@@ -246,12 +246,6 @@ static int journal_file_verify_header(JournalFile *f) {
             !VALID64(le64toh(f->header->entry_array_offset)))
                 return -ENODATA;
 
-        if (le64toh(f->header->data_hash_table_offset) < le64toh(f->header->header_size) ||
-            le64toh(f->header->field_hash_table_offset) < le64toh(f->header->header_size) ||
-            le64toh(f->header->tail_object_offset) < le64toh(f->header->header_size) ||
-            le64toh(f->header->entry_array_offset) < le64toh(f->header->header_size))
-                return -ENODATA;
-
         if (f->writable) {
                 uint8_t state;
 
