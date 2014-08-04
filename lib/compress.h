@@ -29,10 +29,10 @@
 const char* object_compressed_to_string(int compression);
 int object_compressed_from_string(const char *compression);
 
-int compress_blob_xz(const void *src, uint64_t src_size, void *dst, uint64_t *dst_size);
-int compress_blob_lz4(const void *src, uint64_t src_size, void *dst, uint64_t *dst_size);
+int compress_blob_xz(const void *src, uint64_t src_size, void *dst, size_t *dst_size);
+int compress_blob_lz4(const void *src, uint64_t src_size, void *dst, size_t *dst_size);
 
-static inline int compress_blob(const void *src, uint64_t src_size, void *dst, uint64_t *dst_size) {
+static inline int compress_blob(const void *src, uint64_t src_size, void *dst, size_t *dst_size) {
         int r;
 #ifdef HAVE_LZ4
         r = compress_blob_lz4(src, src_size, dst, dst_size);
@@ -47,23 +47,23 @@ static inline int compress_blob(const void *src, uint64_t src_size, void *dst, u
 }
 
 int decompress_blob_xz(const void *src, uint64_t src_size,
-                       void **dst, uint64_t *dst_alloc_size, uint64_t* dst_size, uint64_t dst_max);
+                       void **dst, size_t *dst_alloc_size, size_t* dst_size, size_t dst_max);
 int decompress_blob_lz4(const void *src, uint64_t src_size,
-                        void **dst, uint64_t *dst_alloc_size, uint64_t* dst_size, uint64_t dst_max);
+                        void **dst, size_t *dst_alloc_size, size_t* dst_size, size_t dst_max);
 int decompress_blob(int compression,
                     const void *src, uint64_t src_size,
-                    void **dst, uint64_t *dst_alloc_size, uint64_t* dst_size, uint64_t dst_max);
+                    void **dst, size_t *dst_alloc_size, size_t* dst_size, size_t dst_max);
 
 int decompress_startswith_xz(const void *src, uint64_t src_size,
-                             void **buffer, uint64_t *buffer_size,
-                             const void *prefix, uint64_t prefix_len,
+                             void **buffer, size_t *buffer_size,
+                             const void *prefix, size_t prefix_len,
                              uint8_t extra);
 int decompress_startswith_lz4(const void *src, uint64_t src_size,
-                              void **buffer, uint64_t *buffer_size,
-                              const void *prefix, uint64_t prefix_len,
+                              void **buffer, size_t *buffer_size,
+                              const void *prefix, size_t prefix_len,
                               uint8_t extra);
 int decompress_startswith(int compression,
                           const void *src, uint64_t src_size,
-                          void **buffer, uint64_t *buffer_size,
-                          const void *prefix, uint64_t prefix_len,
+                          void **buffer, size_t *buffer_size,
+                          const void *prefix, size_t prefix_len,
                           uint8_t extra);
