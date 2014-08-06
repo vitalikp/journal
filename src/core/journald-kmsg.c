@@ -74,7 +74,7 @@ static void dev_kmsg_record(Server *s, char *p, size_t l) {
                 /* Did we lose any? */
                 if (serial > *s->kernel_seqnum)
                         server_driver_message(s, "Missed %"PRIu64" kernel messages",
-                                              serial - *s->kernel_seqnum - 1);
+                                              serial - *s->kernel_seqnum);
 
                 /* Make sure we never read this one again. Note that
                  * we always store the next message serial we expect
