@@ -1020,7 +1020,7 @@ int unhexchar(char c) {
         if (c >= 'A' && c <= 'F')
                 return c - 'A' + 10;
 
-        return -1;
+        return -EINVAL;
 }
 
 char *hexmem(const void *p, size_t l) {
@@ -1075,7 +1075,7 @@ int unoctchar(char c) {
         if (c >= '0' && c <= '7')
                 return c - '0';
 
-        return -1;
+        return -EINVAL;
 }
 
 char decchar(int x) {
@@ -1087,7 +1087,7 @@ int undecchar(char c) {
         if (c >= '0' && c <= '9')
                 return c - '0';
 
-        return -1;
+        return -EINVAL;
 }
 
 char *cescape(const char *s) {
@@ -4494,7 +4494,7 @@ int signal_from_string(const char *s) {
                 if (signo > 0 && signo < _NSIG)
                         return signo;
         }
-        return -1;
+        return -EINVAL;
 }
 
 bool kexec_loaded(void) {
