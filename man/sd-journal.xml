@@ -93,8 +93,6 @@
                 tool.</para>
         </refsect1>
 
-        <xi:include href="libsystemd-pkgconfig.xml" />
-
         <refsect1>
                 <title>See Also</title>
                 <para>
