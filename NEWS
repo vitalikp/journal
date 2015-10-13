@@ -1,3 +1,4 @@
    journal (214.3-dev)
 ~~~~~~~
  * install journald program to sbin directory;
+ * install sd-journal.h header file to include directory;
