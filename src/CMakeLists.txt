@@ -47,3 +47,6 @@ add_executable(journalctl
 )
 target_link_libraries(journalctl journal_int_obj journal_logs_obj journal_shared_obj)
 #target_link_libraries(journalctl -pthread rt)
+
+# install
+install(TARGETS journald DESTINATION ${bindir})
