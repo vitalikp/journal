@@ -15,5 +15,9 @@ macro(add_man var name section)
 		ARGS -o ${name}.${section} ${XSLTPROC_OPT} ${CMAKE_SOURCE_DIR}/man/custom-man.xsl ${CMAKE_SOURCE_DIR}/man/${name}.xml
 		COMMENT "  XSLT\t${name}.${section}" VERBATIM)
 		list(APPEND ${var} ${name}.${section})
-	install(FILES ${PROJECT_BINARY_DIR}/${name}.${section} DESTINATION share/man/man${section})
+	add_man_install(${name} ${section})
 endmacro(add_man)
+
+macro(add_man_install name section)
+	install(FILES ${PROJECT_BINARY_DIR}/${name}.${section} DESTINATION share/man/man${section})
+endmacro(add_man_install)
