@@ -53,4 +53,5 @@ target_link_libraries(journal ${XZ_LIBRARIES} ${SYSTEMD_LIBRARIES})
 target_link_libraries(journal -pthread rt)
 
 # install
+install(FILES ${PROJECT_BINARY_DIR}/lib/journal.pc DESTINATION ${libdir}/pkgconfig)
 install(TARGETS journal DESTINATION ${libdir})
