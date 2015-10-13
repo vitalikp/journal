@@ -3,6 +3,12 @@
 # etc
 install(FILES journald.conf DESTINATION /etc)
 
+# completions
+# bash
+if (BASH_COMPL_FOUND)
+	install(FILES completions/bash/journalctl DESTINATION ${datadir}/bash-completion/completions)
+endif(BASH_COMPL_FOUND)
+
 # systemd
 file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/data/sockets.target.wants/)
 execute_process(COMMAND ${LN} -fs ../journald.socket ${PROJECT_BINARY_DIR}/data/sockets.target.wants/)
