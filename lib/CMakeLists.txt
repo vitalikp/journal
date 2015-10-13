@@ -51,3 +51,6 @@ set_target_properties(journal PROPERTIES
 target_link_libraries(journal journal_shared_obj ${LIBJOURNAL_C_FLAGS})
 target_link_libraries(journal ${XZ_LIBRARIES} ${SYSTEMD_LIBRARIES})
 target_link_libraries(journal -pthread rt)
+
+# install
+install(TARGETS journal DESTINATION ${libdir})
