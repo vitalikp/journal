@@ -34,8 +34,6 @@ set(sbindir ${CMAKE_INSTALL_PREFIX}/sbin)
 set(includedir ${CMAKE_INSTALL_PREFIX}/include)
 set(libdir ${CMAKE_INSTALL_PREFIX}/lib64)
 set(datadir ${CMAKE_INSTALL_PREFIX}/share)
-set(catalogstatedir "/var/lib/systemd/catalog")
-add_definitions(-DCATALOG_DATABASE="${catalogstatedir}/database")
 
 # config
 configure_file(config.h.cmake config.h)
