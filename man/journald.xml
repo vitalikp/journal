@@ -52,7 +52,7 @@
         <refsynopsisdiv>
                 <para><filename>journald.service</filename></para>
                 <para><filename>journald.socket</filename></para>
-                <para><filename>/usr/lib/systemd/journald</filename></para>
+                <para><filename>/usr/sbin/journald</filename></para>
         </refsynopsisdiv>
 
         <refsect1>
