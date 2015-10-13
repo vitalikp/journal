@@ -45,6 +45,7 @@ add_definitions(-include ${PROJECT_BINARY_DIR}/config.h)
 include(man/journal-man.cmake)
 add_man(docs journalctl 1)
 add_man(docs journald.conf 5)
+add_man(docs journal-fields 7)
 add_man(docs journald 8)
 add_custom_target(man ALL DEPENDS ${docs})
 
