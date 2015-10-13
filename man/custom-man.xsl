@@ -25,7 +25,7 @@
     </xsl:call-template>
     <xsl:text>" "</xsl:text>
     <xsl:value-of select="normalize-space($section)"/>
-    <xsl:text>" "" "udev </xsl:text>
+    <xsl:text>" "" "journal </xsl:text>
     <xsl:value-of select="$journal.version"/>
     <xsl:text>" "</xsl:text>
     <xsl:value-of select="normalize-space($extra3)"/>
