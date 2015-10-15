@@ -42,6 +42,7 @@ add_definitions(-include ${PROJECT_BINARY_DIR}/config.h)
 # journal man
 include(man/journal-man.cmake)
 add_man(docs journalctl 1)
+add_man(docs coredumpctl 1)
 add_man(docs sd-journal 3)
 add_man(docs sd_journal_add_match 3)
 add_man_install(sd_journal_add_conjunction 3)
