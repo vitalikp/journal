@@ -9,3 +9,6 @@
     - add id SD_MESSAGE_JOURNAL_MISSED;
     - add id SD_MESSAGE_JOURNAL_USAGE;
     - add id SD_MESSAGE_FORWARD_SYSLOG_MISSED;
+ * coredump:
+    - rename systemd-coredump to coredump;
+    - install coredump to sbin directory;
