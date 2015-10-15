@@ -4,3 +4,4 @@
  * install sd-journal.h header file to include directory;
  * messages:
     - add id SD_MESSAGE_JOURNAL_START;
+    - add id SD_MESSAGE_JOURNAL_STOP;
