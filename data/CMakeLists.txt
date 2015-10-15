@@ -13,6 +13,12 @@ if (ZSH)
 	install(FILES completions/zsh/_journalctl DESTINATION ${datadir}/zsh/site-functions)
 endif(ZSH)
 
+# sysctl
+if (${COREDUMP_ENABLE})
+configure_file(sysctl/50-coredump.conf.cmake 50-coredump.conf @ONLY)
+install(FILES ${PROJECT_BINARY_DIR}/data/50-coredump.conf DESTINATION lib/sysctl.d)
+endif()
+
 # systemd
 file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/data/sockets.target.wants/)
 execute_process(COMMAND ${LN} -fs ../journald.socket ${PROJECT_BINARY_DIR}/data/sockets.target.wants/)
