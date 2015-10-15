@@ -7,6 +7,9 @@ install(FILES journald.conf DESTINATION /etc)
 # bash
 if (BASH_COMPL_FOUND)
 	install(FILES completions/bash/journalctl DESTINATION ${datadir}/bash-completion/completions)
+	if (${COREDUMP_ENABLE})
+		install(FILES completions/bash/coredumpctl DESTINATION ${datadir}/bash-completion/completions)
+	endif()
 endif(BASH_COMPL_FOUND)
 # zsh
 if (ZSH)
