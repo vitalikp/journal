@@ -12,3 +12,4 @@
  * coredump:
     - rename systemd-coredump to coredump;
     - install coredump to sbin directory;
+    - rename systemd-coredumpctl to coredumpctl;
