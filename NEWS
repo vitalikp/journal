@@ -5,3 +5,4 @@
  * messages:
     - add id SD_MESSAGE_JOURNAL_START;
     - add id SD_MESSAGE_JOURNAL_STOP;
+    - add id SD_MESSAGE_JOURNAL_DROPPED;
