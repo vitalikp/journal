@@ -57,6 +57,15 @@ target_link_libraries(coredump journal_int_obj journal_label_obj journal_shared_
 install(TARGETS coredump DESTINATION ${sbindir})
 endif()
 
+# coredumpctl
+if (${COREDUMP_ENABLE})
+add_executable(coredumpctl
+	coredumpctl/coredumpctl.c
+)
+target_link_libraries(coredumpctl journal_int_obj journal_shared_obj)
+install(TARGETS coredumpctl DESTINATION ${bindir})
+endif()
+
 # install
 install(TARGETS journald DESTINATION ${sbindir})
 install(TARGETS journalctl DESTINATION ${bindir})
