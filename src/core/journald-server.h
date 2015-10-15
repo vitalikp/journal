@@ -147,6 +147,8 @@ typedef struct Server {
 #define N_IOVEC_UDEV_FIELDS 32
 #define N_IOVEC_OBJECT_FIELDS 11
 
+#define SD_MESSAGE_JOURNAL_START    SD_ID128_MAKE(f7,73,79,a8,49,0b,40,8b,be,5f,69,40,50,5a,77,7b)
+
 void server_dispatch_message(Server *s, struct iovec *iovec, unsigned n, unsigned m, struct ucred *ucred, struct timeval *tv, const char *label, size_t label_len, const char *unit_id, int priority, pid_t object_pid);
 void server_driver_message(Server *s, sd_id128_t message_id, const char *format, ...) _printf_(3,4);
 

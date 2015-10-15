@@ -2,3 +2,5 @@
 ~~~~~~~
  * install journald program to sbin directory;
  * install sd-journal.h header file to include directory;
+ * messages:
+    - add id SD_MESSAGE_JOURNAL_START;
