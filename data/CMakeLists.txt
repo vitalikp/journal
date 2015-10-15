@@ -14,6 +14,9 @@ endif(BASH_COMPL_FOUND)
 # zsh
 if (ZSH)
 	install(FILES completions/zsh/_journalctl DESTINATION ${datadir}/zsh/site-functions)
+	if (${COREDUMP_ENABLE})
+		install(FILES completions/zsh/_coredumpctl DESTINATION ${datadir}/zsh/site-functions)
+	endif()
 endif(ZSH)
 
 # sysctl
