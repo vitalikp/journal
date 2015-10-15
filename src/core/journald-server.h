@@ -151,6 +151,7 @@ typedef struct Server {
 #define SD_MESSAGE_JOURNAL_STOP     SD_ID128_MAKE(d9,3f,b3,c9,c2,4d,45,1a,97,ce,a6,15,ce,59,c0,0b)
 #define SD_MESSAGE_JOURNAL_DROPPED  SD_ID128_MAKE(a5,96,d6,fe,7b,fa,49,94,82,8e,72,30,9e,95,d6,1e)
 #define SD_MESSAGE_JOURNAL_MISSED   SD_ID128_MAKE(e9,bf,28,e6,e8,34,48,1b,b6,f4,8f,54,8a,d1,36,06)
+#define SD_MESSAGE_JOURNAL_USAGE    SD_ID128_MAKE(ec,38,7f,57,7b,84,4b,8f,a9,48,f3,3c,ad,9a,75,e6)
 
 void server_dispatch_message(Server *s, struct iovec *iovec, unsigned n, unsigned m, struct ucred *ucred, struct timeval *tv, const char *label, size_t label_len, const char *unit_id, int priority, pid_t object_pid);
 void server_driver_message(Server *s, sd_id128_t message_id, const char *format, ...) _printf_(3,4);
