@@ -120,6 +120,12 @@ if (${XZ_ENABLE})
 	set(HAVE_XZ 1)
 endif()
 
+# check coredump option
+option(COREDUMP_ENABLE "Disable optional coredump support" ON)
+if (${COREDUMP_ENABLE})
+	set(ENABLE_COREDUMP 1)
+endif()
+
 # get sys_uid_max
 EXECUTE_PROCESS(
 	COMMAND ${AWK} "BEGIN { uid=999 } /^\\s*SYS_UID_MAX\\s+/ { uid=$2 } END { printf uid }"
