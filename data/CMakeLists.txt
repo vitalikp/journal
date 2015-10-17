@@ -43,3 +43,6 @@ install(FILES ${PROJECT_BINARY_DIR}/data/journal-flush.service DESTINATION lib/s
 install(FILES ${PROJECT_BINARY_DIR}/data/journald.service DESTINATION lib/systemd/system)
 install(DIRECTORY ${PROJECT_BINARY_DIR}/data/initrd-switch-root.target.wants DESTINATION lib/systemd/system)
 install(DIRECTORY ${PROJECT_BINARY_DIR}/data/sysinit.target.wants DESTINATION lib/systemd/system)
+
+# tmpfiles
+install(FILES tmpfiles/journal.conf DESTINATION lib/tmpfiles.d)
