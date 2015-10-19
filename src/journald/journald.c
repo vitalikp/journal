@@ -21,7 +21,6 @@
 
 #include <unistd.h>
 
-#include <systemd/sd-messages.h>
 #include <systemd/sd-daemon.h>
 
 #include "journald-server.h"

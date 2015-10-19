@@ -23,7 +23,6 @@
 #include <stddef.h>
 #include <sys/epoll.h>
 
-#include "systemd/sd-messages.h"
 #include "socket-util.h"
 #include "selinux-util.h"
 #include "journald-server.h"

@@ -25,7 +25,6 @@
 #include <sys/statvfs.h>
 #include <sys/mman.h>
 #include <sys/timerfd.h>
-#include <systemd/sd-messages.h>
 #include <systemd/sd-daemon.h>
 
 #include <libudev.h>
