@@ -46,3 +46,6 @@ install(DIRECTORY ${PROJECT_BINARY_DIR}/data/sysinit.target.wants DESTINATION li
 
 # tmpfiles
 install(FILES tmpfiles/journal.conf DESTINATION lib/tmpfiles.d)
+
+# log directory
+install(DIRECTORY DESTINATION ${logdir}/journal)
