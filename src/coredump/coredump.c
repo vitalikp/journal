@@ -38,6 +38,8 @@
 #include "cgroup-util.h"
 #include "journald-native.h"
 
+#define SD_MESSAGE_COREDUMP "fc2e22bc6ee647b6b90729ab34a250b1"
+
 /* Few programs have less than 3MiB resident */
 #define COREDUMP_MIN_START (3*1024*1024u)
 /* Make sure to not make this larger than the maximum journal entry
@@ -219,7 +221,7 @@ int main(int argc, char* argv[]) {
         if (core_timestamp)
                 IOVEC_SET_STRING(iovec[j++], core_timestamp);
 
-        IOVEC_SET_STRING(iovec[j++], "MESSAGE_ID=fc2e22bc6ee647b6b90729ab34a250b1");
+        IOVEC_SET_STRING(iovec[j++], "MESSAGE_ID=" SD_MESSAGE_COREDUMP);
         IOVEC_SET_STRING(iovec[j++], "PRIORITY=2");
 
         core_message = strjoin("MESSAGE=Process ", argv[ARG_PID], " (", argv[ARG_COMM], ") dumped core.", NULL);
