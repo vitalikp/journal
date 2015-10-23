@@ -14,7 +14,7 @@ After=journald.socket syslog.socket
 Before=sysinit.target
 
 [Service]
-ExecStart=@CMAKE_INSTALL_PREFIX@/sbin/journald
+ExecStart=@sbindir@/journald
 Restart=always
 RestartSec=0
 NotifyAccess=all
