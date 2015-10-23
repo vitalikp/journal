@@ -1,5 +1,13 @@
    journal (214.3-dev)
 ~~~~~~~
+ * use systemd/sd-id128.h include instead of sd-id128.h;
+ * use systemd/sd-daemon.h include instead of sd-daemon.h;
+ * use sd-journal.h include instead of systemd/sd-journal.h;
+ * remove unused includes in journald;
+ * journal.pc:
+    - remove URL field;
+    - remove 'deprecated' from Description filed;
+ * don't print systemd features;
  * install journald program to sbin directory;
  * install sd-journal.h header file to include directory;
  * remove include sd-messages.h header file from journald;
