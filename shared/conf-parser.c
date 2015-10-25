@@ -25,7 +25,6 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <netinet/ether.h>
-#include <systemd/sd-messages.h>
 
 #include "conf-parser.h"
 #include "util.h"
@@ -56,7 +55,6 @@ int log_syntax_internal(const char *unit, int level,
                 r = log_struct_internal(level,
                                         file, line, func,
                                         getpid() == 1 ? "UNIT=%s" : "USER_UNIT=%s", unit,
-                                        MESSAGE_ID(SD_MESSAGE_CONFIG_ERROR),
                                         "CONFIG_FILE=%s", config_file,
                                         "CONFIG_LINE=%u", config_line,
                                         "ERRNO=%d", error > 0 ? error : EINVAL,
@@ -65,7 +63,6 @@ int log_syntax_internal(const char *unit, int level,
         else
                 r = log_struct_internal(level,
                                         file, line, func,
-                                        MESSAGE_ID(SD_MESSAGE_CONFIG_ERROR),
                                         "CONFIG_FILE=%s", config_file,
                                         "CONFIG_LINE=%u", config_line,
                                         "ERRNO=%d", error > 0 ? error : EINVAL,
