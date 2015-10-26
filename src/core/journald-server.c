@@ -168,7 +168,7 @@ static uint64_t available_space(Server *s, bool verbose) {
                 char    fb1[FORMAT_BYTES_MAX], fb2[FORMAT_BYTES_MAX], fb3[FORMAT_BYTES_MAX],
                         fb4[FORMAT_BYTES_MAX], fb5[FORMAT_BYTES_MAX];
 
-                server_driver_message(s, SD_MESSAGE_JOURNAL_USAGE,
+                server_driver_message(s,
                                       "%s journal is using %s (max allowed %s, "
                                       "trying to leave %s free of %s available → current limit %s).",
                                       s->system_journal ? "Permanent" : "Runtime",
@@ -768,7 +768,7 @@ static void dispatch_message_real(
         write_to_journal(s, journal_uid, iovec, n, priority);
 }
 
-void server_driver_message(Server *s, sd_id128_t message_id, const char *format, ...) {
+void server_driver_message(Server *s, const char *format, ...) {
         char buffer[16 + LINE_MAX + 1];
         struct iovec iovec[N_IOVEC_META_FIELDS + 4];
         int n = 0;
@@ -854,8 +854,7 @@ void server_dispatch_message(
 
         /* Write a suppression message if we suppressed something */
         if (rl > 1)
-                server_driver_message(s, SD_MESSAGE_JOURNAL_DROPPED,
-                                      "Suppressed %u messages from %s", rl - 1, path);
+                server_driver_message(s, "Suppressed %u messages from %s", rl - 1, path);
 
 finish:
         dispatch_message_real(s, iovec, n, m, ucred, tv, label, label_len, unit_id, priority, object_pid);
@@ -1045,7 +1044,7 @@ finish:
 
         sd_journal_close(j);
 
-        server_driver_message(s, SD_ID128_NULL, "Time spent on flushing to /var is %s for %u entries.", format_timespan(ts, sizeof(ts), now(CLOCK_MONOTONIC) - start, 0), n);
+        server_driver_message(s, "Time spent on flushing to /var is %s for %u entries.", format_timespan(ts, sizeof(ts), now(CLOCK_MONOTONIC) - start, 0), n);
 
         return r;
 }

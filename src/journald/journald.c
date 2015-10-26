@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
         server_flush_dev_kmsg(&server);
 
         log_debug("journald running as pid "PID_FMT, getpid());
-        server_driver_message(&server, SD_MESSAGE_JOURNAL_START, "Journal started");
+        server_driver_message(&server, "Journal started");
 
         sd_notify(false,
                   "READY=1\n"
@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
         }
 
         log_debug("journald stopped as pid "PID_FMT, getpid());
-        server_driver_message(&server, SD_MESSAGE_JOURNAL_STOP, "Journal stopped");
+        server_driver_message(&server, "Journal stopped");
 
 finish:
         sd_notify(false, "STATUS=Shutting down...");

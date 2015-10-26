@@ -21,6 +21,7 @@
     - add id SD_MESSAGE_FORWARD_SYSLOG_MISSED;
     - remove id SD_MESSAGE_COREDUMP;
  * don't write field MESSAGE_ID to journal logs;
+ * remove parameter message_id in server_driver_message function;
  * coredump:
     - rename systemd-coredump to coredump;
     - install coredump to sbin directory;
