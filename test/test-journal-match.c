@@ -21,7 +21,7 @@
 
 #include <stdio.h>
 
-#include "sd-journal.h"
+#include "journal.h"
 
 #include "journal-internal.h"
 #include "util.h"

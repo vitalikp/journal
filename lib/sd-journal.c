@@ -28,7 +28,7 @@
 #include <sys/vfs.h>
 #include <linux/magic.h>
 
-#include "sd-journal.h"
+#include "journal.h"
 #include "journal-def.h"
 #include "journal-file.h"
 #include "hashmap.h"

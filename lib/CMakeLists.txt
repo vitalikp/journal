@@ -17,7 +17,7 @@ set(journal_int_src
 	sd-event.c
 	sd-event.h
 	sd-journal.c
-	sd-journal.h
+	journal.h
 	journal-file.c
 	journal-file.h
 	journal-vacuum.c
@@ -53,6 +53,6 @@ target_link_libraries(journal ${XZ_LIBRARIES} ${SYSTEMD_LIBRARIES})
 target_link_libraries(journal -pthread rt)
 
 # install
-install(FILES sd-journal.h DESTINATION ${includedir})
+install(FILES journal.h DESTINATION ${includedir}/journal)
 install(FILES ${PROJECT_BINARY_DIR}/lib/journal.pc DESTINATION ${libdir}/pkgconfig)
 install(TARGETS journal DESTINATION ${libdir})

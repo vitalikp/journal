@@ -21,7 +21,7 @@
 
 #include <fcntl.h>
 
-#include "sd-journal.h"
+#include "journal.h"
 #include "journal-file.h"
 #include "journal-internal.h"
 

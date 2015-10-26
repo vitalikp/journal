@@ -50,7 +50,7 @@
 
         <refsynopsisdiv>
                 <funcsynopsis>
-                        <funcsynopsisinfo>#include &lt;systemd/sd-journal.h&gt;</funcsynopsisinfo>
+                        <funcsynopsisinfo>#include &lt;journal/journal.h&gt;</funcsynopsisinfo>
 
                         <funcprototype>
                                 <funcdef>int <function>sd_journal_get_realtime_usec</function></funcdef>

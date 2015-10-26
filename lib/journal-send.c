@@ -29,7 +29,7 @@
 
 #define SD_JOURNAL_SUPPRESS_LOCATION
 
-#include "sd-journal.h"
+#include "journal.h"
 #include "util.h"
 #include "socket-util.h"
 

@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-#include "sd-journal.h"
+#include "journal.h"
 #include "util.h"
 #include "output-mode.h"
 

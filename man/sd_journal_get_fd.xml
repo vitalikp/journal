@@ -58,7 +58,7 @@
 
         <refsynopsisdiv>
                 <funcsynopsis>
-                        <funcsynopsisinfo>#include &lt;systemd/sd-journal.h&gt;</funcsynopsisinfo>
+                        <funcsynopsisinfo>#include &lt;journal/journal.h&gt;</funcsynopsisinfo>
 
                         <funcprototype>
                                 <funcdef>int <function>sd_journal_get_fd</function></funcdef>
@@ -266,7 +266,7 @@ else {
 
                 <programlisting>#include &lt;stdio.h&gt;
 #include &lt;string.h&gt;
-#include &lt;systemd/sd-journal.h&gt;
+#include &lt;journal/journal.h&gt;
 
 int main(int argc, char *argv[]) {
         int r;
@@ -309,7 +309,7 @@ int main(int argc, char *argv[]) {
                 simplicity):</para>
 
                 <programlisting>#include &lt;sys/poll.h&gt;
-#include &lt;systemd/sd-journal.h&gt;
+#include &lt;journal/journal.h&gt;
 
 int wait_for_changes(sd_journal *j) {
         struct pollfd pollfd;

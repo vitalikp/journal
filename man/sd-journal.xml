@@ -50,7 +50,7 @@
 
         <refsynopsisdiv>
                 <funcsynopsis>
-                        <funcsynopsisinfo>#include &lt;systemd/sd-journal.h&gt;</funcsynopsisinfo>
+                        <funcsynopsisinfo>#include &lt;journal/journal.h&gt;</funcsynopsisinfo>
                 </funcsynopsis>
 
                 <cmdsynopsis>
@@ -62,7 +62,7 @@
         <refsect1>
                 <title>Description</title>
 
-                <para><filename>sd-journal.h</filename> provides APIs
+                <para><filename>journal.h</filename> provides APIs
                 to submit and query log entries. The APIs exposed act
                 both as client for the
                 <citerefentry><refentrytitle>journald.service</refentrytitle><manvolnum>8</manvolnum></citerefentry>

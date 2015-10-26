@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <sys/prctl.h>
 
-#include <systemd/sd-journal.h>
+#include "journal.h"
 
 #ifdef HAVE_LOGIND
 #include <systemd/sd-login.h>

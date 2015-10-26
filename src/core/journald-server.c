@@ -29,7 +29,7 @@
 
 #include <libudev.h>
 
-#include "sd-journal.h"
+#include "journal.h"
 #include "fileio.h"
 #include "mkdir.h"
 #include "hashmap.h"

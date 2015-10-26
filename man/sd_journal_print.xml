@@ -54,7 +54,7 @@
 
         <refsynopsisdiv>
                 <funcsynopsis>
-                        <funcsynopsisinfo>#include &lt;systemd/sd-journal.h&gt;</funcsynopsisinfo>
+                        <funcsynopsisinfo>#include &lt;journal/journal.h&gt;</funcsynopsisinfo>
 
                         <funcprototype>
                                 <funcdef>int <function>sd_journal_print</function></funcdef>
@@ -191,7 +191,7 @@ sd_journal_send("MESSAGE=Hello World, this is PID %lu!", (unsigned long) getpid(
                 invoked. This is implemented with macros. If this is
                 not desired, it can be turned off by defining
                 SD_JOURNAL_SUPPRESS_LOCATION before including
-                <filename>sd-journal.h</filename>.</para>
+                <filename>journal.h</filename>.</para>
 
                 <para><citerefentry><refentrytitle>syslog</refentrytitle><manvolnum>3</manvolnum></citerefentry>
                 and <function>sd_journal_print()</function> may

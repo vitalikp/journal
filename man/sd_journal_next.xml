@@ -54,7 +54,7 @@
 
         <refsynopsisdiv>
                 <funcsynopsis>
-                        <funcsynopsisinfo>#include &lt;systemd/sd-journal.h&gt;</funcsynopsisinfo>
+                        <funcsynopsisinfo>#include &lt;journal/journal.h&gt;</funcsynopsisinfo>
 
                         <funcprototype>
                                 <funcdef>int <function>sd_journal_next</function></funcdef>
@@ -169,7 +169,7 @@
 
                 <programlisting>#include &lt;stdio.h&gt;
 #include &lt;string.h&gt;
-#include &lt;systemd/sd-journal.h&gt;
+#include &lt;journal/journal.h&gt;
 
 int main(int argc, char *argv[]) {
         int r;

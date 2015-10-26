@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "sd-journal.h"
+#include "journal.h"
 #include "log.h"
 
 int main(int argc, char *argv[]) {

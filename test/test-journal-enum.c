@@ -22,7 +22,7 @@
 #include <stdio.h>
 
 #include "log.h"
-#include "sd-journal.h"
+#include "journal.h"
 #include "macro.h"
 #include "util.h"
 #include "journal-internal.h"
