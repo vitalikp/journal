@@ -13,11 +13,7 @@
  * install sd-journal.h header file to include directory;
  * remove include sd-messages.h header file;
  * messages:
-    - add id SD_MESSAGE_JOURNAL_START;
-    - add id SD_MESSAGE_JOURNAL_STOP;
-    - add id SD_MESSAGE_JOURNAL_DROPPED;
-    - add id SD_MESSAGE_JOURNAL_MISSED;
-    - add id SD_MESSAGE_JOURNAL_USAGE;
+    - remove id's SD_MESSAGE_JOURNAL_*;
     - add id SD_MESSAGE_FORWARD_SYSLOG_MISSED;
     - remove id SD_MESSAGE_COREDUMP;
  * don't write field MESSAGE_ID to journal logs;
