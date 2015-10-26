@@ -769,7 +769,6 @@ static void dispatch_message_real(
 }
 
 void server_driver_message(Server *s, sd_id128_t message_id, const char *format, ...) {
-        char mid[11 + 32 + 1];
         char buffer[16 + LINE_MAX + 1];
         struct iovec iovec[N_IOVEC_META_FIELDS + 4];
         int n = 0;
@@ -788,12 +787,6 @@ void server_driver_message(Server *s, sd_id128_t message_id, const char *format,
         va_end(ap);
         char_array_0(buffer);
         IOVEC_SET_STRING(iovec[n++], buffer);
-
-        if (!sd_id128_equal(message_id, SD_ID128_NULL)) {
-                snprintf(mid, sizeof(mid), MESSAGE_ID(message_id));
-                char_array_0(mid);
-                IOVEC_SET_STRING(iovec[n++], mid);
-        }
 
         ucred.pid = getpid();
         ucred.uid = getuid();
