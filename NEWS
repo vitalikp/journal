@@ -14,7 +14,7 @@
  * remove include sd-messages.h header file;
  * messages:
     - remove id's SD_MESSAGE_JOURNAL_*;
-    - add id SD_MESSAGE_FORWARD_SYSLOG_MISSED;
+    - remove id SD_MESSAGE_FORWARD_SYSLOG_MISSED;
     - remove id SD_MESSAGE_COREDUMP;
  * don't write field MESSAGE_ID to journal logs;
  * remove parameter message_id in server_driver_message function;

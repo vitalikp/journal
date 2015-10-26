@@ -147,8 +147,6 @@ typedef struct Server {
 #define N_IOVEC_UDEV_FIELDS 32
 #define N_IOVEC_OBJECT_FIELDS 11
 
-#define SD_MESSAGE_FORWARD_SYSLOG_MISSED SD_ID128_MAKE(00,27,22,9c,a0,64,41,81,a7,6c,4e,92,45,8a,fa,2e)
-
 void server_dispatch_message(Server *s, struct iovec *iovec, unsigned n, unsigned m, struct ucred *ucred, struct timeval *tv, const char *label, size_t label_len, const char *unit_id, int priority, pid_t object_pid);
 void server_driver_message(Server *s, const char *format, ...) _printf_(3,4);
 
