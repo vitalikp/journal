@@ -148,7 +148,7 @@ typedef struct Server {
 #define N_IOVEC_OBJECT_FIELDS 11
 
 void server_dispatch_message(Server *s, struct iovec *iovec, unsigned n, unsigned m, struct ucred *ucred, struct timeval *tv, const char *label, size_t label_len, const char *unit_id, int priority, pid_t object_pid);
-void server_driver_message(Server *s, const char *format, ...) _printf_(3,4);
+void server_driver_message(Server *s, const char *format, ...) _printf_(2,3);
 
 /* gperf lookup function */
 const struct ConfigPerfItem* journald_gperf_lookup(const char *key, unsigned length);
