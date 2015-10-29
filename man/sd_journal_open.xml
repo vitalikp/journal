@@ -221,9 +221,8 @@
                 <para><function>sd_journal_open()</function>,
                 <function>sd_journal_close()</function>,
                 <constant>SD_JOURNAL_LOCAL_ONLY</constant>,
-                <constant>SD_JOURNAL_RUNTIME_ONLY</constant>,
-                <constant>SD_JOURNAL_SYSTEM_ONLY</constant> were added
-                in systemd-38.</para>
+                <constant>SD_JOURNAL_RUNTIME_ONLY</constant>
+                </para>
 
                 <para><function>sd_journal_open_directory()</function>
                 was added in systemd-187.</para>
@@ -231,9 +230,7 @@
                 <para><constant>SD_JOURNAL_SYSTEM</constant>,
                 <constant>SD_JOURNAL_CURRENT_USER</constant>,
                 and <function>sd_journal_open_files()</function>
-                were added in systemd-205.
-                <constant>SD_JOURNAL_SYSTEM_ONLY</constant>
-                was deprecated.</para>
+                were added in systemd-205.</para>
         </refsect1>
 
         <refsect1>
