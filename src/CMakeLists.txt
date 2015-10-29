@@ -48,15 +48,6 @@ add_executable(journalctl
 target_link_libraries(journalctl journal_int_obj journal_logs_obj journal_shared_obj)
 #target_link_libraries(journalctl -pthread rt)
 
-# coredumpctl
-if (${COREDUMP_ENABLE})
-add_executable(coredumpctl
-	coredumpctl/coredumpctl.c
-)
-target_link_libraries(coredumpctl journal_int_obj journal_shared_obj)
-install(TARGETS coredumpctl DESTINATION ${bindir})
-endif()
-
 # install
 install(TARGETS journald DESTINATION ${sbindir})
 install(TARGETS journalctl DESTINATION ${bindir})
