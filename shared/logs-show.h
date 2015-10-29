@@ -48,18 +48,6 @@ int add_matches_for_user_unit(
                 const char *unit,
                 uid_t uid);
 
-int show_journal_by_unit(
-                FILE *f,
-                const char *unit,
-                OutputMode mode,
-                unsigned n_columns,
-                usec_t not_before,
-                unsigned how_many,
-                uid_t uid,
-                OutputFlags flags,
-                bool system,
-                bool *ellipsized);
-
 void json_escape(
                 FILE *f,
                 const char* p,
