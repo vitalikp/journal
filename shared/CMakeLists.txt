@@ -71,7 +71,7 @@ add_library(journal_label_obj STATIC
 	label.h
 	selinux-util.c
 	selinux-util.h
-	mkdir-label.c
+#	mkdir-label.c
 #	dev-setup.c
 #	dev-setup.h
 )
