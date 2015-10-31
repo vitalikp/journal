@@ -904,35 +904,28 @@ int output_journal(
 
 int add_matches_for_unit(sd_journal *j, const char *unit) {
         int r;
-        char *m1, *m2, *m3, *m4;
+        char *m1, *m2, *m3;
 
         assert(j);
         assert(unit);
 
         m1 = strappenda("_SYSTEMD_UNIT=", unit);
-        m2 = strappenda("COREDUMP_UNIT=", unit);
-        m3 = strappenda("UNIT=", unit);
-        m4 = strappenda("OBJECT_SYSTEMD_UNIT=", unit);
+        m2 = strappenda("UNIT=", unit);
+        m3 = strappenda("OBJECT_SYSTEMD_UNIT=", unit);
 
         (void)(
             /* Look for messages from the service itself */
             (r = sd_journal_add_match(j, m1, 0)) ||
 
-            /* Look for coredumps of the service */
-            (r = sd_journal_add_disjunction(j)) ||
-            (r = sd_journal_add_match(j, "MESSAGE_ID=fc2e22bc6ee647b6b90729ab34a250b1", 0)) ||
-            (r = sd_journal_add_match(j, "_UID=0", 0)) ||
-            (r = sd_journal_add_match(j, m2, 0)) ||
-
              /* Look for messages from PID 1 about this service */
             (r = sd_journal_add_disjunction(j)) ||
             (r = sd_journal_add_match(j, "_PID=1", 0)) ||
-            (r = sd_journal_add_match(j, m3, 0)) ||
+            (r = sd_journal_add_match(j, m2, 0)) ||
 
             /* Look for messages from authorized daemons about this service */
             (r = sd_journal_add_disjunction(j)) ||
             (r = sd_journal_add_match(j, "_UID=0", 0)) ||
-            (r = sd_journal_add_match(j, m4, 0))
+            (r = sd_journal_add_match(j, m3, 0))
         );
 
         if (r == 0 && endswith(unit, ".slice")) {
@@ -950,7 +943,7 @@ int add_matches_for_unit(sd_journal *j, const char *unit) {
 
 int add_matches_for_user_unit(sd_journal *j, const char *unit, uid_t uid) {
         int r;
-        char *m1, *m2, *m3, *m4;
+        char *m1, *m2, *m3;
         char muid[sizeof("_UID=") + DECIMAL_STR_MAX(uid_t)];
 
         assert(j);
@@ -958,8 +951,7 @@ int add_matches_for_user_unit(sd_journal *j, const char *unit, uid_t uid) {
 
         m1 = strappenda("_SYSTEMD_USER_UNIT=", unit);
         m2 = strappenda("USER_UNIT=", unit);
-        m3 = strappenda("COREDUMP_USER_UNIT=", unit);
-        m4 = strappenda("OBJECT_SYSTEMD_USER_UNIT=", unit);
+        m3 = strappenda("OBJECT_SYSTEMD_USER_UNIT=", unit);
         sprintf(muid, "_UID="UID_FMT, uid);
 
         (void) (
@@ -972,26 +964,20 @@ int add_matches_for_user_unit(sd_journal *j, const char *unit, uid_t uid) {
                 (r = sd_journal_add_match(j, m2, 0)) ||
                 (r = sd_journal_add_match(j, muid, 0)) ||
 
-                /* Look for coredumps of the service */
-                (r = sd_journal_add_disjunction(j)) ||
-                (r = sd_journal_add_match(j, m3, 0)) ||
-                (r = sd_journal_add_match(j, muid, 0)) ||
-                (r = sd_journal_add_match(j, "_UID=0", 0)) ||
-
                 /* Look for messages from authorized daemons about this service */
                 (r = sd_journal_add_disjunction(j)) ||
-                (r = sd_journal_add_match(j, m4, 0)) ||
+                (r = sd_journal_add_match(j, m3, 0)) ||
                 (r = sd_journal_add_match(j, muid, 0)) ||
                 (r = sd_journal_add_match(j, "_UID=0", 0))
         );
 
         if (r == 0 && endswith(unit, ".slice")) {
-                char *m5 = strappend("_SYSTEMD_SLICE=", unit);
+                char *m4 = strappend("_SYSTEMD_SLICE=", unit);
 
                 /* Show all messages belonging to a slice */
                 (void)(
                         (r = sd_journal_add_disjunction(j)) ||
-                        (r = sd_journal_add_match(j, m5, 0)) ||
+                        (r = sd_journal_add_match(j, m4, 0)) ||
                         (r = sd_journal_add_match(j, muid, 0))
                         );
         }

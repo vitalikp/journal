@@ -24,3 +24,4 @@
  * journalctl:
     - remove machine argument option;
     - remove new-id128 argument option;
+    - don't match coredumps of the service;
