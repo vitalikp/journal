@@ -1724,48 +1724,6 @@ fail:
         return r;
 }
 
-_public_ int sd_journal_open_container(sd_journal **ret, const char *machine, int flags) {
-        _cleanup_free_ char *root = NULL, *class = NULL;
-        sd_journal *j;
-        char *p;
-        int r;
-
-        assert_return(machine, -EINVAL);
-        assert_return(ret, -EINVAL);
-        assert_return((flags & ~(SD_JOURNAL_LOCAL_ONLY|SD_JOURNAL_SYSTEM)) == 0, -EINVAL);
-        assert_return(filename_is_safe(machine), -EINVAL);
-
-        p = strappenda("/run/systemd/machines/", machine);
-        r = parse_env_file(p, NEWLINE, "ROOT", &root, "CLASS", &class, NULL);
-        if (r == -ENOENT)
-                return -EHOSTDOWN;
-        if (r < 0)
-                return r;
-        if (!root)
-                return -ENODATA;
-
-        if (!streq_ptr(class, "container"))
-                return -EIO;
-
-        j = journal_new(flags, NULL);
-        if (!j)
-                return -ENOMEM;
-
-        j->prefix = root;
-        root = NULL;
-
-        r = add_search_paths(j);
-        if (r < 0)
-                goto fail;
-
-        *ret = j;
-        return 0;
-
-fail:
-        sd_journal_close(j);
-        return r;
-}
-
 _public_ int sd_journal_open_directory(sd_journal **ret, const char *path, int flags) {
         sd_journal *j;
         int r;

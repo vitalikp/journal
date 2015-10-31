@@ -18,6 +18,7 @@
     - remove id SD_MESSAGE_COREDUMP;
  * don't write field MESSAGE_ID to journal logs;
  * remove parameter message_id in server_driver_message function;
+ * remove sd_journal_open_container function;
  * remove SD_JOURNAL_SYSTEM_ONLY open flag;
  * journalctl:
     - remove machine argument option;
