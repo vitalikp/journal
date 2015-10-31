@@ -25,3 +25,5 @@
     - remove machine argument option;
     - remove new-id128 argument option;
     - don't match coredumps of the service;
+ * journal-fields:
+    - remove MESSAGE_ID field;
