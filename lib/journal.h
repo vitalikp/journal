@@ -65,7 +65,7 @@ int sd_journal_stream_fd(const char *identifier, int priority, int level_prefix)
 typedef struct sd_journal sd_journal;
 
 /* Open flags */
-enum {
+enum OpenFlags {
         SD_JOURNAL_LOCAL_ONLY = 1,
         SD_JOURNAL_RUNTIME_ONLY = 2,
         SD_JOURNAL_SYSTEM = 4,
