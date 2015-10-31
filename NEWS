@@ -27,3 +27,4 @@
     - don't match coredumps of the service;
  * journal-fields:
     - remove MESSAGE_ID field;
+    - remove coredump fields;

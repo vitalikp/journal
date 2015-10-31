@@ -25,7 +25,7 @@ __contains_word () {
 }
 
 __journal_fields=(MESSAGE PRIORITY CODE_{FILE,LINE,FUNC}
-                  ERRNO SYSLOG_{FACILITY,IDENTIFIER,PID} COREDUMP_EXE
+                  ERRNO SYSLOG_{FACILITY,IDENTIFIER,PID}
                   _{P,U,G}ID _COMM _EXE _CMDLINE
                   _AUDIT_{SESSION,LOGINUID}
                   _SYSTEMD_{CGROUP,SESSION,UNIT,OWNER_UID}

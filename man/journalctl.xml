@@ -472,9 +472,7 @@
                                 messages from the unit
                                 (<literal>_SYSTEMD_UNIT=<replaceable>UNIT</replaceable></literal>),
                                 along with additional matches for
-                                messages from systemd and messages
-                                about coredumps for the specified
-                                unit.</para>
+                                messages from systemd.</para>
 
                                 <para>This parameter can be specified
                                 multiple times.</para></listitem>
@@ -489,8 +487,7 @@
                                 (<literal>_SYSTEMD_USER_UNIT=</literal>
                                 and <literal>_UID=</literal>) and
                                 additional matches for messages from
-                                session systemd and messages about
-                                coredumps for the specified unit.</para>
+                                session systemd.</para>
                                 <para>This parameter can be specified multiple times.
                                 </para></listitem>
                         </varlistentry>

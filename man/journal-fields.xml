@@ -424,25 +424,6 @@
                 program or unit.
                 </para>
 
-                <para>Fields used by the <command>systemd-coredump</command>
-                coredump kernel helper:
-                </para>
-
-                <variablelist class='journal-directives'>
-                        <varlistentry>
-                                <term><varname>COREDUMP_UNIT=</varname></term>
-                                <term><varname>COREDUMP_USER_UNIT=</varname></term>
-                                <listitem>
-                                        <para>Used to annotate
-                                        messages containing coredumps from
-                                        system and session units.
-                                        See
-                                        <citerefentry><refentrytitle>systemd-coredumpctl</refentrytitle><manvolnum>1</manvolnum></citerefentry>.
-                                        </para>
-                                </listitem>
-                        </varlistentry>
-                </variablelist>
-
                 <para>Priviledged programs (currently UID 0) may
                 attach <varname>OBJECT_PID=</varname> to a
                 message. This will instruct
@@ -574,8 +555,7 @@
                           <citerefentry><refentrytitle>systemd</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
                           <citerefentry><refentrytitle>journalctl</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
                           <citerefentry><refentrytitle>journald.conf</refentrytitle><manvolnum>5</manvolnum></citerefentry>,
-                          <citerefentry><refentrytitle>sd-journal</refentrytitle><manvolnum>3</manvolnum></citerefentry>,
-                          <citerefentry><refentrytitle>systemd-coredumpctl</refentrytitle><manvolnum>1</manvolnum></citerefentry>
+                          <citerefentry><refentrytitle>sd-journal</refentrytitle><manvolnum>3</manvolnum></citerefentry>
                   </para>
         </refsect1>
 

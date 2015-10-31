@@ -23,8 +23,6 @@
 
 #include "journald-server.h"
 
-/* Make sure not to make this smaller than the maximum coredump
- * size. See COREDUMP_MAX in coredump.c */
 #define ENTRY_SIZE_MAX (1024*1024*768)
 #define DATA_SIZE_MAX (1024*1024*768)
 

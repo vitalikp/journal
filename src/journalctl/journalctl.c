@@ -898,7 +898,6 @@ static int get_possible_units(sd_journal *j,
  * possibly matched by rules added with add_matches_for_unit... */
 #define SYSTEM_UNITS                 \
         "_SYSTEMD_UNIT\0"            \
-        "COREDUMP_UNIT\0"            \
         "UNIT\0"                     \
         "OBJECT_SYSTEMD_UNIT\0"      \
         "_SYSTEMD_SLICE\0"
@@ -907,7 +906,6 @@ static int get_possible_units(sd_journal *j,
 #define USER_UNITS                   \
         "_SYSTEMD_USER_UNIT\0"       \
         "USER_UNIT\0"                \
-        "COREDUMP_USER_UNIT\0"       \
         "OBJECT_SYSTEMD_USER_UNIT\0"
 
 static int add_units(sd_journal *j) {
