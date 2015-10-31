@@ -832,7 +832,7 @@ static int add_boot(sd_journal *j) {
                 return 0;
 
         if (arg_boot_offset == 0 && sd_id128_equal(arg_boot_id, SD_ID128_NULL))
-                return add_match_this_boot(j, NULL);
+                return add_match_this_boot(j);
 
         r = get_relative_boot_id(j, &arg_boot_id, arg_boot_offset);
         if (r < 0) {
