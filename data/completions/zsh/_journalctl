@@ -77,7 +77,6 @@ _arguments -s \
     '--user[Show messages from user services]' \
     {-D+,--directory=}'[Show journal files from directory]:directories:_directories' \
     '--file=[Operate on specified journal files]:file:_files' \
-    '--new-id128[Generate a new 128 Bit ID]' \
     '--header[Show journal header information]' \
     '--disk-usage[Show total disk usage]' \
     '--setup-keys[Generate a new FSS key pair]' \

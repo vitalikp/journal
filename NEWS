@@ -23,3 +23,4 @@
  * remove SD_JOURNAL_SYSTEM_ONLY open flag;
  * journalctl:
     - remove machine argument option;
+    - remove new-id128 argument option;

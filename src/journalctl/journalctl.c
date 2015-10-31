@@ -82,7 +82,6 @@ static int arg_journal_type = 0;
 
 static enum {
         ACTION_SHOW,
-        ACTION_NEW_ID128,
         ACTION_PRINT_HEADER,
         ACTION_VERIFY,
         ACTION_DISK_USAGE,
@@ -176,7 +175,6 @@ static int help(void) {
                "\nCommands:\n"
                "  -h --help                Show this help text\n"
                "     --version             Show package version\n"
-               "     --new-id128           Generate a new 128-bit ID\n"
                "     --header              Show journal header information\n"
                "     --disk-usage          Show total disk usage of all journal files\n"
                "  -F --field=FIELD         List all values that a specified field takes\n"
@@ -193,7 +191,6 @@ static int parse_argv(int argc, char *argv[]) {
                 ARG_NO_PAGER,
                 ARG_NO_FULL,
                 ARG_NO_TAIL,
-                ARG_NEW_ID128,
                 ARG_LIST_BOOTS,
                 ARG_USER,
                 ARG_SYSTEM,
@@ -220,7 +217,6 @@ static int parse_argv(int argc, char *argv[]) {
                 { "no-full",        no_argument,       NULL, ARG_NO_FULL        },
                 { "lines",          optional_argument, NULL, 'n'                },
                 { "no-tail",        no_argument,       NULL, ARG_NO_TAIL        },
-                { "new-id128",      no_argument,       NULL, ARG_NEW_ID128      },
                 { "quiet",          no_argument,       NULL, 'q'                },
                 { "merge",          no_argument,       NULL, 'm'                },
                 { "boot",           optional_argument, NULL, 'b'                },
@@ -338,10 +334,6 @@ static int parse_argv(int argc, char *argv[]) {
 
                 case ARG_NO_TAIL:
                         arg_no_tail = true;
-                        break;
-
-                case ARG_NEW_ID128:
-                        arg_action = ACTION_NEW_ID128;
                         break;
 
                 case 'q':
@@ -553,37 +545,6 @@ static int parse_argv(int argc, char *argv[]) {
         }
 
         return 1;
-}
-
-static int generate_new_id128(void) {
-        sd_id128_t id;
-        int r;
-        unsigned i;
-
-        r = sd_id128_randomize(&id);
-        if (r < 0) {
-                log_error("Failed to generate ID: %s", strerror(-r));
-                return r;
-        }
-
-        printf("As string:\n"
-               SD_ID128_FORMAT_STR "\n\n"
-               "As UUID:\n"
-               "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x\n\n"
-               "As macro:\n"
-               "#define MESSAGE_XYZ SD_ID128_MAKE(",
-               SD_ID128_FORMAT_VAL(id),
-               SD_ID128_FORMAT_VAL(id));
-        for (i = 0; i < 16; i++)
-                printf("%02x%s", id.bytes[i], i != 15 ? "," : "");
-        fputs(")\n\n", stdout);
-
-        printf("As Python constant:\n"
-               ">>> import uuid\n"
-               ">>> MESSAGE_XYZ = uuid.UUID('" SD_ID128_FORMAT_STR "')\n",
-               SD_ID128_FORMAT_VAL(id));
-
-        return 0;
 }
 
 static int add_matches(sd_journal *j, char **args) {
@@ -1169,11 +1130,6 @@ int main(int argc, char *argv[]) {
                 goto finish;
 
         signal(SIGWINCH, columns_lines_cache_reset);
-
-        if (arg_action == ACTION_NEW_ID128) {
-                r = generate_new_id128();
-                goto finish;
-        }
 
         if (arg_directory)
                 r = sd_journal_open_directory(&j, arg_directory, arg_journal_type);
