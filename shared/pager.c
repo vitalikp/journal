@@ -91,7 +91,7 @@ int pager_open(bool jump_to_end) {
 
                 less_opts = getenv("SYSTEMD_LESS");
                 if (!less_opts)
-                        less_opts = "FRSXMK";
+                        less_opts = "RSMK";
                 if (jump_to_end)
                         less_opts = strappenda(less_opts, " +G");
                 setenv("LESS", less_opts, 1);
