@@ -48,7 +48,6 @@
                 <refname>sd_journal_send</refname>
                 <refname>sd_journal_sendv</refname>
                 <refname>sd_journal_perror</refname>
-                <refname>SD_JOURNAL_SUPPRESS_LOCATION</refname>
                 <refpurpose>Submit log entries to the journal</refpurpose>
         </refnamediv>
 
@@ -185,13 +184,6 @@
 sd_journal_send("MESSAGE=Hello World, this is PID %lu!", (unsigned long) getpid(),
                 "PRIORITY=%i", LOG_INFO,
                 NULL);</programlisting>
-
-                <para>Note that these calls implicitly add fields for
-                the source file, function name and code line where
-                invoked. This is implemented with macros. If this is
-                not desired, it can be turned off by defining
-                SD_JOURNAL_SUPPRESS_LOCATION before including
-                <filename>journal.h</filename>.</para>
 
                 <para><citerefentry><refentrytitle>syslog</refentrytitle><manvolnum>3</manvolnum></citerefentry>
                 and <function>sd_journal_print()</function> may

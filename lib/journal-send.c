@@ -27,8 +27,6 @@
 #include <fcntl.h>
 #include <printf.h>
 
-#define SD_JOURNAL_SUPPRESS_LOCATION
-
 #include "journal.h"
 #include "util.h"
 #include "socket-util.h"

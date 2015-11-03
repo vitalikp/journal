@@ -47,11 +47,6 @@ int sd_journal_send_with_location(const char *file, const char *line, const char
 int sd_journal_sendv_with_location(const char *file, const char *line, const char *func, const struct iovec *iov, int n);
 int sd_journal_perror_with_location(const char *file, const char *line, const char *func, const char *message);
 
-/* implicitly add code location to messages sent, if this is enabled */
-#ifndef SD_JOURNAL_SUPPRESS_LOCATION
-
-#endif
-
 int sd_journal_stream_fd(const char *identifier, int priority, int level_prefix);
 
 /* Browse journal stream */
