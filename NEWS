@@ -28,3 +28,4 @@
  * journal-fields:
     - remove MESSAGE_ID field;
     - remove coredump fields;
+ * don't add code location to log messages;
