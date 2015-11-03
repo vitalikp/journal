@@ -32,3 +32,4 @@
  * remove id SD_JOURNAL_SUPPRESS_LOCATION;
  * remove sd_journal_print_with_location function;
  * remove sd_journal_printv_with_location function;
+ * remove sd_journal_send_with_location function;

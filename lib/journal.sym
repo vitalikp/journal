@@ -43,7 +43,6 @@ local:
 
 JOURNAL_183 {
 global:
-        sd_journal_send_with_location;
         sd_journal_sendv_with_location;
 } JOURNAL_38;
 

@@ -455,38 +455,6 @@ _public_ int sd_journal_stream_fd(const char *identifier, int priority, int leve
         return fd;
 }
 
-_public_ int sd_journal_send_with_location(const char *file, const char *line, const char *func, const char *format, ...) {
-        int r, i, j;
-        va_list ap;
-        struct iovec *iov = NULL;
-        char *f;
-
-        va_start(ap, format);
-        i = fill_iovec_sprintf(format, ap, 3, &iov);
-        va_end(ap);
-
-        if (_unlikely_(i < 0)) {
-                r = i;
-                goto finish;
-        }
-
-        ALLOCA_CODE_FUNC(f, func);
-
-        IOVEC_SET_STRING(iov[0], file);
-        IOVEC_SET_STRING(iov[1], line);
-        IOVEC_SET_STRING(iov[2], f);
-
-        r = sd_journal_sendv(iov, i);
-
-finish:
-        for (j = 3; j < i; j++)
-                free(iov[j].iov_base);
-
-        free(iov);
-
-        return r;
-}
-
 _public_ int sd_journal_sendv_with_location(
                 const char *file, const char *line,
                 const char *func,
