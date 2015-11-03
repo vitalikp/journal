@@ -33,17 +33,6 @@
 
 #define SNDBUF_SIZE (8*1024*1024)
 
-#define ALLOCA_CODE_FUNC(f, func)                 \
-        do {                                      \
-                size_t _fl;                       \
-                const char *_func = (func);       \
-                char **_f = &(f);                 \
-                _fl = strlen(_func) + 1;          \
-                *_f = alloca(_fl + 10);           \
-                memcpy(*_f, "CODE_FUNC=", 10);    \
-                memcpy(*_f + 10, _func, _fl);     \
-        } while(false)
-
 /* We open a single fd, and we'll share it with the current process,
  * all its threads, and all its subprocesses. This means we need to
  * initialize it atomically, and need to operate on it atomically
@@ -453,21 +442,4 @@ _public_ int sd_journal_stream_fd(const char *identifier, int priority, int leve
         }
 
         return fd;
-}
-
-_public_ int sd_journal_perror_with_location(
-                const char *file, const char *line,
-                const char *func,
-                const char *message) {
-
-        struct iovec iov[6];
-        char *f;
-
-        ALLOCA_CODE_FUNC(f, func);
-
-        IOVEC_SET_STRING(iov[0], file);
-        IOVEC_SET_STRING(iov[1], line);
-        IOVEC_SET_STRING(iov[2], f);
-
-        return fill_iovec_perror_and_send(message, 3, iov);
 }

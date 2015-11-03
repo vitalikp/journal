@@ -57,7 +57,6 @@ global:
 JOURNAL_188 {
 global:
         sd_journal_perror;
-        sd_journal_perror_with_location;
 } JOURNAL_187;
 
 JOURNAL_190 {

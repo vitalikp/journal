@@ -40,9 +40,6 @@ int sd_journal_send(const char *format, ...) _sd_printf_(1, 0) _sd_sentinel_;
 int sd_journal_sendv(const struct iovec *iov, int n);
 int sd_journal_perror(const char *message);
 
-/* Used by the macros below. You probably don't want to call this directly. */
-int sd_journal_perror_with_location(const char *file, const char *line, const char *func, const char *message);
-
 int sd_journal_stream_fd(const char *identifier, int priority, int level_prefix);
 
 /* Browse journal stream */
