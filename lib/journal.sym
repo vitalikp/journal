@@ -41,16 +41,11 @@ local:
         *;
 };
 
-JOURNAL_183 {
-global:
-        sd_journal_sendv_with_location;
-} JOURNAL_38;
-
 JOURNAL_184 {
 global:
         sd_journal_get_cutoff_realtime_usec;
         sd_journal_get_cutoff_monotonic_usec;
-} JOURNAL_183;
+} JOURNAL_38;
 
 JOURNAL_187 {
 global:

@@ -455,29 +455,6 @@ _public_ int sd_journal_stream_fd(const char *identifier, int priority, int leve
         return fd;
 }
 
-_public_ int sd_journal_sendv_with_location(
-                const char *file, const char *line,
-                const char *func,
-                const struct iovec *iov, int n) {
-
-        struct iovec *niov;
-        char *f;
-
-        assert_return(iov, -EINVAL);
-        assert_return(n > 0, -EINVAL);
-
-        niov = alloca(sizeof(struct iovec) * (n + 3));
-        memcpy(niov, iov, sizeof(struct iovec) * n);
-
-        ALLOCA_CODE_FUNC(f, func);
-
-        IOVEC_SET_STRING(niov[n++], file);
-        IOVEC_SET_STRING(niov[n++], line);
-        IOVEC_SET_STRING(niov[n++], f);
-
-        return sd_journal_sendv(niov, n);
-}
-
 _public_ int sd_journal_perror_with_location(
                 const char *file, const char *line,
                 const char *func,
