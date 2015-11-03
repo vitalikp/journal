@@ -455,17 +455,6 @@ _public_ int sd_journal_stream_fd(const char *identifier, int priority, int leve
         return fd;
 }
 
-_public_ int sd_journal_print_with_location(int priority, const char *file, const char *line, const char *func, const char *format, ...) {
-        int r;
-        va_list ap;
-
-        va_start(ap, format);
-        r = sd_journal_printv_with_location(priority, file, line, func, format, ap);
-        va_end(ap);
-
-        return r;
-}
-
 _public_ int sd_journal_printv_with_location(int priority, const char *file, const char *line, const char *func, const char *format, va_list ap) {
         char buffer[8 + LINE_MAX], p[11];
         struct iovec iov[5];
