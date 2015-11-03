@@ -455,37 +455,6 @@ _public_ int sd_journal_stream_fd(const char *identifier, int priority, int leve
         return fd;
 }
 
-_public_ int sd_journal_printv_with_location(int priority, const char *file, const char *line, const char *func, const char *format, va_list ap) {
-        char buffer[8 + LINE_MAX], p[11];
-        struct iovec iov[5];
-        char *f;
-
-        assert_return(priority >= 0, -EINVAL);
-        assert_return(priority <= 7, -EINVAL);
-        assert_return(format, -EINVAL);
-
-        snprintf(p, sizeof(p), "PRIORITY=%i", priority & LOG_PRIMASK);
-        char_array_0(p);
-
-        memcpy(buffer, "MESSAGE=", 8);
-        vsnprintf(buffer+8, sizeof(buffer) - 8, format, ap);
-        char_array_0(buffer);
-
-        /* func is initialized from __func__ which is not a macro, but
-         * a static const char[], hence cannot easily be prefixed with
-         * CODE_FUNC=, hence let's do it manually here. */
-        ALLOCA_CODE_FUNC(f, func);
-
-        zero(iov);
-        IOVEC_SET_STRING(iov[0], buffer);
-        IOVEC_SET_STRING(iov[1], p);
-        IOVEC_SET_STRING(iov[2], file);
-        IOVEC_SET_STRING(iov[3], line);
-        IOVEC_SET_STRING(iov[4], f);
-
-        return sd_journal_sendv(iov, ELEMENTSOF(iov));
-}
-
 _public_ int sd_journal_send_with_location(const char *file, const char *line, const char *func, const char *format, ...) {
         int r, i, j;
         va_list ap;
