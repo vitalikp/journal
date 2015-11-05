@@ -663,14 +663,6 @@ static void dispatch_message_real(
                         IOVEC_SET_STRING(iovec[n++], o_audit_loginuid);
                 }
 #endif
-
-                r = cg_pid_get_path_shifted(object_pid, s->cgroup_root, &c);
-                if (r >= 0) {
-                        x = strappenda("OBJECT_SYSTEMD_CGROUP=", c);
-                        IOVEC_SET_STRING(iovec[n++], x);
-
-                        free(c);
-                }
         }
         assert(n <= m);
 

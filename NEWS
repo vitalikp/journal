@@ -37,6 +37,7 @@
     - remove OBJECT_SYSTEMD_SESSION field;
     - remove _SYSTEMD_SESSION field;
     - remove OBJECT_SYSTEMD_UNIT field;
+    - remove OBJECT_SYSTEMD_CGROUP field;
  * don't add code location to log messages;
  * remove id SD_JOURNAL_SUPPRESS_LOCATION;
  * remove sd_journal_print_with_location function;
