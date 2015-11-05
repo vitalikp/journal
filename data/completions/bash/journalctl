@@ -44,7 +44,7 @@ _journalctl() {
                               --no-tail -q --quiet --setup-keys --this-boot --verify
                               --version --list-boots'
                        [ARG]='-b --boot --this-boot -D --directory --file -F --field
-                              -o --output -u --unit --user-unit'
+                              -o --output -u --unit'
                 [ARGUNKNOWN]='-c --cursor --interval -n --lines -p --priority --since --until
                               --verify-key'
         )
@@ -70,9 +70,6 @@ _journalctl() {
                         ;;
                         --unit|-u)
                                 comps=$(journalctl -F '_SYSTEMD_UNIT' 2>/dev/null)
-                        ;;
-                        --user-unit)
-                                comps=$(journalctl -F '_SYSTEMD_USER_UNIT' 2>/dev/null)
                         ;;
                         *)
                                 return 0

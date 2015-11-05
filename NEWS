@@ -24,6 +24,7 @@
  * journalctl:
     - remove machine argument option;
     - remove new-id128 argument option;
+    - remove user-unit argument option;
     - don't match coredumps of the service;
  * journal-fields:
     - remove MESSAGE_ID field;

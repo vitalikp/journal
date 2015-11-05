@@ -75,7 +75,6 @@ static int arg_priorities = 0xFF;
 static usec_t arg_since, arg_until;
 static bool arg_since_set = false, arg_until_set = false;
 static char **arg_system_units = NULL;
-static char **arg_user_units = NULL;
 static const char *arg_field = NULL;
 static bool arg_reverse = false;
 static int arg_journal_type = 0;
@@ -156,7 +155,6 @@ static int help(void) {
                "     --list-boots          Show terse information about recorded boots\n"
                "  -k --dmesg               Show kernel message log from the current boot\n"
                "  -u --unit=UNIT           Show data only from the specified unit\n"
-               "     --user-unit=UNIT      Show data only from the specified user session unit\n"
                "  -p --priority=RANGE      Show only messages within the specified priority range\n"
                "  -e --pager-end           Immediately jump to end of the journal in the pager\n"
                "  -f --follow              Follow the journal\n"
@@ -202,8 +200,7 @@ static int parse_argv(int argc, char *argv[]) {
                 ARG_SINCE,
                 ARG_UNTIL,
                 ARG_AFTER_CURSOR,
-                ARG_SHOW_CURSOR,
-                ARG_USER_UNIT
+                ARG_SHOW_CURSOR
         };
 
         static const struct option options[] = {
@@ -238,7 +235,6 @@ static int parse_argv(int argc, char *argv[]) {
                 { "since",          required_argument, NULL, ARG_SINCE          },
                 { "until",          required_argument, NULL, ARG_UNTIL          },
                 { "unit",           required_argument, NULL, 'u'                },
-                { "user-unit",      required_argument, NULL, ARG_USER_UNIT      },
                 { "field",          required_argument, NULL, 'F'                },
                 { "reverse",        no_argument,       NULL, 'r'                },
                 {}
@@ -491,12 +487,6 @@ static int parse_argv(int argc, char *argv[]) {
 
                 case 'u':
                         r = strv_extend(&arg_system_units, optarg);
-                        if (r < 0)
-                                return log_oom();
-                        break;
-
-                case ARG_USER_UNIT:
-                        r = strv_extend(&arg_user_units, optarg);
                         if (r < 0)
                                 return log_oom();
                         break;
@@ -1017,29 +1007,6 @@ static int add_units(sd_journal *j) {
         strv_free(patterns);
         patterns = NULL;
 
-        STRV_FOREACH(i, arg_user_units) {
-                _cleanup_free_ char *u = NULL;
-
-                u = unit_name_mangle(*i, MANGLE_GLOB);
-                if (!u)
-                        return log_oom();
-
-                if (string_is_glob(u)) {
-                        r = strv_push(&patterns, u);
-                        if (r < 0)
-                                return r;
-                        u = NULL;
-                } else {
-                        r = add_matches_for_user_unit(j, u, getuid());
-                        if (r < 0)
-                                return r;
-                        r = sd_journal_add_disjunction(j);
-                        if (r < 0)
-                                return r;
-                        count ++;
-                }
-        }
-
         if (!strv_isempty(patterns)) {
                 _cleanup_set_free_free_ Set *units = NULL;
                 Iterator it;
@@ -1062,7 +1029,7 @@ static int add_units(sd_journal *j) {
 
         /* Complain if the user request matches but nothing whatsoever was
          * found, since otherwise everything would be matched. */
-        if (!(strv_isempty(arg_system_units) && strv_isempty(arg_user_units)) && count == 0)
+        if (!strv_isempty(arg_system_units) && count == 0)
                 return -ENODATA;
 
         r = sd_journal_add_conjunction(j);
@@ -1242,7 +1209,6 @@ int main(int argc, char *argv[]) {
 
         r = add_units(j);
         strv_free(arg_system_units);
-        strv_free(arg_user_units);
 
         if (r < 0) {
                 log_error("Failed to add filter for units: %s", strerror(-r));

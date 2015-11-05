@@ -66,7 +66,6 @@ _arguments -s \
     '--list-boots[List boots ordered by time]' \
     {-k,--dmesg}'[Show only kernel messages from the current boot]' \
     {-u+,--unit=}'[Show data only from the specified unit]:units:_journal_fields _SYSTEMD_UNIT' \
-    '--user-unit=[Show data only from the specified user session unit]:units:_journal_fields USER_UNIT' \
     {-p+,--priority=}'[Show only messages within the specified priority range]:priority:_journal_fields PRIORITY' \
     {-c+,--cursor=}'[Start showing entries from the specified cursor]:cursors:_journal_fields __CURSORS' \
     '--after-cursor=[Start showing entries from after the specified cursor]:cursors:_journal_fields __CURSORS' \
