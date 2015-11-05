@@ -502,7 +502,7 @@ static void dispatch_message_real(
         gid_t object_gid;
         char *x;
         int r;
-        char *t, *c;
+        char *t;
         uid_t realuid = 0, journal_uid;
         bool owner_valid = false;
 #ifdef HAVE_AUDIT
@@ -574,22 +574,7 @@ static void dispatch_message_real(
                 }
 #endif
 
-                r = cg_pid_get_path_shifted(ucred->pid, s->cgroup_root, &c);
-                if (r >= 0) {
-                        x = strappenda("_SYSTEMD_CGROUP=", c);
-                        IOVEC_SET_STRING(iovec[n++], x);
-
-                        if (cg_path_get_unit(c, &t) >= 0) {
-                                x = strappenda("_SYSTEMD_UNIT=", t);
-                                free(t);
-                                IOVEC_SET_STRING(iovec[n++], x);
-                        } else if (unit_id) {
-                                x = strappenda("_SYSTEMD_UNIT=", unit_id);
-                                IOVEC_SET_STRING(iovec[n++], x);
-                        }
-
-                        free(c);
-                } else if (unit_id) {
+                if (unit_id) {
                         x = strappenda("_SYSTEMD_UNIT=", unit_id);
                         IOVEC_SET_STRING(iovec[n++], x);
                 }

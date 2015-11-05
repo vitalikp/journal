@@ -199,13 +199,10 @@
                         </varlistentry>
 
                         <varlistentry>
-                                <term><varname>_SYSTEMD_CGROUP=</varname></term>
                                 <term><varname>_SYSTEMD_UNIT=</varname></term>
 
                                 <listitem>
-                                        <para>The control group path
-                                        in the systemd hierarchy,
-                                        the systemd unit name (if
+                                        <para>The systemd unit name (if
                                         any) of the process the
                                         journal entry originates
                                         from.</para>
