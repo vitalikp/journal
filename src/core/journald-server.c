@@ -616,12 +616,6 @@ static void dispatch_message_real(
                                 IOVEC_SET_STRING(iovec[n++], x);
                         }
 
-                        if (cg_path_get_slice(c, &t) >= 0) {
-                                x = strappenda("_SYSTEMD_SLICE=", t);
-                                free(t);
-                                IOVEC_SET_STRING(iovec[n++], x);
-                        }
-
                         free(c);
                 } else if (unit_id) {
                         x = strappenda("_SYSTEMD_UNIT=", unit_id);

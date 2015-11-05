@@ -957,8 +957,7 @@ static int get_possible_units(sd_journal *j,
 #define SYSTEM_UNITS                 \
         "_SYSTEMD_UNIT\0"            \
         "UNIT\0"                     \
-        "OBJECT_SYSTEMD_UNIT\0"      \
-        "_SYSTEMD_SLICE\0"
+        "OBJECT_SYSTEMD_UNIT\0"
 
 /* ... and add_matches_for_user_unit */
 #define USER_UNITS                   \
