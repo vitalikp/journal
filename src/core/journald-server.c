@@ -499,8 +499,7 @@ static void dispatch_message_real(
                 owner_uid[sizeof("_SYSTEMD_OWNER_UID=") + DECIMAL_STR_MAX(uid_t)],
                 source_time[sizeof("_SOURCE_REALTIME_TIMESTAMP=") + DECIMAL_STR_MAX(usec_t)],
                 o_uid[sizeof("OBJECT_UID=") + DECIMAL_STR_MAX(uid_t)],
-                o_gid[sizeof("OBJECT_GID=") + DECIMAL_STR_MAX(gid_t)],
-                o_owner_uid[sizeof("OBJECT_SYSTEMD_OWNER_UID=") + DECIMAL_STR_MAX(uid_t)];
+                o_gid[sizeof("OBJECT_GID=") + DECIMAL_STR_MAX(gid_t)];
         uid_t object_uid;
         gid_t object_gid;
         char *x;
@@ -693,11 +692,6 @@ static void dispatch_message_real(
                                 x = strappenda("OBJECT_SYSTEMD_SESSION=", t);
                                 free(t);
                                 IOVEC_SET_STRING(iovec[n++], x);
-                        }
-
-                        if (cg_path_get_owner_uid(c, &owner) >= 0) {
-                                sprintf(o_owner_uid, "OBJECT_SYSTEMD_OWNER_UID="UID_FMT, owner);
-                                IOVEC_SET_STRING(iovec[n++], o_owner_uid);
                         }
 
                         if (cg_path_get_unit(c, &t) >= 0) {

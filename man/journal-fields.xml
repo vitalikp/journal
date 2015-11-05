@@ -446,7 +446,6 @@
                                 <term><varname>OBJECT_AUDIT_LOGINUID=</varname></term>
                                 <term><varname>OBJECT_SYSTEMD_CGROUP=</varname></term>
                                 <term><varname>OBJECT_SYSTEMD_SESSION=</varname></term>
-                                <term><varname>OBJECT_SYSTEMD_OWNER_UID=</varname></term>
                                 <term><varname>OBJECT_SYSTEMD_UNIT=</varname></term>
                                 <listitem>
                                         <para>These are additional fields added automatically
@@ -460,9 +459,8 @@
                                         <varname>_AUDIT_SESSION=</varname>,
                                         <varname>_AUDIT_LOGINUID=</varname>,
                                         <varname>_SYSTEMD_CGROUP=</varname>,
-                                        <varname>_SYSTEMD_SESSION=</varname>,
-                                        <varname>_SYSTEMD_UNIT=</varname>, and
-                                        <varname>_SYSTEMD_OWNER_UID=</varname>
+                                        <varname>_SYSTEMD_SESSION=</varname>, and
+                                        <varname>_SYSTEMD_UNIT=</varname>
                                         as described above, except that the
                                         process identified by <replaceable>PID</replaceable>
                                         is described, instead of the process
