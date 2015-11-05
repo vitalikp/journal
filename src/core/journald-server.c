@@ -495,7 +495,6 @@ static void dispatch_message_real(
         char    pid[sizeof("_PID=") + DECIMAL_STR_MAX(pid_t)],
                 uid[sizeof("_UID=") + DECIMAL_STR_MAX(uid_t)],
                 gid[sizeof("_GID=") + DECIMAL_STR_MAX(gid_t)],
-                owner_uid[sizeof("_SYSTEMD_OWNER_UID=") + DECIMAL_STR_MAX(uid_t)],
                 source_time[sizeof("_SOURCE_REALTIME_TIMESTAMP=") + DECIMAL_STR_MAX(usec_t)],
                 o_uid[sizeof("OBJECT_UID=") + DECIMAL_STR_MAX(uid_t)],
                 o_gid[sizeof("OBJECT_GID=") + DECIMAL_STR_MAX(gid_t)];
@@ -504,7 +503,7 @@ static void dispatch_message_real(
         char *x;
         int r;
         char *t, *c;
-        uid_t realuid = 0, owner = 0, journal_uid;
+        uid_t realuid = 0, journal_uid;
         bool owner_valid = false;
 #ifdef HAVE_AUDIT
         char    audit_session[sizeof("_AUDIT_SESSION=") + DECIMAL_STR_MAX(uint32_t)],
@@ -587,13 +586,6 @@ static void dispatch_message_real(
                                 session = strappenda("_SYSTEMD_SESSION=", t);
                                 free(t);
                                 IOVEC_SET_STRING(iovec[n++], session);
-                        }
-
-                        if (cg_path_get_owner_uid(c, &owner) >= 0) {
-                                owner_valid = true;
-
-                                sprintf(owner_uid, "_SYSTEMD_OWNER_UID="UID_FMT, owner);
-                                IOVEC_SET_STRING(iovec[n++], owner_uid);
                         }
 
                         if (cg_path_get_unit(c, &t) >= 0) {
