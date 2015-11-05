@@ -576,23 +576,14 @@ static void dispatch_message_real(
 
                 r = cg_pid_get_path_shifted(ucred->pid, s->cgroup_root, &c);
                 if (r >= 0) {
-                        char *session = NULL;
-
                         x = strappenda("_SYSTEMD_CGROUP=", c);
                         IOVEC_SET_STRING(iovec[n++], x);
-
-                        r = cg_path_get_session(c, &t);
-                        if (r >= 0) {
-                                session = strappenda("_SYSTEMD_SESSION=", t);
-                                free(t);
-                                IOVEC_SET_STRING(iovec[n++], session);
-                        }
 
                         if (cg_path_get_unit(c, &t) >= 0) {
                                 x = strappenda("_SYSTEMD_UNIT=", t);
                                 free(t);
                                 IOVEC_SET_STRING(iovec[n++], x);
-                        } else if (unit_id && !session) {
+                        } else if (unit_id) {
                                 x = strappenda("_SYSTEMD_UNIT=", unit_id);
                                 IOVEC_SET_STRING(iovec[n++], x);
                         }
