@@ -678,13 +678,6 @@ static void dispatch_message_real(
                         x = strappenda("OBJECT_SYSTEMD_CGROUP=", c);
                         IOVEC_SET_STRING(iovec[n++], x);
 
-                        r = cg_path_get_session(c, &t);
-                        if (r >= 0) {
-                                x = strappenda("OBJECT_SYSTEMD_SESSION=", t);
-                                free(t);
-                                IOVEC_SET_STRING(iovec[n++], x);
-                        }
-
                         if (cg_path_get_unit(c, &t) >= 0) {
                                 x = strappenda("OBJECT_SYSTEMD_UNIT=", t);
                                 free(t);
