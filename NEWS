@@ -31,6 +31,7 @@
     - remove coredump fields;
     - remove _SYSTEMD_SLICE field;
     - remove OBJECT_SYSTEMD_USER_UNIT field;
+    - remove _SYSTEMD_USER_UNIT field;
  * don't add code location to log messages;
  * remove id SD_JOURNAL_SUPPRESS_LOCATION;
  * remove sd_journal_print_with_location function;
