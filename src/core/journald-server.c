@@ -73,7 +73,6 @@ DEFINE_STRING_TABLE_LOOKUP(storage, Storage);
 DEFINE_CONFIG_PARSE_ENUM(config_parse_storage, storage, Storage, "Failed to parse storage setting");
 
 static const char* const split_mode_table[_SPLIT_MAX] = {
-        [SPLIT_LOGIN] = "login",
         [SPLIT_UID] = "uid",
         [SPLIT_NONE] = "none",
 };
@@ -727,14 +726,6 @@ static void dispatch_message_real(
         if (s->split_mode == SPLIT_UID && realuid > 0)
                 /* Split up strictly by any UID */
                 journal_uid = realuid;
-        else if (s->split_mode == SPLIT_LOGIN && realuid > 0 && owner_valid && owner > 0)
-                /* Split up by login UIDs, this avoids creation of
-                 * individual journals for system UIDs.  We do this
-                 * only if the realuid is not root, in order not to
-                 * accidentally leak privileged information to the
-                 * user that is logged by a privileged process that is
-                 * part of an unprivileged session.*/
-                journal_uid = owner;
         else
                 journal_uid = 0;
 
