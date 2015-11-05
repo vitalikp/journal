@@ -450,7 +450,6 @@
                                 <term><varname>OBJECT_SYSTEMD_SESSION=</varname></term>
                                 <term><varname>OBJECT_SYSTEMD_OWNER_UID=</varname></term>
                                 <term><varname>OBJECT_SYSTEMD_UNIT=</varname></term>
-                                <term><varname>OBJECT_SYSTEMD_USER_UNIT=</varname></term>
                                 <listitem>
                                         <para>These are additional fields added automatically
                                         by <command>journald</command>.
@@ -464,8 +463,7 @@
                                         <varname>_AUDIT_LOGINUID=</varname>,
                                         <varname>_SYSTEMD_CGROUP=</varname>,
                                         <varname>_SYSTEMD_SESSION=</varname>,
-                                        <varname>_SYSTEMD_UNIT=</varname>,
-                                        <varname>_SYSTEMD_USER_UNIT=</varname>, and
+                                        <varname>_SYSTEMD_UNIT=</varname>, and
                                         <varname>_SYSTEMD_OWNER_UID=</varname>
                                         as described above, except that the
                                         process identified by <replaceable>PID</replaceable>

@@ -933,7 +933,7 @@ int add_matches_for_unit(sd_journal *j, const char *unit) {
 
 int add_matches_for_user_unit(sd_journal *j, const char *unit, uid_t uid) {
         int r;
-        char *m1, *m2, *m3;
+        char *m1, *m2;
         char muid[sizeof("_UID=") + DECIMAL_STR_MAX(uid_t)];
 
         assert(j);
@@ -941,7 +941,6 @@ int add_matches_for_user_unit(sd_journal *j, const char *unit, uid_t uid) {
 
         m1 = strappenda("_SYSTEMD_USER_UNIT=", unit);
         m2 = strappenda("USER_UNIT=", unit);
-        m3 = strappenda("OBJECT_SYSTEMD_USER_UNIT=", unit);
         sprintf(muid, "_UID="UID_FMT, uid);
 
         (void) (
@@ -952,13 +951,7 @@ int add_matches_for_user_unit(sd_journal *j, const char *unit, uid_t uid) {
                 /* Look for messages from systemd about this service */
                 (r = sd_journal_add_disjunction(j)) ||
                 (r = sd_journal_add_match(j, m2, 0)) ||
-                (r = sd_journal_add_match(j, muid, 0)) ||
-
-                /* Look for messages from authorized daemons about this service */
-                (r = sd_journal_add_disjunction(j)) ||
-                (r = sd_journal_add_match(j, m3, 0)) ||
-                (r = sd_journal_add_match(j, muid, 0)) ||
-                (r = sd_journal_add_match(j, "_UID=0", 0))
+                (r = sd_journal_add_match(j, muid, 0))
         );
 
         return r;

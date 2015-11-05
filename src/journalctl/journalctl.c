@@ -962,8 +962,7 @@ static int get_possible_units(sd_journal *j,
 /* ... and add_matches_for_user_unit */
 #define USER_UNITS                   \
         "_SYSTEMD_USER_UNIT\0"       \
-        "USER_UNIT\0"                \
-        "OBJECT_SYSTEMD_USER_UNIT\0"
+        "USER_UNIT\0"
 
 static int add_units(sd_journal *j) {
         _cleanup_strv_free_ char **patterns = NULL;

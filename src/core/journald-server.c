@@ -715,12 +715,6 @@ static void dispatch_message_real(
                                 IOVEC_SET_STRING(iovec[n++], x);
                         }
 
-                        if (cg_path_get_user_unit(c, &t) >= 0) {
-                                x = strappenda("OBJECT_SYSTEMD_USER_UNIT=", t);
-                                free(t);
-                                IOVEC_SET_STRING(iovec[n++], x);
-                        }
-
                         free(c);
                 }
         }
