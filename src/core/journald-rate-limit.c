@@ -23,9 +23,7 @@
 #include <errno.h>
 
 #include "journald-rate-limit.h"
-#include "list.h"
 #include "util.h"
-#include "hashmap.h"
 
 #define POOLS_MAX 5
 #define BUCKETS_MAX 127

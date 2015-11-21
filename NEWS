@@ -43,6 +43,7 @@
     - add pools field to JournalRateLimit struct;
     - remove JournalRateLimitGroup struct;
     - remove parameter id in journal_rate_limit_test function;
+    - remove unused includes;
  * don't add code location to log messages;
  * remove id SD_JOURNAL_SUPPRESS_LOCATION;
  * remove sd_journal_print_with_location function;
