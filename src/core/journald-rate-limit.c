@@ -66,6 +66,8 @@ struct JournalRateLimit {
         usec_t interval;
         unsigned burst;
 
+        JournalRateLimitPool pools[POOLS_MAX];
+
         JournalRateLimitGroup* buckets[BUCKETS_MAX];
         JournalRateLimitGroup *lru, *lru_tail;
 
