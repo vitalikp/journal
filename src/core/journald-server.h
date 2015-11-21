@@ -162,7 +162,7 @@ int config_parse_split_mode(const char *unit, const char *filename, unsigned lin
 const char *split_mode_to_string(SplitMode s) _const_;
 SplitMode split_mode_from_string(const char *s) _pure_;
 
-void server_fix_perms(Server *s, JournalFile *f, uid_t uid);
+void server_fix_perms(Server *s, JournalFile *f);
 bool shall_try_append_again(JournalFile *f, int r);
 int server_init(Server *s);
 void server_done(Server *s);

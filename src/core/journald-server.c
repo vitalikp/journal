@@ -181,7 +181,7 @@ static uint64_t available_space(Server *s, bool verbose) {
         return s->cached_available_space;
 }
 
-void server_fix_perms(Server *s, JournalFile *f, uid_t uid) {
+void server_fix_perms(Server *s, JournalFile *f) {
         int r;
 
         assert(f);
@@ -233,7 +233,7 @@ static JournalFile* find_journal(Server *s, uid_t uid) {
         if (r < 0)
                 return s->system_journal;
 
-        server_fix_perms(s, f, uid);
+        server_fix_perms(s, f);
 
         r = hashmap_put(s->user_journals, UINT32_TO_PTR(uid), f);
         if (r < 0) {
@@ -261,7 +261,7 @@ static int do_rotate(Server *s, JournalFile **f, const char* name,
                         log_error("Failed to create new %s journal: %s",
                                   name, strerror(-r));
         else
-                server_fix_perms(s, *f, uid);
+                server_fix_perms(s, *f);
         return r;
 }
 
@@ -808,7 +808,7 @@ static int system_journal_open(Server *s) {
                 r = journal_file_open_reliably(fn, O_RDWR|O_CREAT, 0640, s->compress, &s->system_metrics, s->mmap, NULL, &s->system_journal);
 
                 if (r >= 0)
-                        server_fix_perms(s, s->system_journal, 0);
+                        server_fix_perms(s, s->system_journal);
                 else if (r < 0) {
                         if (r != -ENOENT && r != -EROFS)
                                 log_warning("Failed to open system journal: %s", strerror(-r));
@@ -859,7 +859,7 @@ static int system_journal_open(Server *s) {
                 }
 
                 if (s->runtime_journal)
-                        server_fix_perms(s, s->runtime_journal, 0);
+                        server_fix_perms(s, s->runtime_journal);
         }
 
         available_space(s, true);
