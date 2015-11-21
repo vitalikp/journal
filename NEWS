@@ -41,6 +41,7 @@
     - remove _SYSTEMD_CGROUP field;
  * rate-limit:
     - add pools field to JournalRateLimit struct;
+    - remove JournalRateLimitGroup struct;
  * don't add code location to log messages;
  * remove id SD_JOURNAL_SUPPRESS_LOCATION;
  * remove sd_journal_print_with_location function;

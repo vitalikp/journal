@@ -43,7 +43,6 @@ static const int priority_map[] = {
 };
 
 typedef struct JournalRateLimitPool JournalRateLimitPool;
-typedef struct JournalRateLimitGroup JournalRateLimitGroup;
 
 struct JournalRateLimitPool {
         usec_t begin;
@@ -51,29 +50,11 @@ struct JournalRateLimitPool {
         unsigned suppressed;
 };
 
-struct JournalRateLimitGroup {
-        JournalRateLimit *parent;
-
-        char *id;
-        JournalRateLimitPool pools[POOLS_MAX];
-        unsigned long hash;
-
-        LIST_FIELDS(JournalRateLimitGroup, bucket);
-        LIST_FIELDS(JournalRateLimitGroup, lru);
-};
-
 struct JournalRateLimit {
         usec_t interval;
         unsigned burst;
 
         JournalRateLimitPool pools[POOLS_MAX];
-
-        JournalRateLimitGroup* buckets[BUCKETS_MAX];
-        JournalRateLimitGroup *lru, *lru_tail;
-
-        unsigned n_groups;
-
-        uint8_t hash_key[16];
 };
 
 JournalRateLimit *journal_rate_limit_new(usec_t interval, unsigned burst) {
@@ -88,92 +69,13 @@ JournalRateLimit *journal_rate_limit_new(usec_t interval, unsigned burst) {
         r->interval = interval;
         r->burst = burst;
 
-        random_bytes(r->hash_key, sizeof(r->hash_key));
-
         return r;
-}
-
-static void journal_rate_limit_group_free(JournalRateLimitGroup *g) {
-        assert(g);
-
-        if (g->parent) {
-                assert(g->parent->n_groups > 0);
-
-                if (g->parent->lru_tail == g)
-                        g->parent->lru_tail = g->lru_prev;
-
-                LIST_REMOVE(lru, g->parent->lru, g);
-                LIST_REMOVE(bucket, g->parent->buckets[g->hash % BUCKETS_MAX], g);
-
-                g->parent->n_groups --;
-        }
-
-        free(g->id);
-        free(g);
 }
 
 void journal_rate_limit_free(JournalRateLimit *r) {
         assert(r);
 
-        while (r->lru)
-                journal_rate_limit_group_free(r->lru);
-
         free(r);
-}
-
-_pure_ static bool journal_rate_limit_group_expired(JournalRateLimitGroup *g, usec_t ts) {
-        unsigned i;
-
-        assert(g);
-
-        for (i = 0; i < POOLS_MAX; i++)
-                if (g->pools[i].begin + g->parent->interval >= ts)
-                        return false;
-
-        return true;
-}
-
-static void journal_rate_limit_vacuum(JournalRateLimit *r, usec_t ts) {
-        assert(r);
-
-        /* Makes room for at least one new item, but drop all
-         * expored items too. */
-
-        while (r->n_groups >= GROUPS_MAX ||
-               (r->lru_tail && journal_rate_limit_group_expired(r->lru_tail, ts)))
-                journal_rate_limit_group_free(r->lru_tail);
-}
-
-static JournalRateLimitGroup* journal_rate_limit_group_new(JournalRateLimit *r, const char *id, usec_t ts) {
-        JournalRateLimitGroup *g;
-
-        assert(r);
-        assert(id);
-
-        g = new0(JournalRateLimitGroup, 1);
-        if (!g)
-                return NULL;
-
-        g->id = strdup(id);
-        if (!g->id)
-                goto fail;
-
-        g->hash = string_hash_func(g->id, r->hash_key);
-
-        journal_rate_limit_vacuum(r, ts);
-
-        LIST_PREPEND(bucket, r->buckets[g->hash % BUCKETS_MAX], g);
-        LIST_PREPEND(lru, r->lru, g);
-        if (!g->lru_next)
-                r->lru_tail = g;
-        r->n_groups ++;
-
-        g->parent = r;
-        return g;
-
-fail:
-        journal_rate_limit_group_free(g);
-        return NULL;
 }
 
 static unsigned burst_modulate(unsigned burst, uint64_t available) {
@@ -205,8 +107,6 @@ static unsigned burst_modulate(unsigned burst, uint64_t available) {
 }
 
 int journal_rate_limit_test(JournalRateLimit *r, const char *id, int priority, uint64_t available) {
-        unsigned long h;
-        JournalRateLimitGroup *g;
         JournalRateLimitPool *p;
         unsigned burst;
         usec_t ts;
@@ -223,20 +123,7 @@ int journal_rate_limit_test(JournalRateLimit *r, const char *id, int priority, u
 
         ts = now(CLOCK_MONOTONIC);
 
-        h = string_hash_func(id, r->hash_key);
-        g = r->buckets[h % BUCKETS_MAX];
-
-        LIST_FOREACH(bucket, g, g)
-                if (streq(g->id, id))
-                        break;
-
-        if (!g) {
-                g = journal_rate_limit_group_new(r, id, ts);
-                if (!g)
-                        return -ENOMEM;
-        }
-
-        p = &g->pools[priority_map[priority]];
+        p = &r->pools[priority_map[priority]];
 
         if (p->begin <= 0) {
                 p->suppressed = 0;
