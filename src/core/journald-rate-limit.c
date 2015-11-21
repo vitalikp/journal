@@ -106,12 +106,10 @@ static unsigned burst_modulate(unsigned burst, uint64_t available) {
         return burst;
 }
 
-int journal_rate_limit_test(JournalRateLimit *r, const char *id, int priority, uint64_t available) {
+int journal_rate_limit_test(JournalRateLimit *r, int priority, uint64_t available) {
         JournalRateLimitPool *p;
         unsigned burst;
         usec_t ts;
-
-        assert(id);
 
         if (!r)
                 return 1;
