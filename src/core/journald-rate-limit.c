@@ -29,6 +29,9 @@
 #define BUCKETS_MAX 127
 #define GROUPS_MAX 2047
 
+#define DEFAULT_INTERVAL (30*USEC_PER_SEC)
+#define DEFAULT_BURST 1000
+
 static const int priority_map[] = {
         [LOG_EMERG]   = 0,
         [LOG_ALERT]   = 0,
@@ -64,8 +67,8 @@ JournalRateLimit *journal_rate_limit_new(usec_t interval, unsigned burst) {
         if (!r)
                 return NULL;
 
-        r->interval = interval;
-        r->burst = burst;
+        r->interval = interval > 0 ? interval : DEFAULT_INTERVAL;
+        r->burst = burst > 0 ? burst : DEFAULT_BURST;
 
         return r;
 }
