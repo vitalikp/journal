@@ -35,7 +35,6 @@
 #include "hashmap.h"
 #include "journal-file.h"
 #include "socket-util.h"
-#include "cgroup-util.h"
 #include "list.h"
 #include "missing.h"
 #include "conf-parser.h"
@@ -714,7 +713,6 @@ void server_dispatch_message(
                 pid_t object_pid) {
 
         int rl, r;
-        _cleanup_free_ char *path = NULL;
         char *c;
 
         assert(s);
@@ -738,27 +736,7 @@ void server_dispatch_message(
 
         realuid = ucred->uid;
 
-        r = cg_pid_get_path_shifted(ucred->pid, s->cgroup_root, &path);
-        if (r < 0)
-                goto finish;
-
-        /* example: /user/lennart/3/foobar
-         *          /system/dbus.service/foobar
-         *
-         * So let's cut of everything past the third /, since that is
-         * where user directories start */
-
-        c = strchr(path, '/');
-        if (c) {
-                c = strchr(c+1, '/');
-                if (c) {
-                        c = strchr(c+1, '/');
-                        if (c)
-                                *c = 0;
-                }
-        }
-
-        rl = journal_rate_limit_test(s->rate_limit, path,
+        rl = journal_rate_limit_test(s->rate_limit,
                                      priority & LOG_PRIMASK, available_space(s, false));
 
         if (rl == 0)
@@ -766,7 +744,7 @@ void server_dispatch_message(
 
         /* Write a suppression message if we suppressed something */
         if (rl > 1)
-                server_driver_message(s, "Suppressed %u messages from %s", rl - 1, path);
+                server_driver_message(s, "Suppressed %u messages from uid %u", rl - 1, realuid);
 
 finish:
         dispatch_message_real(s, iovec, n, m, ucred, tv, label, label_len, unit_id, object_pid);
@@ -1443,10 +1421,6 @@ int server_init(Server *s) {
         if (!s->rate_limit)
                 return -ENOMEM;
 
-        r = cg_get_root_path(&s->cgroup_root);
-        if (r < 0)
-                return r;
-
         server_cache_hostname(s);
         server_cache_boot_id(s);
         server_cache_machine_id(s);
@@ -1502,7 +1476,6 @@ void server_done(Server *s) {
 
         free(s->buffer);
         free(s->tty_path);
-        free(s->cgroup_root);
 
         if (s->mmap)
                 mmap_cache_unref(s->mmap);
