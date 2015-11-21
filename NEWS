@@ -54,3 +54,4 @@
  * remove login split mode;
  * move call write_to_journal function from dispatch_message_real;
  * remove cgroup_root field from Server struct;
+ * remove cgroup util from shared library;

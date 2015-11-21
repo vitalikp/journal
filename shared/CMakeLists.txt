@@ -41,8 +41,6 @@ add_library(journal_shared_obj STATIC
 	pager.h
 	conf-files.c
 	conf-files.h
-	cgroup-util.c
-	cgroup-util.h
 	unit-name.c
 	unit-name.h
 	utmp-wtmp.c
