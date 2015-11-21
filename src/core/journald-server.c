@@ -422,7 +422,7 @@ bool shall_try_append_again(JournalFile *f, int r) {
         return true;
 }
 
-static void write_to_journal(Server *s, uid_t uid, struct iovec *iovec, unsigned n, int priority) {
+static void write_to_journal(Server *s, uid_t realuid, struct iovec *iovec, unsigned n, int priority) {
         JournalFile *f;
         bool vacuumed = false;
         int r;
@@ -430,6 +430,14 @@ static void write_to_journal(Server *s, uid_t uid, struct iovec *iovec, unsigned
         assert(s);
         assert(iovec);
         assert(n > 0);
+
+        uid_t uid = 0;
+
+        if (s->split_mode == SPLIT_UID && realuid > 0)
+				/* Split up strictly by any UID */
+				uid = realuid;
+		else
+				uid = 0;
 
         f = find_journal(s, uid);
         if (!f)
@@ -489,7 +497,6 @@ static void dispatch_message_real(
                 struct timeval *tv,
                 const char *label, size_t label_len,
                 const char *unit_id,
-                int priority,
                 pid_t object_pid) {
 
         char    pid[sizeof("_PID=") + DECIMAL_STR_MAX(pid_t)],
@@ -503,7 +510,6 @@ static void dispatch_message_real(
         char *x;
         int r;
         char *t;
-        uid_t realuid = 0, journal_uid;
         bool owner_valid = false;
 #ifdef HAVE_AUDIT
         char    audit_session[sizeof("_AUDIT_SESSION=") + DECIMAL_STR_MAX(uint32_t)],
@@ -521,8 +527,6 @@ static void dispatch_message_real(
         assert(n + N_IOVEC_META_FIELDS + (object_pid ? N_IOVEC_OBJECT_FIELDS : 0) <= m);
 
         if (ucred) {
-                realuid = ucred->uid;
-
                 sprintf(pid, "_PID="PID_FMT, ucred->pid);
                 IOVEC_SET_STRING(iovec[n++], pid);
 
@@ -669,14 +673,6 @@ static void dispatch_message_real(
                 IOVEC_SET_STRING(iovec[n++], s->hostname_field);
 
         assert(n <= m);
-
-        if (s->split_mode == SPLIT_UID && realuid > 0)
-                /* Split up strictly by any UID */
-                journal_uid = realuid;
-        else
-                journal_uid = 0;
-
-        write_to_journal(s, journal_uid, iovec, n, priority);
 }
 
 void server_driver_message(Server *s, const char *format, ...) {
@@ -703,7 +699,8 @@ void server_driver_message(Server *s, const char *format, ...) {
         ucred.uid = getuid();
         ucred.gid = getgid();
 
-        dispatch_message_real(s, iovec, n, ELEMENTSOF(iovec), &ucred, NULL, NULL, 0, NULL, LOG_INFO, 0);
+        dispatch_message_real(s, iovec, n, ELEMENTSOF(iovec), &ucred, NULL, NULL, 0, NULL, 0);
+        write_to_journal(s, ucred.uid, iovec, n, LOG_INFO);
 }
 
 void server_dispatch_message(
@@ -734,8 +731,12 @@ void server_dispatch_message(
         if (s->storage == STORAGE_NONE)
                 return;
 
+        uid_t realuid = 0;
+
         if (!ucred)
                 goto finish;
+
+        realuid = ucred->uid;
 
         r = cg_pid_get_path_shifted(ucred->pid, s->cgroup_root, &path);
         if (r < 0)
@@ -768,7 +769,8 @@ void server_dispatch_message(
                 server_driver_message(s, "Suppressed %u messages from %s", rl - 1, path);
 
 finish:
-        dispatch_message_real(s, iovec, n, m, ucred, tv, label, label_len, unit_id, priority, object_pid);
+        dispatch_message_real(s, iovec, n, m, ucred, tv, label, label_len, unit_id, object_pid);
+        write_to_journal(s, realuid, iovec, n, priority);
 }
 
 

@@ -52,3 +52,4 @@
  * remove sd_journal_sendv_with_location function;
  * remove sd_journal_perror_with_location function;
  * remove login split mode;
+ * move call write_to_journal function from dispatch_message_real;
