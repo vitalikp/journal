@@ -154,8 +154,8 @@ static uint64_t available_space(Server *s, bool verbose) {
          * value is cached so that we don't give up space on pressure,
          * but hover below the maximum usage. */
 
-        if (m->use < sum)
-                m->use = sum;
+        if (m->min_use < sum)
+                m->min_use = sum;
 
         avail = LESS_BY(ss_avail, m->keep_free);
 
