@@ -47,6 +47,8 @@
     - set default values if less or equal zero;
  * journald.conf:
     - add System and Runtime sections;
+ * journal-file:
+    - add journal_reset_metrics function;
  * don't add code location to log messages;
  * remove id SD_JOURNAL_SUPPRESS_LOCATION;
  * remove sd_journal_print_with_location function;

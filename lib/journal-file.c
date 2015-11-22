@@ -2686,6 +2686,20 @@ int journal_file_copy_entry(JournalFile *from, JournalFile *to, Object *o, uint6
         return journal_file_append_entry_internal(to, &ts, xor_hash, items, n, seqnum, ret, offset);
 }
 
+void journal_reset_metrics(JournalMetrics *m) {
+	assert(m);
+
+	/* Set everything to "pick automatic values". */
+
+	*m = (JournalMetrics) {
+		.max_size = (uint64_t) -1,
+		.min_size = (uint64_t) -1,
+		.max_use = (uint64_t) -1,
+		.min_use = (uint64_t) -1,
+		.keep_free = (uint64_t) -1,
+	};
+}
+
 void journal_default_metrics(JournalMetrics *m, int fd) {
         uint64_t fs_size = 0;
         struct statvfs ss;
