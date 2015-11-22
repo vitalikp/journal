@@ -49,7 +49,7 @@ typedef struct EntryItem EntryItem;
 typedef struct HashItem HashItem;
 
 /* Object types */
-enum {
+typedef enum ObjectType {
         OBJECT_UNUSED,
         OBJECT_DATA,
         OBJECT_FIELD,
@@ -58,7 +58,7 @@ enum {
         OBJECT_FIELD_HASH_TABLE,
         OBJECT_ENTRY_ARRAY,
         _OBJECT_TYPE_MAX
-};
+} ObjectType;
 
 /* Object flags */
 enum {
