@@ -56,8 +56,6 @@
 #define USER_JOURNALS_MAX 1024
 
 #define DEFAULT_SYNC_INTERVAL_USEC (5*USEC_PER_MINUTE)
-#define DEFAULT_RATE_LIMIT_INTERVAL (30*USEC_PER_SEC)
-#define DEFAULT_RATE_LIMIT_BURST 1000
 
 #define RECHECK_AVAILABLE_SPACE_USEC (30*USEC_PER_SEC)
 
@@ -1301,9 +1299,6 @@ int server_init(Server *s) {
 
         s->sync_interval_usec = DEFAULT_SYNC_INTERVAL_USEC;
         s->sync_scheduled = false;
-
-        s->rate_limit_interval = DEFAULT_RATE_LIMIT_INTERVAL;
-        s->rate_limit_burst = DEFAULT_RATE_LIMIT_BURST;
 
         s->forward_to_syslog = true;
         s->forward_to_wall = true;
