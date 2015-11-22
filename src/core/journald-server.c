@@ -1314,8 +1314,8 @@ int server_init(Server *s) {
         s->max_level_console = LOG_INFO;
         s->max_level_wall = LOG_EMERG;
 
-        memset(&s->system_metrics, 0xFF, sizeof(s->system_metrics));
-        memset(&s->runtime_metrics, 0xFF, sizeof(s->runtime_metrics));
+        journal_reset_metrics(&s->system_metrics);
+        journal_reset_metrics(&s->runtime_metrics);
 
         server_parse_config_file(s);
         server_parse_proc_cmdline(s);
