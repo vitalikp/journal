@@ -61,3 +61,4 @@
  * remove cgroup_root field from Server struct;
  * remove cgroup util from shared library;
  * remove prefix field from sd_journal struct;
+ * don't add machine_id to root log path directory;

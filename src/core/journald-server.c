@@ -78,9 +78,6 @@ DEFINE_STRING_TABLE_LOOKUP(split_mode, SplitMode);
 DEFINE_CONFIG_PARSE_ENUM(config_parse_split_mode, split_mode, SplitMode, "Failed to parse split mode setting");
 
 static uint64_t available_space(Server *s, bool verbose) {
-        char ids[33];
-        _cleanup_free_ char *p = NULL;
-        sd_id128_t machine;
         struct statvfs ss;
         uint64_t sum = 0, ss_avail = 0, avail = 0;
         int r;
@@ -95,10 +92,6 @@ static uint64_t available_space(Server *s, bool verbose) {
             && !verbose)
                 return s->cached_available_space;
 
-        r = sd_id128_get_machine(&machine);
-        if (r < 0)
-                return 0;
-
         if (s->system_journal) {
                 f = "/var/log/journal/";
                 m = &s->system_metrics;
@@ -109,11 +102,7 @@ static uint64_t available_space(Server *s, bool verbose) {
 
         assert(m);
 
-        p = strappend(f, sd_id128_to_string(machine, ids));
-        if (!p)
-                return 0;
-
-        d = opendir(p);
+        d = opendir(f);
         if (!d)
                 return 0;
 
@@ -192,7 +181,6 @@ static JournalFile* find_journal(Server *s, uid_t uid) {
         _cleanup_free_ char *p = NULL;
         int r;
         JournalFile *f;
-        sd_id128_t machine;
 
         assert(s);
 
@@ -207,16 +195,11 @@ static JournalFile* find_journal(Server *s, uid_t uid) {
         if (uid <= SYSTEM_UID_MAX)
                 return s->system_journal;
 
-        r = sd_id128_get_machine(&machine);
-        if (r < 0)
-                return s->system_journal;
-
         f = hashmap_get(s->user_journals, UINT32_TO_PTR(uid));
         if (f)
                 return f;
 
-        if (asprintf(&p, "/var/log/journal/" SD_ID128_FORMAT_STR "/user-"UID_FMT".journal",
-                     SD_ID128_FORMAT_VAL(machine), uid) < 0)
+        if (asprintf(&p, "/var/log/journal/user-"UID_FMT".journal", uid) < 0)
                 return s->system_journal;
 
         while (hashmap_size(s->user_journals) >= USER_JOURNALS_MAX) {
@@ -310,38 +293,27 @@ void server_sync(Server *s) {
         s->sync_scheduled = false;
 }
 
-static void do_vacuum(Server *s, char *ids, JournalFile *f, const char* path,
+static void do_vacuum(Server *s, JournalFile *f, const char* path,
                       JournalMetrics *metrics) {
-        char *p;
         int r;
 
         if (!f)
                 return;
 
-        p = strappenda(path, ids);
-        r = journal_directory_vacuum(p, metrics->max_use, s->max_retention_usec, &s->oldest_file_usec);
+        r = journal_directory_vacuum(path, metrics->max_use, s->max_retention_usec, &s->oldest_file_usec);
         if (r < 0 && r != -ENOENT)
-                log_error("Failed to vacuum %s: %s", p, strerror(-r));
+                log_error("Failed to vacuum %s: %s", path, strerror(-r));
 }
 
 void server_vacuum(Server *s) {
-        char ids[33];
-        sd_id128_t machine;
         int r;
 
         log_debug("Vacuuming...");
 
         s->oldest_file_usec = 0;
 
-        r = sd_id128_get_machine(&machine);
-        if (r < 0) {
-                log_error("Failed to get machine ID: %s", strerror(-r));
-                return;
-        }
-        sd_id128_to_string(machine, ids);
-
-        do_vacuum(s, ids, s->system_journal, "/var/log/journal/", &s->system_metrics);
-        do_vacuum(s, ids, s->runtime_journal, "/run/log/journal/", &s->runtime_metrics);
+        do_vacuum(s, s->system_journal, "/var/log/journal/", &s->system_metrics);
+        do_vacuum(s, s->runtime_journal, "/run/log/journal/", &s->runtime_metrics);
 
         s->cached_available_space_timestamp = 0;
 }
@@ -753,16 +725,6 @@ finish:
 static int system_journal_open(Server *s) {
         int r;
         char *fn;
-        sd_id128_t machine;
-        char ids[33];
-
-        r = sd_id128_get_machine(&machine);
-        if (r < 0) {
-                log_error("Failed to get machine id: %s", strerror(-r));
-                return r;
-        }
-
-        sd_id128_to_string(machine, ids);
 
         if (!s->system_journal &&
             (s->storage == STORAGE_PERSISTENT || s->storage == STORAGE_AUTO) &&
@@ -777,10 +739,7 @@ static int system_journal_open(Server *s) {
                 if (s->storage == STORAGE_PERSISTENT)
                         (void) mkdir("/var/log/journal/", 0755);
 
-                fn = strappenda("/var/log/journal/", ids);
-                (void) mkdir(fn, 0755);
-
-                fn = strappenda(fn, "/system.journal");
+                fn = strappenda("/var/log/journal/", "system.journal");
                 r = journal_file_open_reliably(fn, O_RDWR|O_CREAT, 0640, s->compress, &s->system_metrics, s->mmap, NULL, &s->system_journal);
 
                 if (r >= 0)
@@ -796,7 +755,7 @@ static int system_journal_open(Server *s) {
         if (!s->runtime_journal &&
             (s->storage != STORAGE_NONE)) {
 
-                fn = strjoin("/run/log/journal/", ids, "/system.journal", NULL);
+                fn = strjoin("/run/log/journal/", "system.journal", NULL);
                 if (!fn)
                         return -ENOMEM;
 
@@ -844,7 +803,6 @@ static int system_journal_open(Server *s) {
 }
 
 int server_flush_to_var(Server *s) {
-        sd_id128_t machine;
         sd_journal *j = NULL;
         char ts[FORMAT_TIMESPAN_MAX];
         usec_t start;
@@ -868,10 +826,6 @@ int server_flush_to_var(Server *s) {
         log_debug("Flushing to /var...");
 
         start = now(CLOCK_MONOTONIC);
-
-        r = sd_id128_get_machine(&machine);
-        if (r < 0)
-                return r;
 
         r = sd_journal_open(&j, SD_JOURNAL_RUNTIME_ONLY);
         if (r < 0) {

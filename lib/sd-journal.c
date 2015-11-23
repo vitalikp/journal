@@ -1387,7 +1387,6 @@ static int add_directory(sd_journal *j, const char *prefix, const char *dirname)
         _cleanup_free_ char *path = NULL;
         int r;
         _cleanup_closedir_ DIR *d = NULL;
-        sd_id128_t id, mid;
         Directory *m;
 
         assert(j);
@@ -1395,12 +1394,6 @@ static int add_directory(sd_journal *j, const char *prefix, const char *dirname)
         assert(dirname);
 
         log_debug("Considering %s/%s.", prefix, dirname);
-
-        if ((j->flags & SD_JOURNAL_LOCAL_ONLY) &&
-            (sd_id128_from_string(dirname, &id) < 0 ||
-             sd_id128_get_machine(&mid) < 0 ||
-             !(sd_id128_equal(id, mid) || path_startswith(prefix, "/run"))))
-            return 0;
 
         path = strjoin(prefix, "/", dirname, NULL);
         if (!path)
@@ -1557,8 +1550,7 @@ static int add_root_directory(sd_journal *j, const char *p) {
                                 if (r < 0)
                                         return r;
                         }
-                } else if ((de->d_type == DT_DIR || de->d_type == DT_LNK || de->d_type == DT_UNKNOWN) &&
-                           sd_id128_from_string(de->d_name, &id) >= 0) {
+                } else if ((de->d_type == DT_DIR || de->d_type == DT_LNK || de->d_type == DT_UNKNOWN)) {
 
                         r = add_directory(j, m->path, de->d_name);
                         if (r < 0)
@@ -2184,7 +2176,7 @@ static void process_inotify_event(sd_journal *j, struct inotify_event *e) {
                         }
 
 
-                } else if (d->is_root && (e->mask & IN_ISDIR) && e->len > 0 && sd_id128_from_string(e->name, &id) >= 0) {
+                } else if (d->is_root && (e->mask & IN_ISDIR) && e->len > 0) {
 
                         /* Event for root directory */
 
