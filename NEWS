@@ -12,6 +12,7 @@
  * install journald program to sbin directory;
  * install sd-journal.h header file to include directory;
  * remove include sd-messages.h header file;
+ * remove special.h header file;
  * messages:
     - remove id's SD_MESSAGE_JOURNAL_*;
     - remove id SD_MESSAGE_FORWARD_SYSLOG_MISSED;
