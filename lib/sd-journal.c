@@ -1490,9 +1490,6 @@ static int add_root_directory(sd_journal *j, const char *p) {
             !path_startswith(p, "/run"))
                 return -EINVAL;
 
-        if (j->prefix)
-                p = strappenda(j->prefix, p);
-
         d = opendir(p);
         if (!d)
                 return -errno;
@@ -1813,7 +1810,6 @@ _public_ void sd_journal_close(sd_journal *j) {
         }
 
         free(j->path);
-        free(j->prefix);
         free(j->unique_field);
         set_free(j->errors);
         free(j);
