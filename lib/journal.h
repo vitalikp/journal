@@ -48,10 +48,9 @@ typedef struct sd_journal sd_journal;
 
 /* Open flags */
 enum OpenFlags {
-        SD_JOURNAL_LOCAL_ONLY = 1,
-        SD_JOURNAL_RUNTIME_ONLY = 2,
-        SD_JOURNAL_SYSTEM = 4,
-        SD_JOURNAL_CURRENT_USER = 8
+        SD_JOURNAL_RUNTIME_ONLY = 1,
+        SD_JOURNAL_SYSTEM = 2,
+        SD_JOURNAL_CURRENT_USER = 4
 };
 
 /* Wakeup event types */

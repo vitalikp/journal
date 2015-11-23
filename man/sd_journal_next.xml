@@ -174,7 +174,7 @@
 int main(int argc, char *argv[]) {
         int r;
         sd_journal *j;
-        r = sd_journal_open(&amp;j, SD_JOURNAL_LOCAL_ONLY);
+        r = sd_journal_open(&amp;j, 0);
         if (r &lt; 0) {
                 fprintf(stderr, "Failed to open journal: %s\n", strerror(-r));
                 return 1;

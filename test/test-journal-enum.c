@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
 
         log_set_max_level(LOG_DEBUG);
 
-        assert_se(sd_journal_open(&j, SD_JOURNAL_LOCAL_ONLY) >= 0);
+        assert_se(sd_journal_open(&j, 0) >= 0);
 
         assert_se(sd_journal_add_match(j, "_TRANSPORT=syslog", 0) >= 0);
         assert_se(sd_journal_add_match(j, "_UID=0", 0) >= 0);

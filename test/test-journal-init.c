@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
         assert_se(mkdtemp(t));
 
         for (i = 0; i < I; i++) {
-                r = sd_journal_open(&j, SD_JOURNAL_LOCAL_ONLY);
+                r = sd_journal_open(&j, 0);
                 assert_se(r == 0);
 
                 sd_journal_close(j);
@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
                 sd_journal_close(j);
 
                 j = NULL;
-                r = sd_journal_open_directory(&j, t, SD_JOURNAL_LOCAL_ONLY);
+                r = sd_journal_open_directory(&j, t, 0);
                 assert_se(r == -EINVAL);
                 assert_se(j == NULL);
         }

@@ -1155,7 +1155,7 @@ int main(int argc, char *argv[]) {
         else if (arg_file)
                 r = sd_journal_open_files(&j, (const char**) arg_file, 0);
         else
-                r = sd_journal_open(&j, !arg_merge*SD_JOURNAL_LOCAL_ONLY + arg_journal_type);
+                r = sd_journal_open(&j, arg_journal_type);
         if (r < 0) {
                 log_error("Failed to open %s: %s",
                           arg_directory ? arg_directory : arg_file ? "files" : "journal",

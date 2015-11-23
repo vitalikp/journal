@@ -48,7 +48,6 @@
                 <refname>sd_journal_open_files</refname>
                 <refname>sd_journal_close</refname>
                 <refname>sd_journal</refname>
-                <refname>SD_JOURNAL_LOCAL_ONLY</refname>
                 <refname>SD_JOURNAL_RUNTIME_ONLY</refname>
                 <refname>SD_JOURNAL_SYSTEM</refname>
                 <refname>SD_JOURNAL_CURRENT_USER</refname>
@@ -97,9 +96,7 @@
                 success will contain a journal context object. The
                 second argument is a flags field, which may consist of
                 the following flags ORed together:
-                <constant>SD_JOURNAL_LOCAL_ONLY</constant> makes sure
-                only journal files generated on the local machine will
-                be opened. <constant>SD_JOURNAL_RUNTIME_ONLY</constant>
+                <constant>SD_JOURNAL_RUNTIME_ONLY</constant>
                 makes sure only volatile journal files will be opened,
                 excluding those which are stored on persistent
                 storage. <constant>SD_JOURNAL_SYSTEM</constant>
@@ -207,7 +204,6 @@
 
                 <para><function>sd_journal_open()</function>,
                 <function>sd_journal_close()</function>,
-                <constant>SD_JOURNAL_LOCAL_ONLY</constant>,
                 <constant>SD_JOURNAL_RUNTIME_ONLY</constant>
                 </para>
 
