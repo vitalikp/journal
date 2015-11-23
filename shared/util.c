@@ -6041,37 +6041,6 @@ int parse_proc_cmdline(int (*parse_item)(const char *key, const char *value)) {
         return 0;
 }
 
-int container_get_leader(const char *machine, pid_t *pid) {
-        _cleanup_free_ char *s = NULL, *class = NULL;
-        const char *p;
-        pid_t leader;
-        int r;
-
-        assert(machine);
-        assert(pid);
-
-        p = strappenda("/run/systemd/machines/", machine);
-        r = parse_env_file(p, NEWLINE, "LEADER", &s, "CLASS", &class, NULL);
-        if (r == -ENOENT)
-                return -EHOSTDOWN;
-        if (r < 0)
-                return r;
-        if (!s)
-                return -EIO;
-
-        if (!streq_ptr(class, "container"))
-                return -EIO;
-
-        r = parse_pid(s, &leader);
-        if (r < 0)
-                return r;
-        if (leader <= 1)
-                return -EIO;
-
-        *pid = leader;
-        return 0;
-}
-
 int namespace_open(pid_t pid, int *pidns_fd, int *mntns_fd, int *netns_fd, int *root_fd) {
         _cleanup_close_ int pidnsfd = -1, mntnsfd = -1, netnsfd = -1;
         int rfd = -1;
