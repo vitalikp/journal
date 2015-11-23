@@ -144,6 +144,15 @@ enum {
         HEADER_INCOMPATIBLE_COMPRESSED = 1
 };
 
+/* LPKSHHRH -
+ *    (L)ennart
+ *    (P)oettering,
+ *    (K)ay
+ *    (S)ievers,
+ *    (H)ansestadt
+ *    (H)amburg
+ *    (R)ed(H)at
+ */
 #define HEADER_SIGNATURE ((char[]) { 'L', 'P', 'K', 'S', 'H', 'H', 'R', 'H' })
 
 struct Header {
