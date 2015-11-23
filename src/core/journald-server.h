@@ -133,7 +133,6 @@ typedef struct Server {
 
         bool sync_scheduled;
 
-        char machine_id_field[sizeof("_MACHINE_ID=") + 32];
         char boot_id_field[sizeof("_BOOT_ID=") + 32];
         char *hostname_field;
 } Server;

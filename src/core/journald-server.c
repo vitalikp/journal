@@ -318,19 +318,6 @@ void server_vacuum(Server *s) {
         s->cached_available_space_timestamp = 0;
 }
 
-static void server_cache_machine_id(Server *s) {
-        sd_id128_t id;
-        int r;
-
-        assert(s);
-
-        r = sd_id128_get_machine(&id);
-        if (r < 0)
-                return;
-
-        sd_id128_to_string(id, stpcpy(s->machine_id_field, "_MACHINE_ID="));
-}
-
 static void server_cache_boot_id(Server *s) {
         sd_id128_t id;
         int r;
@@ -634,9 +621,6 @@ static void dispatch_message_real(
          * anyway. However, we need this indexed, too. */
         if (!isempty(s->boot_id_field))
                 IOVEC_SET_STRING(iovec[n++], s->boot_id_field);
-
-        if (!isempty(s->machine_id_field))
-                IOVEC_SET_STRING(iovec[n++], s->machine_id_field);
 
         if (!isempty(s->hostname_field))
                 IOVEC_SET_STRING(iovec[n++], s->hostname_field);
@@ -1372,7 +1356,6 @@ int server_init(Server *s) {
 
         server_cache_hostname(s);
         server_cache_boot_id(s);
-        server_cache_machine_id(s);
 
         r = system_journal_open(s);
         if (r < 0)
