@@ -61,7 +61,6 @@ _arguments -s \
     {-r,--reverse}'[Reverse output]' \
     {-o+,--output=}'[Change journal output mode]:output modes:_sd_outputmodes' \
     {-q,--quiet}"[Don't show privilege warning]" \
-    {-m,--merge}'[Show entries from all available journals]' \
     {-b+,--boot=}'[Show data only from the specified boot or offset]:boot id or offset:_journal_boots' \
     '--list-boots[List boots ordered by time]' \
     {-k,--dmesg}'[Show only kernel messages from the current boot]' \

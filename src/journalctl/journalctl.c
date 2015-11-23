@@ -61,7 +61,6 @@ static bool arg_no_pager = false;
 static int arg_lines = -1;
 static bool arg_no_tail = false;
 static bool arg_quiet = false;
-static bool arg_merge = false;
 static bool arg_boot = false;
 static sd_id128_t arg_boot_id = {};
 static int arg_boot_offset = 0;
@@ -168,7 +167,6 @@ static int help(void) {
                "  -a --all                 Show all fields, including long and unprintable\n"
                "  -q --quiet               Do not show privilege warning\n"
                "     --no-pager            Do not pipe output into a pager\n"
-               "  -m --merge               Show entries from all available journals\n"
                "  -D --directory=PATH      Show journal files from directory\n"
                "     --file=PATH           Show journal file\n"
                "\nCommands:\n"
@@ -216,7 +214,6 @@ static int parse_argv(int argc, char *argv[]) {
                 { "lines",          optional_argument, NULL, 'n'                },
                 { "no-tail",        no_argument,       NULL, ARG_NO_TAIL        },
                 { "quiet",          no_argument,       NULL, 'q'                },
-                { "merge",          no_argument,       NULL, 'm'                },
                 { "boot",           optional_argument, NULL, 'b'                },
                 { "list-boots",     no_argument,       NULL, ARG_LIST_BOOTS     },
                 { "this-boot",      optional_argument, NULL, 'b'                }, /* deprecated */
@@ -245,7 +242,7 @@ static int parse_argv(int argc, char *argv[]) {
         assert(argc >= 0);
         assert(argv);
 
-        while ((c = getopt_long(argc, argv, "hefo:aln::qmb::kD:p:c:u:F:xrM:", options, NULL)) >= 0) {
+        while ((c = getopt_long(argc, argv, "hefo:aln::qb::kD:p:c:u:F:xrM:", options, NULL)) >= 0) {
 
                 switch (c) {
 
@@ -335,10 +332,6 @@ static int parse_argv(int argc, char *argv[]) {
 
                 case 'q':
                         arg_quiet = true;
-                        break;
-
-                case 'm':
-                        arg_merge = true;
                         break;
 
                 case 'b':
@@ -535,8 +528,8 @@ static int parse_argv(int argc, char *argv[]) {
                 return -EINVAL;
         }
 
-        if ((arg_boot || arg_action == ACTION_LIST_BOOTS) && (arg_file || arg_directory || arg_merge)) {
-                log_error("Using --boot or --list-boots with --file, --directory or --merge is not supported.");
+        if ((arg_boot || arg_action == ACTION_LIST_BOOTS) && (arg_file || arg_directory)) {
+                log_error("Using --boot or --list-boots with --file or --directory is not supported.");
                 return -EINVAL;
         }
 
@@ -1361,6 +1354,8 @@ int main(int argc, char *argv[]) {
                 }
         }
 
+        sd_id128_t boot_id;
+
         for (;;) {
                 while (arg_lines < 0 || n_shown < arg_lines || (arg_follow && !first_line)) {
                         int flags;
@@ -1402,19 +1397,15 @@ int main(int argc, char *argv[]) {
                                         goto finish;
                         }
 
-                        if (!arg_merge) {
-                                sd_id128_t boot_id;
+                        r = sd_journal_get_monotonic_usec(j, NULL, &boot_id);
+                        if (r >= 0) {
+                                if (previous_boot_id_valid &&
+                                    !sd_id128_equal(boot_id, previous_boot_id))
+                                        printf("%s-- Reboot --%s\n",
+                                               ansi_highlight(), ansi_highlight_off());
 
-                                r = sd_journal_get_monotonic_usec(j, NULL, &boot_id);
-                                if (r >= 0) {
-                                        if (previous_boot_id_valid &&
-                                            !sd_id128_equal(boot_id, previous_boot_id))
-                                                printf("%s-- Reboot --%s\n",
-                                                       ansi_highlight(), ansi_highlight_off());
-
-                                        previous_boot_id = boot_id;
-                                        previous_boot_id_valid = true;
-                                }
+                                previous_boot_id = boot_id;
+                                previous_boot_id_valid = true;
                         }
 
                         flags =
