@@ -2,8 +2,6 @@
 
 # journal shared objects
 add_library(journal_shared_obj STATIC
-	device-nodes.c
-	device-nodes.h
 	util.c
 	util.h
 	virt.c
