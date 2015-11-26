@@ -179,10 +179,6 @@ static int journal_file_refresh_header(JournalFile *f) {
 
         assert(f);
 
-        r = sd_id128_get_machine(&f->header->machine_id);
-        if (r < 0)
-                return r;
-
         r = sd_id128_get_boot(&boot_id);
         if (r < 0)
                 return r;
@@ -253,15 +249,6 @@ static int journal_file_verify_header(JournalFile *f) {
 
         if (f->writable) {
                 uint8_t state;
-                sd_id128_t machine_id;
-                int r;
-
-                r = sd_id128_get_machine(&machine_id);
-                if (r < 0)
-                        return r;
-
-                if (!sd_id128_equal(machine_id, f->header->machine_id))
-                        return -EHOSTDOWN;
 
                 state = f->header->state;
 
@@ -2300,7 +2287,6 @@ void journal_file_print_header(JournalFile *f) {
 
         printf("File Path: %s\n"
                "File ID: %s\n"
-               "Machine ID: %s\n"
                "Boot ID: %s\n"
                "Sequential Number ID: %s\n"
                "State: %s\n"
@@ -2320,7 +2306,6 @@ void journal_file_print_header(JournalFile *f) {
                "Entry Objects: %"PRIu64"\n",
                f->path,
                sd_id128_to_string(f->header->file_id, a),
-               sd_id128_to_string(f->header->machine_id, b),
                sd_id128_to_string(f->header->boot_id, c),
                sd_id128_to_string(f->header->seqnum_id, d),
                f->header->state == STATE_OFFLINE ? "OFFLINE" :

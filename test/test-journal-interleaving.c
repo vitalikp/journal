@@ -218,7 +218,6 @@ static void test_sequence_numbers(void) {
         assert(seqnum == 2);
 
         assert(one->header->state == STATE_ONLINE);
-        assert(!sd_id128_equal(one->header->file_id, one->header->machine_id));
         assert(!sd_id128_equal(one->header->file_id, one->header->boot_id));
         assert(sd_id128_equal(one->header->file_id, one->header->seqnum_id));
 
@@ -229,7 +228,6 @@ static void test_sequence_numbers(void) {
 
         assert(two->header->state == STATE_ONLINE);
         assert(!sd_id128_equal(two->header->file_id, one->header->file_id));
-        assert(sd_id128_equal(one->header->machine_id, one->header->machine_id));
         assert(sd_id128_equal(one->header->boot_id, one->header->boot_id));
         assert(sd_id128_equal(one->header->seqnum_id, one->header->seqnum_id));
 
