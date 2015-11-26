@@ -61,7 +61,9 @@
  * remove login split mode;
  * move call write_to_journal function from dispatch_message_real;
  * remove cgroup_root field from Server struct;
- * remove cgroup util from shared library;
+ * shared:
+    - remove cgroup util from shared library;
+    - remove fstab_node_to_udev_node function;
  * remove prefix field from sd_journal struct;
  * don't add machine_id to root log path directory;
  * remove SD_JOURNAL_LOCAL_ONLY journal open flag;

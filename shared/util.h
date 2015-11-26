@@ -495,8 +495,6 @@ int null_or_empty_path(const char *fn);
 
 DIR *xopendirat(int dirfd, const char *name, int flags);
 
-char *fstab_node_to_udev_node(const char *p);
-
 char *resolve_dev_console(char **active);
 bool tty_is_vc(const char *tty);
 bool tty_is_vc_resolve(const char *tty);
