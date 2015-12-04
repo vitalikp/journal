@@ -30,6 +30,7 @@
 #include "journald-kmsg.h"
 #include "journald-console.h"
 #include "journald-wall.h"
+#include "socket.h"
 
 /* Warn once every 30s if we missed syslog message */
 #define WARN_FORWARD_SYSLOG_MISSED_USEC (30 * USEC_PER_SEC)
@@ -420,55 +421,13 @@ void server_process_syslog_message(
 }
 
 int server_open_syslog_socket(Server *s) {
-        int one, r;
+        int r;
 
         assert(s);
 
-        if (s->syslog_fd < 0) {
-                union sockaddr_union sa = {
-                        .un.sun_family = AF_UNIX,
-                        .un.sun_path = "/dev/log",
-                };
-
-                s->syslog_fd = socket(AF_UNIX, SOCK_DGRAM|SOCK_CLOEXEC|SOCK_NONBLOCK, 0);
-                if (s->syslog_fd < 0) {
-                        log_error("socket() failed: %m");
-                        return -errno;
-                }
-
-                unlink(sa.un.sun_path);
-
-                r = bind(s->syslog_fd, &sa.sa, offsetof(union sockaddr_union, un.sun_path) + strlen(sa.un.sun_path));
-                if (r < 0) {
-                        log_error("bind() failed: %m");
-                        return -errno;
-                }
-
-                chmod(sa.un.sun_path, 0666);
-        }
-
-        one = 1;
-        r = setsockopt(s->syslog_fd, SOL_SOCKET, SO_PASSCRED, &one, sizeof(one));
-        if (r < 0) {
-                log_error("SO_PASSCRED failed: %m");
-                return -errno;
-        }
-
-#ifdef HAVE_SELINUX
-        if (use_selinux()) {
-                one = 1;
-                r = setsockopt(s->syslog_fd, SOL_SOCKET, SO_PASSSEC, &one, sizeof(one));
-                if (r < 0)
-                        log_warning("SO_PASSSEC failed: %m");
-        }
-#endif
-
-        one = 1;
-        r = setsockopt(s->syslog_fd, SOL_SOCKET, SO_TIMESTAMP, &one, sizeof(one));
-        if (r < 0) {
-                log_error("SO_TIMESTAMP failed: %m");
-                return -errno;
-        }
+        s->syslog_fd = socket_open("/dev/log", SOCK_DGRAM);
+        if (s->syslog_fd < 0)
+        	return -errno;
 
         r = sd_event_add_io(s->event, &s->syslog_event_source, s->syslog_fd, EPOLLIN, process_datagram, s);
         if (r < 0) {

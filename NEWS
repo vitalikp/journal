@@ -77,3 +77,4 @@
  * journald:
    - add socket module;
    - init journal sockets without systemd daemon;
+   - open journal sockets with socket module;

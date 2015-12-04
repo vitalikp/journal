@@ -36,6 +36,7 @@
 #include "journald-kmsg.h"
 #include "journald-console.h"
 #include "journald-wall.h"
+#include "socket.h"
 
 #define STDOUT_STREAMS_MAX 4096
 
@@ -434,33 +435,9 @@ int server_open_stdout_socket(Server *s) {
 
         assert(s);
 
-        if (s->stdout_fd < 0) {
-                union sockaddr_union sa = {
-                        .un.sun_family = AF_UNIX,
-                        .un.sun_path = "/run/systemd/journal/stdout",
-                };
-
-                s->stdout_fd = socket(AF_UNIX, SOCK_STREAM|SOCK_CLOEXEC|SOCK_NONBLOCK, 0);
-                if (s->stdout_fd < 0) {
-                        log_error("socket() failed: %m");
-                        return -errno;
-                }
-
-                unlink(sa.un.sun_path);
-
-                r = bind(s->stdout_fd, &sa.sa, offsetof(union sockaddr_union, un.sun_path) + strlen(sa.un.sun_path));
-                if (r < 0) {
-                        log_error("bind() failed: %m");
-                        return -errno;
-                }
-
-                chmod(sa.un.sun_path, 0666);
-
-                if (listen(s->stdout_fd, SOMAXCONN) < 0) {
-                        log_error("listen() failed: %m");
-                        return -errno;
-                }
-        }
+        s->stdout_fd = socket_open("/run/systemd/journal/stdout", SOCK_STREAM);
+        if (s->stdout_fd < 0)
+        	return -errno;
 
         r = sd_event_add_io(s->event, &s->stdout_event_source, s->stdout_fd, EPOLLIN, stdout_stream_new, s);
         if (r < 0) {
