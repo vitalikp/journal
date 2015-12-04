@@ -95,6 +95,7 @@ add_man(docs journald 8)
 add_custom_target(man ALL DEPENDS ${docs})
 
 # source code
+add_definitions(-DJOURNAL_COMPILATION)
 include_directories(include)
 include_directories(shared)
 include_directories(lib)

@@ -3,7 +3,7 @@
  * use systemd/sd-id128.h include instead of sd-id128.h;
  * use systemd/sd-daemon.h include instead of sd-daemon.h;
  * use sd-journal.h include instead of systemd/sd-journal.h;
- * rename sd-journal.h header file to journal.h;
+ * add journal.h header file;
  * remove exit-status.h header file;
  * remove unused includes in journald;
  * journal.pc:
