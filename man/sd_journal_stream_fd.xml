@@ -129,7 +129,6 @@
 #include &lt;string.h&gt;
 #include &lt;unistd.h&gt;
 #include &lt;journal/journal.h&gt;
-#include &lt;systemd/sd-daemon.h&gt;
 
 int main(int argc, char *argv[]) {
         int fd;
@@ -146,7 +145,7 @@ int main(int argc, char *argv[]) {
                 return 1;
         }
         fprintf(log, "Hello World!\n");
-        fprintf(log, SD_WARNING "This is a warning!\n");
+        fprintf(log, "&lt;4&gt;This is a warning!\n");
         fclose(log);
         return 0;
 }</programlisting>
