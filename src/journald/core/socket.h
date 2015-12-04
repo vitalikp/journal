@@ -7,10 +7,10 @@
  * See the file LICENSE.
  */
 
-#ifndef _SOCKET_H_
-#define _SOCKET_H_
+#ifndef _JOURNALD_SOCKET_H_
+#define _JOURNALD_SOCKET_H_
 
 
 int socket_open(const char* path, int type);
 
-#endif	/* _SOCKET_H_ */
+#endif	/* _JOURNALD_SOCKET_H_ */
