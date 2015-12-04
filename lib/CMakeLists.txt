@@ -14,6 +14,8 @@ configure_file(journal.pc.cmake journal.pc @ONLY)
 
 # journal internal
 set(journal_int_src
+	uuid.c
+	uuid.h
 	sd-event.c
 	sd-event.h
 	sd-journal.c

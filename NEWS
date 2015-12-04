@@ -9,6 +9,8 @@
  * journal.pc:
     - remove URL field;
     - remove 'deprecated' from Description filed;
+ * libjournal:
+    - add uuid module;
  * don't print systemd features;
  * install journald program to sbin directory;
  * install sd-journal.h header file to include directory;
