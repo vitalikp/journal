@@ -4,6 +4,7 @@
  * use systemd/sd-daemon.h include instead of sd-daemon.h;
  * use sd-journal.h include instead of systemd/sd-journal.h;
  * rename sd-journal.h header file to journal.h;
+ * remove exit-status.h header file;
  * remove unused includes in journald;
  * journal.pc:
     - remove URL field;

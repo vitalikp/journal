@@ -34,7 +34,6 @@
 #include "utf8.h"
 #include "path-util.h"
 #include "set.h"
-#include "exit-status.h"
 
 int log_syntax_internal(const char *unit, int level,
                         const char *file, unsigned line, const char *func,

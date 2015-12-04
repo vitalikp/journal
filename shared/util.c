@@ -76,7 +76,7 @@
 #include "label.h"
 #include "mkdir.h"
 #include "path-util.h"
-#include "exit-status.h"
+#include "set.h"
 #include "hashmap.h"
 #include "env-util.h"
 #include "fileio.h"
