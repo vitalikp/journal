@@ -62,8 +62,7 @@ static int arg_lines = -1;
 static bool arg_no_tail = false;
 static bool arg_quiet = false;
 static bool arg_boot = false;
-static sd_id128_t arg_boot_id = {};
-static int arg_boot_offset = 0;
+static const char* arg_boot_id = NULL;
 static bool arg_dmesg = false;
 static const char *arg_cursor = NULL;
 static const char *arg_after_cursor = NULL;
@@ -336,26 +335,7 @@ static int parse_argv(int argc, char *argv[]) {
 
                 case 'b':
                         arg_boot = true;
-
-                        if (optarg) {
-                                r =  parse_boot_descriptor(optarg, &arg_boot_id, &arg_boot_offset);
-                                if (r < 0) {
-                                        log_error("Failed to parse boot descriptor '%s'", optarg);
-                                        return -EINVAL;
-                                }
-                        } else {
-
-                                /* Hmm, no argument? Maybe the next
-                                 * word on the command line is
-                                 * supposed to be the argument? Let's
-                                 * see if there is one and is parsable
-                                 * as a boot descriptor... */
-
-                                if (optind < argc &&
-                                    parse_boot_descriptor(argv[optind], &arg_boot_id, &arg_boot_offset) >= 0)
-                                        optind++;
-                        }
-
+                        arg_boot_id = optarg;
                         break;
 
                 case ARG_LIST_BOOTS:
@@ -819,6 +799,8 @@ static int list_boots(sd_journal *j) {
 }
 
 static int add_boot(sd_journal *j) {
+        int boot_offset = 0;
+        sd_id128_t bid = {};
         char match[9+32+1] = "_BOOT_ID=";
         int r;
         boot_id_t ref_boot_id = {};
@@ -828,20 +810,22 @@ static int add_boot(sd_journal *j) {
         if (!arg_boot)
                 return 0;
 
-        if (arg_boot_offset == 0 && sd_id128_equal(arg_boot_id, SD_ID128_NULL))
+        if (arg_boot_id)
+        	parse_boot_descriptor(arg_boot_id, &bid, &boot_offset);
+
+        if (boot_offset == 0 && sd_id128_equal(bid, SD_ID128_NULL))
                 return add_match_this_boot(j);
 
-        ref_boot_id.id = arg_boot_id;
-        r = get_boots(j, NULL, &ref_boot_id, arg_boot_offset);
+        ref_boot_id.id = bid;
+        r = get_boots(j, NULL, &ref_boot_id, boot_offset);
         assert(r <= 1);
         if (r <= 0) {
                 const char *reason = (r == 0) ? "No such boot ID in journal" : strerror(-r);
 
-                if (sd_id128_equal(arg_boot_id, SD_ID128_NULL))
-                        log_error("Failed to look up boot %+i: %s", arg_boot_offset, reason);
+                if (sd_id128_equal(bid, SD_ID128_NULL))
+                        log_error("Failed to look up boot %+i: %s", boot_offset, reason);
                 else
-                        log_error("Failed to look up boot ID "SD_ID128_FORMAT_STR"%+i: %s",
-                                  SD_ID128_FORMAT_VAL(arg_boot_id), arg_boot_offset, reason);
+                        log_error("Failed to look up boot ID %s: %s", arg_boot_id, reason);
 
                 return r == 0 ? -ENODATA : r;
         }

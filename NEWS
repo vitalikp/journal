@@ -32,6 +32,7 @@
     - remove user-unit argument option;
     - remove merge argument option;
     - don't match coredumps of the service;
+    - parse boot argument option value in add_boot function;
  * journal-fields:
     - remove MESSAGE_ID field;
     - remove coredump fields;
