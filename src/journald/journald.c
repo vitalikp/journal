@@ -21,8 +21,6 @@
 
 #include <unistd.h>
 
-#include <systemd/sd-daemon.h>
-
 #include "journald-server.h"
 #include "journald-kmsg.h"
 #include "journald-syslog.h"
