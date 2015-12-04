@@ -2,6 +2,7 @@
 
 
 # journal core
+include_directories(journald/core)
 set(JOURNALD_GPERF "core/journald-gperf.gperf")
 set(JOURNALD_GPERF_C "src/journald-gperf.c")
 message("-- generate ${JOURNALD_GPERF_C}")
@@ -11,6 +12,8 @@ execute_process(
 	OUTPUT_FILE ${JOURNALD_GPERF_C}
 )
 add_library(journal_core_obj STATIC
+	journald/core/socket.c
+	journald/core/socket.h
 	core/journald-kmsg.c
 	core/journald-kmsg.h
 	core/journald-syslog.c
