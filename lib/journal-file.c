@@ -2277,6 +2277,19 @@ static const char* format_timestamp_safe(char *buf, size_t l, usec_t t) {
         return " --- ";
 }
 
+static const char* format_timestamp_short(char *buf, size_t l, usec_t t) {
+	struct tm tm;
+	time_t sec;
+
+	sec = (time_t) (t / USEC_PER_SEC);
+	localtime_r(&sec, &tm);
+
+	if (strftime(buf, l, "%Y%m%d%H%M%S", &tm) <= 0)
+		buf[0] = '\0';
+
+	return buf;
+}
+
 void journal_file_print_header(JournalFile *f) {
         char a[33], b[33], c[33], d[33];
         char x[FORMAT_TIMESTAMP_MAX], y[FORMAT_TIMESTAMP_MAX], z[FORMAT_TIMESTAMP_MAX];
@@ -2507,6 +2520,7 @@ int journal_file_rotate(JournalFile **f, bool compress) {
         _cleanup_free_ char *p = NULL;
         size_t l;
         JournalFile *old_file, *new_file = NULL;
+        char x[FORMAT_TIMESTAMP_MAX];
         int r;
 
         assert(f);
@@ -2521,11 +2535,9 @@ int journal_file_rotate(JournalFile **f, bool compress) {
                 return -EINVAL;
 
         l = strlen(old_file->path);
-        r = asprintf(&p, "%.*s@" SD_ID128_FORMAT_STR "-%016"PRIx64"-%016"PRIx64".journal",
+        r = asprintf(&p, "%.*s-%s.journal",
                      (int) l - 8, old_file->path,
-                     SD_ID128_FORMAT_VAL(old_file->header->seqnum_id),
-                     le64toh((*f)->header->head_entry_seqnum),
-                     le64toh((*f)->header->head_entry_realtime));
+                     format_timestamp_short(x, sizeof(x), le64toh((*f)->header->head_entry_realtime)));
         if (r < 0)
                 return -ENOMEM;
 
@@ -2555,6 +2567,7 @@ int journal_file_open_reliably(
         int r;
         size_t l;
         _cleanup_free_ char *p = NULL;
+        char x[FORMAT_TIMESTAMP_MAX];
 
         r = journal_file_open(fname, flags, mode, compress,
                               metrics, mmap_cache, template, ret);
@@ -2578,10 +2591,9 @@ int journal_file_open_reliably(
         /* The file is corrupted. Rotate it away and try it again (but only once) */
 
         l = strlen(fname);
-        if (asprintf(&p, "%.*s@%016llx-%016" PRIx64 ".journal~",
+        if (asprintf(&p, "%.*s-%s.journal~",
                      (int) l - 8, fname,
-                     (unsigned long long) now(CLOCK_REALTIME),
-                     random_u64()) < 0)
+                     format_timestamp_short(x, sizeof(x), now(CLOCK_REALTIME))) < 0)
                 return -ENOMEM;
 
         r = rename(fname, p);

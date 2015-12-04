@@ -53,6 +53,7 @@
  * journal-file:
     - add journal_reset_metrics function;
     - don't set and check machine_id header field;
+    - change format filename on rotation;
  * don't add code location to log messages;
  * remove id SD_JOURNAL_SUPPRESS_LOCATION;
  * remove sd_journal_print_with_location function;
