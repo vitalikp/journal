@@ -3,6 +3,7 @@
 
 # journal core
 include_directories(journald/core)
+add_subdirectory(journald)
 set(JOURNALD_GPERF "core/journald-gperf.gperf")
 set(JOURNALD_GPERF_C "src/journald-gperf.c")
 message("-- generate ${JOURNALD_GPERF_C}")
@@ -37,13 +38,6 @@ target_link_libraries(journal_core_obj journal_int_obj ${LIBUDEV_LIBRARIES} jour
 target_link_libraries(journal_core_obj ${AUDIT_LIBRARIES})
 target_link_libraries(journal_core_obj -pthread rt)
 
-
-# journald
-add_executable(journald
-	journald/journald.c
-)
-target_link_libraries(journald journal_core_obj journal_int_obj journal_shared_obj)
-
 # journalctl
 add_executable(journalctl
 	journalctl/journalctl.c
@@ -52,5 +46,4 @@ target_link_libraries(journalctl journal_int_obj journal_logs_obj journal_shared
 #target_link_libraries(journalctl -pthread rt)
 
 # install
-install(TARGETS journald DESTINATION ${sbindir})
 install(TARGETS journalctl DESTINATION ${bindir})
