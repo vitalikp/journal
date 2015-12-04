@@ -79,3 +79,5 @@
    - add socket module;
    - init journal sockets without systemd daemon;
    - open journal sockets with socket module;
+ * vacuum:
+   - use time of last modification journal files in realtime field;

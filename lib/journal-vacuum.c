@@ -69,57 +69,6 @@ static int vacuum_compare(const void *_a, const void *_b) {
                 return strcmp(a->filename, b->filename);
 }
 
-static void patch_realtime(
-                const char *dir,
-                const char *fn,
-                const struct stat *st,
-                unsigned long long *realtime) {
-
-        usec_t x;
-        uint64_t crtime;
-        _cleanup_free_ const char *path = NULL;
-
-        /* The timestamp was determined by the file name, but let's
-         * see if the file might actually be older than the file name
-         * suggested... */
-
-        assert(dir);
-        assert(fn);
-        assert(st);
-        assert(realtime);
-
-        x = timespec_load(&st->st_ctim);
-        if (x > 0 && x != (usec_t) -1 && x < *realtime)
-                *realtime = x;
-
-        x = timespec_load(&st->st_atim);
-        if (x > 0 && x != (usec_t) -1 && x < *realtime)
-                *realtime = x;
-
-        x = timespec_load(&st->st_mtim);
-        if (x > 0 && x != (usec_t) -1 && x < *realtime)
-                *realtime = x;
-
-        /* Let's read the original creation time, if possible. Ideally
-         * we'd just query the creation time the FS might provide, but
-         * unfortunately there's currently no sane API to query
-         * it. Hence let's implement this manually... */
-
-        /* Unfortunately there is is not fgetxattrat(), so we need to
-         * go via path here. :-( */
-
-        path = strjoin(dir, "/", fn, NULL);
-        if (!path)
-                return;
-
-        if (getxattr(path, "user.crtime_usec", &crtime, sizeof(crtime)) == sizeof(crtime)) {
-                crtime = le64toh(crtime);
-
-                if (crtime > 0 && crtime != (uint64_t) -1 && crtime < *realtime)
-                        *realtime = crtime;
-        }
-}
-
 static int journal_file_empty(int dir_fd, const char *name) {
         int r;
         le64_t n_entries;
@@ -273,14 +222,12 @@ int journal_directory_vacuum(
                         continue;
                 }
 
-                patch_realtime(directory, p, &st, &realtime);
-
                 GREEDY_REALLOC(list, n_allocated, n_list + 1);
 
                 list[n_list].filename = p;
                 list[n_list].usage = 512UL * (uint64_t) st.st_blocks;
                 list[n_list].seqnum = seqnum;
-                list[n_list].realtime = realtime;
+                list[n_list].realtime = timespec_load(&st.st_mtim);
                 list[n_list].seqnum_id = seqnum_id;
                 list[n_list].have_seqnum = have_seqnum;
 
