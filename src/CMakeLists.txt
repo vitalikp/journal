@@ -2,6 +2,7 @@
 
 
 # journal core
+include_directories(journald)
 include_directories(journald/core)
 add_subdirectory(journald)
 set(JOURNALD_GPERF "core/journald-gperf.gperf")
