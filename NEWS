@@ -70,3 +70,4 @@
  * don't add machine_id to root log path directory;
  * remove SD_JOURNAL_LOCAL_ONLY journal open flag;
  * remove machine_id_field field from Server struct;
+ * don't notify systemd watchdog;

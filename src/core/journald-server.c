@@ -1275,8 +1275,6 @@ int server_init(Server *s) {
                 return r;
         }
 
-        sd_event_set_watchdog(s->event, true);
-
         n = sd_listen_fds(true);
         if (n < 0) {
                 log_error("Failed to read listening file descriptors from environment: %s", strerror(-n));
