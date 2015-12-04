@@ -80,8 +80,6 @@ int main(int argc, char *argv[]) {
                                 goto finish;
                         }
                 }
-
-                server_maybe_warn_forward_syslog_missed(&server);
         }
 
         log_debug("journald stopped as pid "PID_FMT, getpid());

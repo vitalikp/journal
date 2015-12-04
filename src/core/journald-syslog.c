@@ -32,9 +32,6 @@
 #include "journald-wall.h"
 #include "socket.h"
 
-/* Warn once every 30s if we missed syslog message */
-#define WARN_FORWARD_SYSLOG_MISSED_USEC (30 * USEC_PER_SEC)
-
 static void forward_syslog_iovec(Server *s, const struct iovec *iovec, unsigned n_iovec, struct ucred *ucred, struct timeval *tv) {
 
         union sockaddr_union sa = {
@@ -80,10 +77,8 @@ static void forward_syslog_iovec(Server *s, const struct iovec *iovec, unsigned 
 
         /* The socket is full? I guess the syslog implementation is
          * too slow, and we shouldn't wait for that... */
-        if (errno == EAGAIN) {
-                s->n_forward_syslog_missed++;
+        if (errno == EAGAIN)
                 return;
-        }
 
         if (ucred && errno == ESRCH) {
                 struct ucred u;
@@ -99,10 +94,8 @@ static void forward_syslog_iovec(Server *s, const struct iovec *iovec, unsigned 
                 if (sendmsg(s->syslog_fd, &msghdr, MSG_NOSIGNAL) >= 0)
                         return;
 
-                if (errno == EAGAIN) {
-                        s->n_forward_syslog_missed++;
+                if (errno == EAGAIN)
                         return;
-                }
         }
 
         if (errno != ENOENT)
@@ -436,21 +429,4 @@ int server_open_syslog_socket(Server *s) {
         }
 
         return 0;
-}
-
-void server_maybe_warn_forward_syslog_missed(Server *s) {
-        usec_t n;
-        assert(s);
-
-        if (s->n_forward_syslog_missed <= 0)
-                return;
-
-        n = now(CLOCK_MONOTONIC);
-        if (s->last_warn_forward_syslog_missed + WARN_FORWARD_SYSLOG_MISSED_USEC > n)
-                return;
-
-        server_driver_message(s, "Forwarding to syslog missed %u messages.", s->n_forward_syslog_missed);
-
-        s->n_forward_syslog_missed = 0;
-        s->last_warn_forward_syslog_missed = n;
 }

@@ -107,9 +107,6 @@ typedef struct Server {
         bool forward_to_console;
         bool forward_to_wall;
 
-        unsigned n_forward_syslog_missed;
-        usec_t last_warn_forward_syslog_missed;
-
         uint64_t cached_available_space;
         usec_t cached_available_space_timestamp;
 
