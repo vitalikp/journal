@@ -7,12 +7,12 @@
  * See the file LICENSE.
  */
 
-#ifndef _BOOT_H_
-#define _BOOT_H_
+#ifndef _JOURNAL_BOOT_H_
+#define _JOURNAL_BOOT_H_
 
 #include "uuid.h"
 
 
 int journal_get_bootid(uuid_t* boot_id);
 
-#endif	/* _BOOT_H_ */
+#endif	/* _JOURNAL_BOOT_H_ */
