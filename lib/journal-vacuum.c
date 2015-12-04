@@ -178,26 +178,13 @@ int journal_directory_vacuum(
                         have_seqnum = true;
 
                 } else if (endswith(de->d_name, ".journal~")) {
-                        unsigned long long tmp;
 
                         /* Vacuum corrupted files */
-
-                        if (q < 1 + 16 + 1 + 16 + 8 + 1)
-                                continue;
-
-                        if (de->d_name[q-1-8-16-1] != '-' ||
-                            de->d_name[q-1-8-16-1-16-1] != '@')
-                                continue;
 
                         p = strdup(de->d_name);
                         if (!p) {
                                 r = -ENOMEM;
                                 goto finish;
-                        }
-
-                        if (sscanf(de->d_name + q-1-8-16-1-16, "%16llx-%16llx.journal~", &realtime, &tmp) != 2) {
-                                free(p);
-                                continue;
                         }
 
                         have_seqnum = false;

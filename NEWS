@@ -81,3 +81,4 @@
    - open journal sockets with socket module;
  * vacuum:
    - use time of last modification journal files in realtime field;
+   - don't check corrupt journal files;
