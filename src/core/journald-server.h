@@ -62,6 +62,7 @@ typedef enum SplitMode {
 typedef struct StdoutStream StdoutStream;
 
 typedef struct Server {
+        int epoll_fd;
         int syslog_fd;
         int native_fd;
         int stdout_fd;
