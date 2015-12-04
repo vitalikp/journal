@@ -13,8 +13,6 @@ execute_process(
 	OUTPUT_FILE ${JOURNALD_GPERF_C}
 )
 add_library(journal_core_obj STATIC
-	journald/core/socket.c
-	journald/core/socket.h
 	core/journald-kmsg.c
 	core/journald-kmsg.h
 	core/journald-syslog.c
@@ -34,7 +32,7 @@ add_library(journal_core_obj STATIC
 	core/journal-internal.h
 	${PROJECT_BINARY_DIR}/${JOURNALD_GPERF_C}
 )
-target_link_libraries(journal_core_obj journal_int_obj ${LIBUDEV_LIBRARIES} journal_capability_obj journal_label_obj journal_shared_obj)
+target_link_libraries(journal_core_obj journald_core_obj journal_int_obj ${LIBUDEV_LIBRARIES} journal_capability_obj journal_label_obj journal_shared_obj)
 target_link_libraries(journal_core_obj ${AUDIT_LIBRARIES})
 target_link_libraries(journal_core_obj -pthread rt)
 
