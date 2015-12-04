@@ -1013,9 +1013,13 @@ static int dispatch_sigterm(sd_event_source *es, const struct signalfd_siginfo *
 
         assert(s);
 
+        if (s->state != SERVER_RUNNING)
+                return 0;
+
         log_received_signal(LOG_INFO, si);
 
-        sd_event_exit(s->event, 0);
+        s->state = SERVER_EXITING;
+
         return 0;
 }
 
@@ -1268,6 +1272,7 @@ int server_init(Server *s) {
         if (!s->mmap)
                 return log_oom();
 
+        s->state = SERVER_RUNNING;
         r = sd_event_default(&s->event);
         if (r < 0) {
                 log_error("Failed to create event loop: %s", strerror(-r));

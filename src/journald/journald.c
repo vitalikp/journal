@@ -52,14 +52,8 @@ int main(int argc, char *argv[]) {
         log_debug("journald running as pid "PID_FMT, getpid());
         server_driver_message(&server, "Journal started");
 
-        for (;;) {
+        while (server.state != SERVER_FINISHED) {
                 usec_t t = (usec_t) -1, n;
-
-                r = sd_event_get_state(server.event);
-                if (r < 0)
-                        goto finish;
-                if (r == SD_EVENT_FINISHED)
-                        break;
 
                 n = now(CLOCK_REALTIME);
 
@@ -77,10 +71,14 @@ int main(int argc, char *argv[]) {
                         t = server.oldest_file_usec + server.max_retention_usec - n;
                 }
 
-                r = sd_event_run(server.event, t);
-                if (r < 0) {
-                        log_error("Failed to run event loop: %s", strerror(-r));
-                        goto finish;
+                if (server.state == SERVER_EXITING)
+                        server.state = SERVER_FINISHED;
+                else {
+                        r = sd_event_run(server.event, t);
+                        if (r < 0) {
+                                log_error("Failed to run event loop: %s", strerror(-r));
+                                goto finish;
+                        }
                 }
 
                 server_maybe_warn_forward_syslog_missed(&server);

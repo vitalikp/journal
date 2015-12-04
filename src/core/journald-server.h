@@ -68,6 +68,7 @@ typedef struct Server {
         int dev_kmsg_fd;
         int hostname_fd;
 
+        ServerState state;
         sd_event *event;
 
         sd_event_source *syslog_event_source;
