@@ -13,6 +13,7 @@
 #define _JOURNAL_H_INSIDE_
 
 #include <sd-journal.h>
+#include "boot.h"
 
 #undef _JOURNAL_H_INSIDE_
 
