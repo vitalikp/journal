@@ -124,7 +124,7 @@ int journal_directory_vacuum(
                 size_t q;
                 struct stat st;
                 char *p;
-                unsigned long long seqnum = 0, realtime;
+                unsigned long long seqnum = 0;
                 sd_id128_t seqnum_id;
                 bool have_seqnum;
 
@@ -150,30 +150,15 @@ int journal_directory_vacuum(
 
                         /* Vacuum archived files */
 
-                        if (q < 1 + 32 + 1 + 16 + 1 + 16 + 8)
+                        JournalFile *f = NULL;
+
+                        if (journal_file_open(f->path, O_RDONLY, 0, false, NULL, NULL, NULL, &f) < 0)
                                 continue;
 
-                        if (de->d_name[q-8-16-1] != '-' ||
-                            de->d_name[q-8-16-1-16-1] != '-' ||
-                            de->d_name[q-8-16-1-16-1-32-1] != '@')
-                                continue;
+                        seqnum_id = f->header->seqnum_id;
+                        seqnum = f->header->head_entry_seqnum;
 
-                        p = strdup(de->d_name);
-                        if (!p) {
-                                r = -ENOMEM;
-                                goto finish;
-                        }
-
-                        de->d_name[q-8-16-1-16-1] = 0;
-                        if (sd_id128_from_string(de->d_name + q-8-16-1-16-1-32, &seqnum_id) < 0) {
-                                free(p);
-                                continue;
-                        }
-
-                        if (sscanf(de->d_name + q-8-16-1-16, "%16llx-%16llx.journal", &seqnum, &realtime) != 2) {
-                                free(p);
-                                continue;
-                        }
+                        journal_file_close(f);
 
                         have_seqnum = true;
 
