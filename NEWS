@@ -71,3 +71,4 @@
  * remove SD_JOURNAL_LOCAL_ONLY journal open flag;
  * remove machine_id_field field from Server struct;
  * don't notify systemd watchdog;
+ * dont't notify status to systemd;

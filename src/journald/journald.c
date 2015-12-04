@@ -54,10 +54,6 @@ int main(int argc, char *argv[]) {
         log_debug("journald running as pid "PID_FMT, getpid());
         server_driver_message(&server, "Journal started");
 
-        sd_notify(false,
-                  "READY=1\n"
-                  "STATUS=Processing requests...");
-
         for (;;) {
                 usec_t t = (usec_t) -1, n;
 
@@ -96,8 +92,6 @@ int main(int argc, char *argv[]) {
         server_driver_message(&server, "Journal stopped");
 
 finish:
-        sd_notify(false, "STATUS=Shutting down...");
-
         server_done(&server);
 
         return r < 0 ? EXIT_FAILURE : EXIT_SUCCESS;

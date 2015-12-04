@@ -15,9 +15,6 @@ Before=sysinit.target
 
 [Service]
 ExecStart=@sbindir@/journald
-Restart=always
-RestartSec=0
-NotifyAccess=all
 StandardOutput=null
 CapabilityBoundingSet=CAP_SYS_ADMIN CAP_DAC_OVERRIDE CAP_SYS_PTRACE CAP_SYSLOG CAP_AUDIT_CONTROL CAP_CHOWN CAP_DAC_READ_SEARCH CAP_FOWNER CAP_SETUID CAP_SETGID
 
