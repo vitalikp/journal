@@ -24,6 +24,7 @@
 #include <fcntl.h>
 #include <stddef.h>
 
+#include "uuid.h"
 #include "util.h"
 #include "macro.h"
 #include "journal-def.h"
@@ -759,7 +760,7 @@ int journal_file_verify(
         uint64_t p = 0;
 
         uint64_t entry_seqnum = 0, entry_monotonic = 0, entry_realtime = 0;
-        sd_id128_t entry_boot_id;
+        uuid_t entry_boot_id;
         bool entry_seqnum_set = false, entry_monotonic_set = false, entry_realtime_set = false, found_main_entry_array = false;
         uint64_t n_weird = 0, n_objects = 0, n_entries = 0, n_data = 0, n_fields = 0, n_data_hash_tables = 0, n_field_hash_tables = 0, n_entry_arrays = 0;
         usec_t last_usec = 0;
@@ -877,7 +878,7 @@ int journal_file_verify(
                         entry_seqnum_set = true;
 
                         if (entry_monotonic_set &&
-                            sd_id128_equal(entry_boot_id, o->entry.boot_id) &&
+                            uuid_equal(entry_boot_id, o->entry.boot_id) &&
                             entry_monotonic > le64toh(o->entry.monotonic)) {
                                 log_error("Entry timestamp out of synchronization at "OFSfmt, p);
                                 r = -EBADMSG;
@@ -1028,7 +1029,7 @@ int journal_file_verify(
         }
 
         if (entry_monotonic_set &&
-            (!sd_id128_equal(entry_boot_id, f->header->boot_id) ||
+            (!uuid_equal(entry_boot_id, f->header->boot_id) ||
              entry_monotonic != le64toh(f->header->tail_entry_monotonic))) {
                 log_error("Invalid tail monotonic timestamp");
                 r = -EBADMSG;

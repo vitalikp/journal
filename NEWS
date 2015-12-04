@@ -12,6 +12,7 @@
  * libjournal:
     - add uuid module;
     - add boot module;
+ * use uuid_t type instead of sd_id128_t;
  * don't print systemd features;
  * install journald program to sbin directory;
  * install sd-journal.h header file to include directory;

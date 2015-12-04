@@ -318,16 +318,16 @@ void server_vacuum(Server *s) {
 }
 
 static void server_cache_boot_id(Server *s) {
-        sd_id128_t id;
+        uuid_t id;
         int r;
 
         assert(s);
 
-        r = sd_id128_get_boot(&id);
+        r = journal_get_bootid(&id);
         if (r < 0)
                 return;
 
-        sd_id128_to_string(id, stpcpy(s->boot_id_field, "_BOOT_ID="));
+        uuid_to_str(id, stpcpy(s->boot_id_field, "_BOOT_ID="));
 }
 
 static void server_cache_hostname(Server *s) {

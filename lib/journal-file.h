@@ -23,8 +23,7 @@
 
 #include <inttypes.h>
 
-#include <systemd/sd-id128.h>
-
+#include "uuid.h"
 #include "sparse-endian.h"
 #include "journal-def.h"
 #include "util.h"
@@ -153,12 +152,12 @@ int journal_file_next_entry_for_data(JournalFile *f, Object *o, uint64_t p, uint
 int journal_file_move_to_entry_by_offset(JournalFile *f, uint64_t seqnum, direction_t direction, Object **ret, uint64_t *offset);
 int journal_file_move_to_entry_by_seqnum(JournalFile *f, uint64_t seqnum, direction_t direction, Object **ret, uint64_t *offset);
 int journal_file_move_to_entry_by_realtime(JournalFile *f, uint64_t realtime, direction_t direction, Object **ret, uint64_t *offset);
-int journal_file_move_to_entry_by_monotonic(JournalFile *f, sd_id128_t boot_id, uint64_t monotonic, direction_t direction, Object **ret, uint64_t *offset);
+int journal_file_move_to_entry_by_monotonic(JournalFile *f, uuid_t boot_id, uint64_t monotonic, direction_t direction, Object **ret, uint64_t *offset);
 
 int journal_file_move_to_entry_by_offset_for_data(JournalFile *f, uint64_t data_offset, uint64_t p, direction_t direction, Object **ret, uint64_t *offset);
 int journal_file_move_to_entry_by_seqnum_for_data(JournalFile *f, uint64_t data_offset, uint64_t seqnum, direction_t direction, Object **ret, uint64_t *offset);
 int journal_file_move_to_entry_by_realtime_for_data(JournalFile *f, uint64_t data_offset, uint64_t realtime, direction_t direction, Object **ret, uint64_t *offset);
-int journal_file_move_to_entry_by_monotonic_for_data(JournalFile *f, uint64_t data_offset, sd_id128_t boot_id, uint64_t monotonic, direction_t direction, Object **ret, uint64_t *offset);
+int journal_file_move_to_entry_by_monotonic_for_data(JournalFile *f, uint64_t data_offset, uuid_t boot_id, uint64_t monotonic, direction_t direction, Object **ret, uint64_t *offset);
 
 int journal_file_copy_entry(JournalFile *from, JournalFile *to, Object *o, uint64_t p, uint64_t *seqnum, Object **ret, uint64_t *offset);
 
@@ -173,7 +172,7 @@ void journal_reset_metrics(JournalMetrics *m);
 void journal_default_metrics(JournalMetrics *m, int fd);
 
 int journal_file_get_cutoff_realtime_usec(JournalFile *f, usec_t *from, usec_t *to);
-int journal_file_get_cutoff_monotonic_usec(JournalFile *f, sd_id128_t boot, usec_t *from, usec_t *to);
+int journal_file_get_cutoff_monotonic_usec(JournalFile *f, uuid_t boot, usec_t *from, usec_t *to);
 
 bool journal_file_rotate_suggested(JournalFile *f, usec_t max_file_usec);
 

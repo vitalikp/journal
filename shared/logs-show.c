@@ -265,7 +265,7 @@ static int output_short(
 
         if (mode == OUTPUT_SHORT_MONOTONIC) {
                 uint64_t t;
-                sd_id128_t boot_id;
+                uuid_t boot_id;
 
                 r = -ENOENT;
 
@@ -473,7 +473,7 @@ static int output_export(
                 unsigned n_columns,
                 OutputFlags flags) {
 
-        sd_id128_t boot_id;
+        uuid_t boot_id;
         char sid[33];
         int r;
         usec_t realtime, monotonic;
@@ -511,7 +511,7 @@ static int output_export(
                 cursor,
                 realtime,
                 monotonic,
-                sd_id128_to_string(boot_id, sid));
+                uuid_to_str(boot_id, sid));
 
         JOURNAL_FOREACH_DATA_RETVAL(j, data, length, r) {
 
@@ -615,7 +615,7 @@ static int output_json(
         _cleanup_free_ char *cursor = NULL;
         const void *data;
         size_t length;
-        sd_id128_t boot_id;
+        uuid_t boot_id;
         char sid[33], *k;
         int r;
         Hashmap *h = NULL;
@@ -653,7 +653,7 @@ static int output_json(
                         cursor,
                         realtime,
                         monotonic,
-                        sd_id128_to_string(boot_id, sid));
+                        uuid_to_str(boot_id, sid));
         else {
                 if (mode == OUTPUT_JSON_SSE)
                         fputs("data: ", f);
@@ -666,7 +666,7 @@ static int output_json(
                         cursor,
                         realtime,
                         monotonic,
-                        sd_id128_to_string(boot_id, sid));
+                        uuid_to_str(boot_id, sid));
         }
 
         h = hashmap_new(string_hash_func, string_compare_func);
@@ -948,18 +948,18 @@ int add_matches_for_user_unit(sd_journal *j, const char *unit, uid_t uid) {
 
 int add_match_this_boot(sd_journal *j) {
         char match[9+32+1] = "_BOOT_ID=";
-        sd_id128_t boot_id;
+        uuid_t boot_id;
         int r;
 
         assert(j);
 
-        r = sd_id128_get_boot(&boot_id);
+        r = journal_get_bootid(&boot_id);
         if (r < 0) {
                 log_error("Failed to get boot id: %s", strerror(-r));
                 return r;
         }
 
-        sd_id128_to_string(boot_id, match + 9);
+        uuid_to_str(boot_id, match + 9);
         r = sd_journal_add_match(j, match, strlen(match));
         if (r < 0) {
                 log_error("Failed to add match: %s", strerror(-r));

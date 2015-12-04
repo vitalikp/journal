@@ -28,6 +28,7 @@
 #include <stddef.h>
 #include <sys/xattr.h>
 
+#include "boot.h"
 #include "journal-def.h"
 #include "journal-file.h"
 #include "lookup3.h"
@@ -153,9 +154,7 @@ static int journal_file_init_header(JournalFile *f, JournalFile *template) {
 
         h.compatible_flags = 0;
 
-        r = sd_id128_randomize(&h.file_id);
-        if (r < 0)
-                return r;
+        uuid_gen_rand(&h.file_id);
 
         if (template) {
                 h.seqnum_id = template->header->seqnum_id;
@@ -175,15 +174,15 @@ static int journal_file_init_header(JournalFile *f, JournalFile *template) {
 
 static int journal_file_refresh_header(JournalFile *f) {
         int r;
-        sd_id128_t boot_id;
+        uuid_t boot_id;
 
         assert(f);
 
-        r = sd_id128_get_boot(&boot_id);
+        r = journal_get_bootid(&boot_id);
         if (r < 0)
                 return r;
 
-        if (sd_id128_equal(boot_id, f->header->boot_id))
+        if (uuid_equal(boot_id, f->header->boot_id))
                 f->tail_entry_monotonic_valid = true;
 
         f->header->boot_id = boot_id;
@@ -1824,18 +1823,18 @@ static int test_object_monotonic(JournalFile *f, uint64_t p, uint64_t needle) {
 
 static inline int find_data_object_by_boot_id(
                 JournalFile *f,
-                sd_id128_t boot_id,
+                uuid_t boot_id,
                 Object **o,
                 uint64_t *b) {
         char t[sizeof("_BOOT_ID=")-1 + 32 + 1] = "_BOOT_ID=";
 
-        sd_id128_to_string(boot_id, t + 9);
+        uuid_to_str(boot_id, t + 9);
         return journal_file_find_data_object(f, t, sizeof(t) - 1, o, b);
 }
 
 int journal_file_move_to_entry_by_monotonic(
                 JournalFile *f,
-                sd_id128_t boot_id,
+                uuid_t boot_id,
                 uint64_t monotonic,
                 direction_t direction,
                 Object **ret,
@@ -2069,7 +2068,7 @@ int journal_file_move_to_entry_by_offset_for_data(
 int journal_file_move_to_entry_by_monotonic_for_data(
                 JournalFile *f,
                 uint64_t data_offset,
-                sd_id128_t boot_id,
+                uuid_t boot_id,
                 uint64_t monotonic,
                 direction_t direction,
                 Object **ret, uint64_t *offset) {
@@ -2318,9 +2317,9 @@ void journal_file_print_header(JournalFile *f) {
                "Objects: %"PRIu64"\n"
                "Entry Objects: %"PRIu64"\n",
                f->path,
-               sd_id128_to_string(f->header->file_id, a),
-               sd_id128_to_string(f->header->boot_id, c),
-               sd_id128_to_string(f->header->seqnum_id, d),
+			   uuid_to_str(f->header->file_id, a),
+			   uuid_to_str(f->header->boot_id, c),
+			   uuid_to_str(f->header->seqnum_id, d),
                f->header->state == STATE_OFFLINE ? "OFFLINE" :
                f->header->state == STATE_ONLINE ? "ONLINE" :
                f->header->state == STATE_ARCHIVED ? "ARCHIVED" : "UNKNOWN",
@@ -2793,7 +2792,7 @@ int journal_file_get_cutoff_realtime_usec(JournalFile *f, usec_t *from, usec_t *
         return 1;
 }
 
-int journal_file_get_cutoff_monotonic_usec(JournalFile *f, sd_id128_t boot_id, usec_t *from, usec_t *to) {
+int journal_file_get_cutoff_monotonic_usec(JournalFile *f, uuid_t boot_id, usec_t *from, usec_t *to) {
         Object *o;
         uint64_t p;
         int r;

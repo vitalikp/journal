@@ -62,7 +62,7 @@
                                 <funcdef>int <function>sd_journal_get_monotonic_usec</function></funcdef>
                                 <paramdef>sd_journal *<parameter>j</parameter></paramdef>
                                 <paramdef>uint64_t *<parameter>usec</parameter></paramdef>
-                                <paramdef>sd_id128_t *<parameter>boot_id</parameter></paramdef>
+                                <paramdef>uuid_t *<parameter>boot_id</parameter></paramdef>
                         </funcprototype>
 
                 </funcsynopsis>
@@ -90,11 +90,9 @@
                 i.e. <constant>CLOCK_MONOTONIC</constant>. Since the
                 monotonic clock begins new with every reboot, it only
                 defines a well-defined point in time when used
-                together with an identifier identifying the boot. See
-                <citerefentry><refentrytitle>sd_id128_get_boot</refentrytitle><manvolnum>3</manvolnum></citerefentry>
-                for more information. If the boot ID parameter is
-                passed <constant>NULL</constant>, the function will
-                fail if the monotonic timestamp of the current entry
+                together with an identifier identifying the boot.
+                If the boot ID parameter is passed <constant>NULL</constant>,
+                the function will fail if the monotonic timestamp of the current entry
                 is not of the current system boot.</para>
 
                 <para>Note that these functions will not work before
@@ -137,7 +135,6 @@
                         <citerefentry><refentrytitle>sd_journal_open</refentrytitle><manvolnum>3</manvolnum></citerefentry>,
                         <citerefentry><refentrytitle>sd_journal_next</refentrytitle><manvolnum>3</manvolnum></citerefentry>,
                         <citerefentry><refentrytitle>sd_journal_get_data</refentrytitle><manvolnum>3</manvolnum></citerefentry>,
-                        <citerefentry><refentrytitle>sd_id128_get_boot</refentrytitle><manvolnum>3</manvolnum></citerefentry>,
                         <citerefentry><refentrytitle>clock_gettime</refentrytitle><manvolnum>2</manvolnum></citerefentry>,
                         <citerefentry><refentrytitle>sd_journal_get_cutoff_realtime_usec</refentrytitle><manvolnum>3</manvolnum></citerefentry>
                 </para>

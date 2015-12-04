@@ -202,7 +202,7 @@ static void test_sequence_numbers(void) {
         char t[] = "/tmp/journal-seq-XXXXXX";
         JournalFile *one, *two;
         uint64_t seqnum = 0;
-        sd_id128_t seqnum_id;
+        uuid_t seqnum_id;
 
         assert_se(mkdtemp(t));
         assert_se(chdir(t) >= 0);
@@ -218,18 +218,18 @@ static void test_sequence_numbers(void) {
         assert(seqnum == 2);
 
         assert(one->header->state == STATE_ONLINE);
-        assert(!sd_id128_equal(one->header->file_id, one->header->boot_id));
-        assert(sd_id128_equal(one->header->file_id, one->header->seqnum_id));
+        assert(!uuid_equal(one->header->file_id, one->header->boot_id));
+        assert(uuid_equal(one->header->file_id, one->header->seqnum_id));
 
-        memcpy(&seqnum_id, &one->header->seqnum_id, sizeof(sd_id128_t));
+        memcpy(&seqnum_id, &one->header->seqnum_id, sizeof(uuid_t));
 
         assert_se(journal_file_open("two.journal", O_RDWR|O_CREAT, 0644,
                                     true, NULL, NULL, one, &two) == 0);
 
         assert(two->header->state == STATE_ONLINE);
-        assert(!sd_id128_equal(two->header->file_id, one->header->file_id));
-        assert(sd_id128_equal(one->header->boot_id, one->header->boot_id));
-        assert(sd_id128_equal(one->header->seqnum_id, one->header->seqnum_id));
+        assert(!uuid_equal(two->header->file_id, one->header->file_id));
+        assert(uuid_equal(one->header->boot_id, one->header->boot_id));
+        assert(uuid_equal(one->header->seqnum_id, one->header->seqnum_id));
 
         append_number(two, 3, &seqnum);
         printf("seqnum=%"PRIu64"\n", seqnum);
@@ -256,7 +256,7 @@ static void test_sequence_numbers(void) {
         assert_se(journal_file_open("two.journal", O_RDWR, 0,
                                     true, NULL, NULL, NULL, &two) == 0);
 
-        assert(sd_id128_equal(two->header->seqnum_id, seqnum_id));
+        assert(uuid_equal(two->header->seqnum_id, seqnum_id));
 
         append_number(two, 7, &seqnum);
         printf("seqnum=%"PRIu64"\n", seqnum);

@@ -69,7 +69,7 @@
                         <funcprototype>
                                 <funcdef>int <function>sd_journal_seek_monotonic_usec</function></funcdef>
                                 <paramdef>sd_journal *<parameter>j</parameter></paramdef>
-                                <paramdef>sd_id128_t <parameter>boot_id</parameter></paramdef>
+                                <paramdef>uuid_t <parameter>boot_id</parameter></paramdef>
                                 <paramdef>uint64_t <parameter>usec</parameter></paramdef>
                         </funcprototype>
 

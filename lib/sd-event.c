@@ -23,9 +23,9 @@
 #include <sys/timerfd.h>
 #include <sys/wait.h>
 #include <pthread.h>
-#include <systemd/sd-id128.h>
 #include <systemd/sd-daemon.h>
 
+#include "boot.h"
 #include "macro.h"
 #include "prioq.h"
 #include "hashmap.h"
@@ -772,7 +772,7 @@ _public_ int sd_event_add_io(
 }
 
 static void initialize_perturb(sd_event *e) {
-        sd_id128_t bootid = {};
+        uuid_t bootid = {};
 
         /* When we sleep for longer, we try to realign the wakeup to
            the same time wihtin each minute/second/250ms, so that
@@ -786,7 +786,7 @@ static void initialize_perturb(sd_event *e) {
         if (_likely_(e->perturb != (usec_t) -1))
                 return;
 
-        if (sd_id128_get_boot(&bootid) >= 0)
+        if (journal_get_bootid(&bootid) >= 0)
                 e->perturb = (bootid.qwords[0] ^ bootid.qwords[1]) % USEC_PER_MINUTE;
 }
 

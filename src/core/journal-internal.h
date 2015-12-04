@@ -25,8 +25,7 @@
 #include <inttypes.h>
 #include <stdbool.h>
 
-#include <systemd/sd-id128.h>
-
+#include "uuid.h"
 #include "journal-def.h"
 #include "list.h"
 #include "hashmap.h"
@@ -80,12 +79,12 @@ struct Location {
         bool xor_hash_set;
 
         uint64_t seqnum;
-        sd_id128_t seqnum_id;
+        uuid_t seqnum_id;
 
         uint64_t realtime;
 
         uint64_t monotonic;
-        sd_id128_t boot_id;
+        uuid_t boot_id;
 
         uint64_t xor_hash;
 };

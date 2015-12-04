@@ -29,6 +29,7 @@
 #include <linux/magic.h>
 
 #include "journal.h"
+#include "boot.h"
 #include "journal-def.h"
 #include "journal-file.h"
 #include "hashmap.h"
@@ -440,13 +441,13 @@ static int compare_entry_order(JournalFile *af, Object *_ao,
          * If contents and timestamps match, these entries are
          * identical, even if the seqnum does not match */
 
-        if (sd_id128_equal(ao->entry.boot_id, bo->entry.boot_id) &&
+        if (uuid_equal(ao->entry.boot_id, bo->entry.boot_id) &&
             ao->entry.monotonic == bo->entry.monotonic &&
             ao->entry.realtime == bo->entry.realtime &&
             ao->entry.xor_hash == bo->entry.xor_hash)
                 return 0;
 
-        if (sd_id128_equal(af->header->seqnum_id, bf->header->seqnum_id)) {
+        if (uuid_equal(af->header->seqnum_id, bf->header->seqnum_id)) {
 
                 /* If this is from the same seqnum source, compare
                  * seqnums */
@@ -463,7 +464,7 @@ static int compare_entry_order(JournalFile *af, Object *_ao,
                  * best of it and compare by time. */
         }
 
-        if (sd_id128_equal(ao->entry.boot_id, bo->entry.boot_id)) {
+        if (uuid_equal(ao->entry.boot_id, bo->entry.boot_id)) {
 
                 /* If the boot id matches, compare monotonic time */
                 a = le64toh(ao->entry.monotonic);
@@ -505,7 +506,7 @@ _pure_ static int compare_with_location(JournalFile *af, Object *ao, Location *l
         assert(l->type == LOCATION_DISCRETE || l->type == LOCATION_SEEK);
 
         if (l->monotonic_set &&
-            sd_id128_equal(ao->entry.boot_id, l->boot_id) &&
+            uuid_equal(ao->entry.boot_id, l->boot_id) &&
             l->realtime_set &&
             le64toh(ao->entry.realtime) == l->realtime &&
             l->xor_hash_set &&
@@ -513,7 +514,7 @@ _pure_ static int compare_with_location(JournalFile *af, Object *ao, Location *l
                 return 0;
 
         if (l->seqnum_set &&
-            sd_id128_equal(af->header->seqnum_id, l->seqnum_id)) {
+            uuid_equal(af->header->seqnum_id, l->seqnum_id)) {
 
                 a = le64toh(ao->entry.seqnum);
 
@@ -524,7 +525,7 @@ _pure_ static int compare_with_location(JournalFile *af, Object *ao, Location *l
         }
 
         if (l->monotonic_set &&
-            sd_id128_equal(ao->entry.boot_id, l->boot_id)) {
+            uuid_equal(ao->entry.boot_id, l->boot_id)) {
 
                 a = le64toh(ao->entry.monotonic);
 
@@ -675,7 +676,7 @@ static int find_location_for_match(
                         return journal_file_next_entry_for_data(f, NULL, 0, dp, DIRECTION_DOWN, ret, offset);
                 if (j->current_location.type == LOCATION_TAIL)
                         return journal_file_next_entry_for_data(f, NULL, 0, dp, DIRECTION_UP, ret, offset);
-                if (j->current_location.seqnum_set && sd_id128_equal(j->current_location.seqnum_id, f->header->seqnum_id))
+                if (j->current_location.seqnum_set && uuid_equal(j->current_location.seqnum_id, f->header->seqnum_id))
                         return journal_file_move_to_entry_by_seqnum_for_data(f, dp, j->current_location.seqnum, direction, ret, offset);
                 if (j->current_location.monotonic_set) {
                         r = journal_file_move_to_entry_by_monotonic_for_data(f, dp, j->current_location.boot_id, j->current_location.monotonic, direction, ret, offset);
@@ -768,7 +769,7 @@ static int find_location_with_matches(
                         return journal_file_next_entry(f, NULL, 0, DIRECTION_DOWN, ret, offset);
                 if (j->current_location.type == LOCATION_TAIL)
                         return journal_file_next_entry(f, NULL, 0, DIRECTION_UP, ret, offset);
-                if (j->current_location.seqnum_set && sd_id128_equal(j->current_location.seqnum_id, f->header->seqnum_id))
+                if (j->current_location.seqnum_set && uuid_equal(j->current_location.seqnum_id, f->header->seqnum_id))
                         return journal_file_move_to_entry_by_seqnum(f, j->current_location.seqnum, direction, ret, offset);
                 if (j->current_location.monotonic_set) {
                         r = journal_file_move_to_entry_by_monotonic(f, j->current_location.boot_id, j->current_location.monotonic, direction, ret, offset);
@@ -981,8 +982,8 @@ _public_ int sd_journal_get_cursor(sd_journal *j, char **cursor) {
         if (r < 0)
                 return r;
 
-        sd_id128_to_string(j->current_file->header->seqnum_id, sid);
-        sd_id128_to_string(o->entry.boot_id, bid);
+        uuid_to_str(j->current_file->header->seqnum_id, sid);
+        uuid_to_str(o->entry.boot_id, bid);
 
         if (asprintf(cursor,
                      "s=%s;i=%"PRIx64";b=%s;m=%"PRIx64";t=%"PRIx64";x=%"PRIx64,
@@ -1006,7 +1007,7 @@ _public_ int sd_journal_seek_cursor(sd_journal *j, const char *cursor) {
                 monotonic_set = false,
                 realtime_set = false,
                 xor_hash_set = false;
-        sd_id128_t seqnum_id, boot_id;
+        uuid_t seqnum_id, boot_id;
 
         assert_return(j, -EINVAL);
         assert_return(!journal_pid_changed(j), -ECHILD);
@@ -1027,7 +1028,8 @@ _public_ int sd_journal_seek_cursor(sd_journal *j, const char *cursor) {
 
                 case 's':
                         seqnum_id_set = true;
-                        k = sd_id128_from_string(item+2, &seqnum_id);
+                        if (uuid_parse(item+2, &seqnum_id) < 0)
+                                k = -EINVAL;
                         break;
 
                 case 'i':
@@ -1038,7 +1040,8 @@ _public_ int sd_journal_seek_cursor(sd_journal *j, const char *cursor) {
 
                 case 'b':
                         boot_id_set = true;
-                        k = sd_id128_from_string(item+2, &boot_id);
+                        if (uuid_parse(item+2, &boot_id) < 0)
+                                k = -EINVAL;
                         break;
 
                 case 'm':
@@ -1119,7 +1122,7 @@ _public_ int sd_journal_test_cursor(sd_journal *j, const char *cursor) {
 
         FOREACH_WORD_SEPARATOR(w, l, cursor, ";", state) {
                 _cleanup_free_ char *item = NULL;
-                sd_id128_t id;
+                uuid_t id;
                 unsigned long long ll;
                 int k = 0;
 
@@ -1133,10 +1136,9 @@ _public_ int sd_journal_test_cursor(sd_journal *j, const char *cursor) {
                 switch (w[0]) {
 
                 case 's':
-                        k = sd_id128_from_string(item+2, &id);
-                        if (k < 0)
-                                return k;
-                        if (!sd_id128_equal(id, j->current_file->header->seqnum_id))
+                        if (uuid_parse(item+2, &id) < 0)
+                                return -EINVAL;
+                        if (!uuid_equal(id, j->current_file->header->seqnum_id))
                                 return 0;
                         break;
 
@@ -1148,10 +1150,9 @@ _public_ int sd_journal_test_cursor(sd_journal *j, const char *cursor) {
                         break;
 
                 case 'b':
-                        k = sd_id128_from_string(item+2, &id);
-                        if (k < 0)
-                                return k;
-                        if (!sd_id128_equal(id, o->entry.boot_id))
+                        if (uuid_parse(item+2, &id) < 0)
+                                return -EINVAL;
+                        if (!uuid_equal(id, o->entry.boot_id))
                                 return 0;
                         break;
 
@@ -1182,7 +1183,7 @@ _public_ int sd_journal_test_cursor(sd_journal *j, const char *cursor) {
 }
 
 
-_public_ int sd_journal_seek_monotonic_usec(sd_journal *j, sd_id128_t boot_id, uint64_t usec) {
+_public_ int sd_journal_seek_monotonic_usec(sd_journal *j, uuid_t boot_id, uint64_t usec) {
         assert_return(j, -EINVAL);
         assert_return(!journal_pid_changed(j), -ECHILD);
 
@@ -1528,7 +1529,7 @@ static int add_root_directory(sd_journal *j, const char *p) {
 
         for (;;) {
                 struct dirent *de;
-                sd_id128_t id;
+                uuid_t id;
 
                 errno = 0;
                 de = readdir(d);
@@ -1831,11 +1832,11 @@ _public_ int sd_journal_get_realtime_usec(sd_journal *j, uint64_t *ret) {
         return 0;
 }
 
-_public_ int sd_journal_get_monotonic_usec(sd_journal *j, uint64_t *ret, sd_id128_t *ret_boot_id) {
+_public_ int sd_journal_get_monotonic_usec(sd_journal *j, uint64_t *ret, uuid_t *ret_boot_id) {
         Object *o;
         JournalFile *f;
         int r;
-        sd_id128_t id;
+        uuid_t id;
 
         assert_return(j, -EINVAL);
         assert_return(!journal_pid_changed(j), -ECHILD);
@@ -1854,11 +1855,10 @@ _public_ int sd_journal_get_monotonic_usec(sd_journal *j, uint64_t *ret, sd_id12
         if (ret_boot_id)
                 *ret_boot_id = o->entry.boot_id;
         else {
-                r = sd_id128_get_boot(&id);
-                if (r < 0)
-                        return r;
+                if (journal_get_bootid(&id) < 0)
+                        return -errno;
 
-                if (!sd_id128_equal(id, o->entry.boot_id))
+                if (!uuid_equal(id, o->entry.boot_id))
                         return -ESTALE;
         }
 
@@ -2142,7 +2142,7 @@ static void process_inotify_event(sd_journal *j, struct inotify_event *e) {
         /* Is this a subdirectory we watch? */
         d = hashmap_get(j->directories_by_wd, INT_TO_PTR(e->wd));
         if (d) {
-                sd_id128_t id;
+                uuid_t id;
 
                 if (!(e->mask & IN_ISDIR) && e->len > 0 &&
                     (endswith(e->name, ".journal") ||
@@ -2332,7 +2332,7 @@ _public_ int sd_journal_get_cutoff_realtime_usec(sd_journal *j, uint64_t *from, 
         return first ? 0 : 1;
 }
 
-_public_ int sd_journal_get_cutoff_monotonic_usec(sd_journal *j, sd_id128_t boot_id, uint64_t *from, uint64_t *to) {
+_public_ int sd_journal_get_cutoff_monotonic_usec(sd_journal *j, uuid_t boot_id, uint64_t *from, uint64_t *to) {
         Iterator i;
         JournalFile *f;
         bool first = true;

@@ -23,7 +23,7 @@
 
 #include "sparse-endian.h"
 
-#include <systemd/sd-id128.h>
+#include "uuid.h"
 
 #include "macro.h"
 
@@ -102,7 +102,7 @@ struct EntryObject {
         le64_t seqnum;
         le64_t realtime;
         le64_t monotonic;
-        sd_id128_t boot_id;
+        uuid_t boot_id;
         le64_t xor_hash;
         EntryItem items[];
 } _packed_;
@@ -161,10 +161,10 @@ struct Header {
         le32_t incompatible_flags;
         uint8_t state;
         uint8_t reserved[7];
-        sd_id128_t file_id;
-        sd_id128_t machine_id;
-        sd_id128_t boot_id;    /* last writer */
-        sd_id128_t seqnum_id;
+        uuid_t file_id;
+        uuid_t machine_id;
+        uuid_t boot_id;    /* last writer */
+        uuid_t seqnum_id;
         le64_t header_size;
         le64_t arena_size;
         le64_t data_hash_table_offset;

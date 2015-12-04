@@ -86,7 +86,7 @@ static enum {
 } arg_action = ACTION_SHOW;
 
 typedef struct boot_id_t {
-        sd_id128_t id;
+        uuid_t id;
         uint64_t first;
         uint64_t last;
         LIST_FIELDS(struct boot_id_t, boot_list);
@@ -100,16 +100,15 @@ static void pager_open_if_enabled(void) {
         pager_open(arg_pager_end);
 }
 
-static int parse_boot_descriptor(const char *x, sd_id128_t *boot_id, int *offset) {
-        sd_id128_t id = SD_ID128_NULL;
+static int parse_boot_descriptor(const char *x, uuid_t *boot_id, int *offset) {
+        uuid_t id = {};
         int off = 0, r;
 
         if (strlen(x) >= 32) {
                 char *t;
 
                 t = strndupa(x, 32);
-                r = sd_id128_from_string(t, &id);
-                if (r >= 0)
+                if (uuid_parse(t, &id) >= 0)
                         x += 32;
 
                 if (*x != '-' && *x != '+' && *x != 0)
@@ -633,7 +632,7 @@ static int discover_next_boot(sd_journal *j,
         }
 
         /* Now seek to the last occurrence of this boot ID. */
-        sd_id128_to_string(next_boot->id, match + 9);
+        uuid_to_str(next_boot->id, match + 9);
         r = sd_journal_add_match(j, match, sizeof(match) - 1);
         if (r < 0)
                 return r;
@@ -679,19 +678,19 @@ static int get_boots(sd_journal *j,
         /* Adjust for the asymmetry that offset 0 is
          * the last (and current) boot, while 1 is considered the
          * (chronological) first boot in the journal. */
-        skip_once = query_ref_boot && sd_id128_equal(query_ref_boot->id, SD_ID128_NULL) && ref_boot_offset < 0;
+        skip_once = query_ref_boot && uuid_is_null(query_ref_boot->id) && ref_boot_offset < 0;
 
         /* Advance to the earliest/latest occurrence of our reference
          * boot ID (taking our lookup direction into account), so that
          * discover_next_boot() can do its job.
          * If no reference is given, the journal head/tail will do,
          * they're "virtual" boots after all. */
-        if (query_ref_boot && !sd_id128_equal(query_ref_boot->id, SD_ID128_NULL)) {
+        if (query_ref_boot && !uuid_is_null(query_ref_boot->id)) {
                 char match[9+32+1] = "_BOOT_ID=";
 
                 sd_journal_flush_matches(j);
 
-                sd_id128_to_string(query_ref_boot->id, match + 9);
+                uuid_to_str(query_ref_boot->id, match + 9);
                 r = sd_journal_add_match(j, match, sizeof(match) - 1);
                 if (r < 0)
                         return r;
@@ -768,6 +767,7 @@ finish:
 }
 
 static int list_boots(sd_journal *j) {
+        char bid[33];
         int w, i, count;
         boot_id_t *id, *id_next, *all_ids;
 
@@ -786,9 +786,9 @@ static int list_boots(sd_journal *j) {
         LIST_FOREACH_SAFE(boot_list, id, id_next, all_ids) {
                 char a[FORMAT_TIMESTAMP_MAX], b[FORMAT_TIMESTAMP_MAX];
 
-                printf("% *i " SD_ID128_FORMAT_STR " %s—%s\n",
+                printf("% *i %s %s—%s\n",
                        w, i - count + 1,
-                       SD_ID128_FORMAT_VAL(id->id),
+                       uuid_to_str(id->id, bid),
                        format_timestamp(a, sizeof(a), id->first),
                        format_timestamp(b, sizeof(b), id->last));
                 i++;
@@ -800,7 +800,7 @@ static int list_boots(sd_journal *j) {
 
 static int add_boot(sd_journal *j) {
         int boot_offset = 0;
-        sd_id128_t bid = {};
+        uuid_t bid = {};
         char match[9+32+1] = "_BOOT_ID=";
         int r;
         boot_id_t ref_boot_id = {};
@@ -813,7 +813,7 @@ static int add_boot(sd_journal *j) {
         if (arg_boot_id)
         	parse_boot_descriptor(arg_boot_id, &bid, &boot_offset);
 
-        if (boot_offset == 0 && sd_id128_equal(bid, SD_ID128_NULL))
+        if (boot_offset == 0 && uuid_is_null(bid))
                 return add_match_this_boot(j);
 
         ref_boot_id.id = bid;
@@ -822,7 +822,7 @@ static int add_boot(sd_journal *j) {
         if (r <= 0) {
                 const char *reason = (r == 0) ? "No such boot ID in journal" : strerror(-r);
 
-                if (sd_id128_equal(bid, SD_ID128_NULL))
+                if (uuid_is_null(bid))
                         log_error("Failed to look up boot %+i: %s", boot_offset, reason);
                 else
                         log_error("Failed to look up boot ID %s: %s", arg_boot_id, reason);
@@ -830,7 +830,7 @@ static int add_boot(sd_journal *j) {
                 return r == 0 ? -ENODATA : r;
         }
 
-        sd_id128_to_string(ref_boot_id.id, match + 9);
+        uuid_to_str(ref_boot_id.id, match + 9);
 
         r = sd_journal_add_match(j, match, sizeof(match) - 1);
         if (r < 0) {
@@ -1112,7 +1112,7 @@ int main(int argc, char *argv[]) {
         int r;
         _cleanup_journal_close_ sd_journal *j = NULL;
         bool need_seek = false;
-        sd_id128_t previous_boot_id;
+        uuid_t previous_boot_id;
         bool previous_boot_id_valid = false, first_line = true;
         int n_shown = 0;
         bool ellipsized = false;
@@ -1338,7 +1338,7 @@ int main(int argc, char *argv[]) {
                 }
         }
 
-        sd_id128_t boot_id;
+        uuid_t boot_id;
 
         for (;;) {
                 while (arg_lines < 0 || n_shown < arg_lines || (arg_follow && !first_line)) {
@@ -1384,7 +1384,7 @@ int main(int argc, char *argv[]) {
                         r = sd_journal_get_monotonic_usec(j, NULL, &boot_id);
                         if (r >= 0) {
                                 if (previous_boot_id_valid &&
-                                    !sd_id128_equal(boot_id, previous_boot_id))
+                                    !uuid_equal(boot_id, previous_boot_id))
                                         printf("%s-- Reboot --%s\n",
                                                ansi_highlight(), ansi_highlight_off());
 

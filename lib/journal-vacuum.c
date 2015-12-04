@@ -25,8 +25,8 @@
 #include <sys/statvfs.h>
 #include <unistd.h>
 #include <sys/xattr.h>
-#include <systemd/sd-id128.h>
 
+#include "boot.h"
 #include "journal-def.h"
 #include "journal-file.h"
 #include "journal-vacuum.h"
@@ -37,7 +37,7 @@ struct vacuum_info {
         char *filename;
 
         uint64_t realtime;
-        sd_id128_t seqnum_id;
+        uuid_t seqnum_id;
         uint64_t seqnum;
 
         bool have_seqnum;
@@ -50,7 +50,7 @@ static int vacuum_compare(const void *_a, const void *_b) {
         b = _b;
 
         if (a->have_seqnum && b->have_seqnum &&
-            sd_id128_equal(a->seqnum_id, b->seqnum_id)) {
+            uuid_equal(a->seqnum_id, b->seqnum_id)) {
                 if (a->seqnum < b->seqnum)
                         return -1;
                 else if (a->seqnum > b->seqnum)
@@ -125,7 +125,7 @@ int journal_directory_vacuum(
                 struct stat st;
                 char *p;
                 unsigned long long seqnum = 0;
-                sd_id128_t seqnum_id;
+                uuid_t seqnum_id;
                 bool have_seqnum;
 
                 errno = 0;
