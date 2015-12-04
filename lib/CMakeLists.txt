@@ -16,6 +16,8 @@ configure_file(journal.pc.cmake journal.pc @ONLY)
 set(journal_int_src
 	uuid.c
 	uuid.h
+	boot.c
+	boot.h
 	sd-event.c
 	sd-event.h
 	sd-journal.c

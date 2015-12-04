@@ -11,6 +11,7 @@
     - remove 'deprecated' from Description filed;
  * libjournal:
     - add uuid module;
+    - add boot module;
  * don't print systemd features;
  * install journald program to sbin directory;
  * install sd-journal.h header file to include directory;
