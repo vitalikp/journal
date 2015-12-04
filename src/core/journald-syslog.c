@@ -39,14 +39,14 @@ static void forward_syslog_iovec(Server *s, const struct iovec *iovec, unsigned 
 
         union sockaddr_union sa = {
                 .un.sun_family = AF_UNIX,
-                .un.sun_path = "/run/systemd/journal/syslog",
+                .un.sun_path = "/run/journal/syslog",
         };
         struct msghdr msghdr = {
                 .msg_iov = (struct iovec *) iovec,
                 .msg_iovlen = n_iovec,
                 .msg_name = &sa,
                 .msg_namelen = offsetof(union sockaddr_union, un.sun_path)
-                               + strlen("/run/systemd/journal/syslog"),
+                               + strlen("/run/journal/syslog"),
         };
         struct cmsghdr *cmsg;
         union {
@@ -72,7 +72,7 @@ static void forward_syslog_iovec(Server *s, const struct iovec *iovec, unsigned 
         }
 
         /* Forward the syslog message we received via /dev/log to
-         * /run/systemd/syslog. Unfortunately we currently can't set
+         * /run/journal/syslog. Unfortunately we currently can't set
          * the SO_TIMESTAMP auxiliary data, and hence we don't. */
 
         if (sendmsg(s->syslog_fd, &msghdr, MSG_NOSIGNAL) >= 0)

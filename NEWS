@@ -89,6 +89,7 @@
    - add ServerState enum type;
    - add state field to Server struct;
    - add epoll_fd field to Server struct;
+   - move syslog output socket to /run/journal/syslog;
  * vacuum:
    - use time of last modification journal files in realtime field;
    - don't check corrupt journal files;
