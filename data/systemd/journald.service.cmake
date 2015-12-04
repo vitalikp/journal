@@ -9,8 +9,7 @@
 Description=Journal Service
 Documentation=man:journald.service(8) man:journald.conf(5)
 DefaultDependencies=no
-Requires=journald.socket
-After=journald.socket syslog.socket
+After=syslog.socket
 Before=sysinit.target
 
 [Service]

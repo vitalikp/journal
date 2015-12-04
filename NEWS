@@ -74,3 +74,4 @@
  * dont't notify status to systemd;
  * journald:
    - add socket module;
+   - init journal sockets without systemd daemon;

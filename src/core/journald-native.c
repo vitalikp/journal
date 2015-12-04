@@ -392,8 +392,7 @@ int server_open_native_socket(Server*s) {
                 }
 
                 chmod(sa.un.sun_path, 0666);
-        } else
-                fd_nonblock(s->native_fd, 1);
+        }
 
         one = 1;
         r = setsockopt(s->native_fd, SOL_SOCKET, SO_PASSCRED, &one, sizeof(one));

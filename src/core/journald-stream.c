@@ -460,8 +460,7 @@ int server_open_stdout_socket(Server *s) {
                         log_error("listen() failed: %m");
                         return -errno;
                 }
-        } else
-                fd_nonblock(s->stdout_fd, 1);
+        }
 
         r = sd_event_add_io(s->event, &s->stdout_event_source, s->stdout_fd, EPOLLIN, stdout_stream_new, s);
         if (r < 0) {

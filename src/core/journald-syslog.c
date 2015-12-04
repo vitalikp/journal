@@ -445,8 +445,7 @@ int server_open_syslog_socket(Server *s) {
                 }
 
                 chmod(sa.un.sun_path, 0666);
-        } else
-                fd_nonblock(s->syslog_fd, 1);
+        }
 
         one = 1;
         r = setsockopt(s->syslog_fd, SOL_SOCKET, SO_PASSCRED, &one, sizeof(one));

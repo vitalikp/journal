@@ -25,7 +25,6 @@
 #include <sys/statvfs.h>
 #include <sys/mman.h>
 #include <sys/timerfd.h>
-#include <systemd/sd-daemon.h>
 
 #include <libudev.h>
 
@@ -1227,7 +1226,7 @@ static int server_open_hostname(Server *s) {
 }
 
 int server_init(Server *s) {
-        int n, r, fd;
+        int r, fd;
 
         assert(s);
 
@@ -1273,47 +1272,6 @@ int server_init(Server *s) {
         if (r < 0) {
                 log_error("Failed to create event loop: %s", strerror(-r));
                 return r;
-        }
-
-        n = sd_listen_fds(true);
-        if (n < 0) {
-                log_error("Failed to read listening file descriptors from environment: %s", strerror(-n));
-                return n;
-        }
-
-        for (fd = SD_LISTEN_FDS_START; fd < SD_LISTEN_FDS_START + n; fd++) {
-
-                if (sd_is_socket_unix(fd, SOCK_DGRAM, -1, "/run/systemd/journal/socket", 0) > 0) {
-
-                        if (s->native_fd >= 0) {
-                                log_error("Too many native sockets passed.");
-                                return -EINVAL;
-                        }
-
-                        s->native_fd = fd;
-
-                } else if (sd_is_socket_unix(fd, SOCK_STREAM, 1, "/run/systemd/journal/stdout", 0) > 0) {
-
-                        if (s->stdout_fd >= 0) {
-                                log_error("Too many stdout sockets passed.");
-                                return -EINVAL;
-                        }
-
-                        s->stdout_fd = fd;
-
-                } else if (sd_is_socket_unix(fd, SOCK_DGRAM, -1, "/dev/log", 0) > 0) {
-
-                        if (s->syslog_fd >= 0) {
-                                log_error("Too many /dev/log sockets passed.");
-                                return -EINVAL;
-                        }
-
-                        s->syslog_fd = fd;
-
-                } else {
-                        log_error("Unknown socket passed.");
-                        return -EINVAL;
-                }
         }
 
         r = server_open_syslog_socket(s);

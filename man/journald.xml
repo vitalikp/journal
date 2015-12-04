@@ -44,14 +44,12 @@
 
         <refnamediv>
                 <refname>journald.service</refname>
-                <refname>journald.socket</refname>
                 <refname>journald</refname>
                 <refpurpose>Journal service</refpurpose>
         </refnamediv>
 
         <refsynopsisdiv>
                 <para><filename>journald.service</filename></para>
-                <para><filename>journald.socket</filename></para>
                 <para><filename>/usr/sbin/journald</filename></para>
         </refsynopsisdiv>
 
