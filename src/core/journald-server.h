@@ -35,6 +35,14 @@
 #include "journald-rate-limit.h"
 #include "list.h"
 
+
+typedef enum ServerState
+{
+	SERVER_RUNNING,
+	SERVER_EXITING,
+	SERVER_FINISHED
+} ServerState;
+
 typedef enum Storage {
         STORAGE_AUTO,
         STORAGE_VOLATILE,

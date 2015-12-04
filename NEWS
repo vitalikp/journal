@@ -86,6 +86,7 @@
    - add socket module;
    - init journal sockets without systemd daemon;
    - open journal sockets with socket module;
+   - add ServerState enum type;
  * vacuum:
    - use time of last modification journal files in realtime field;
    - don't check corrupt journal files;
