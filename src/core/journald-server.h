@@ -139,6 +139,7 @@ typedef struct Server {
         struct udev *udev;
 
         bool sync_scheduled;
+        uint64_t sync_seqnum;
         usec_t sync_time;
 
         char boot_id_field[sizeof("_BOOT_ID=") + 32];

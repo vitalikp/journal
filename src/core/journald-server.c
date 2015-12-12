@@ -271,6 +271,9 @@ void server_sync(Server *s) {
         Iterator i;
         int r;
 
+        if (s->sync_seqnum >= s->seqnum)
+                return;
+
         if (s->system_journal) {
                 r = journal_file_set_offline(s->system_journal);
                 if (r < 0)
@@ -290,6 +293,7 @@ void server_sync(Server *s) {
         }
 
         s->sync_scheduled = false;
+        s->sync_seqnum = s->seqnum;
         s->sync_time = now(CLOCK_MONOTONIC);
 }
 
