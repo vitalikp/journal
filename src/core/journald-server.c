@@ -290,6 +290,7 @@ void server_sync(Server *s) {
         }
 
         s->sync_scheduled = false;
+        s->sync_time = now(CLOCK_MONOTONIC);
 }
 
 static void do_vacuum(Server *s, JournalFile *f, const char* path,
@@ -1240,6 +1241,7 @@ int server_init(Server *s) {
 
         s->sync_interval_usec = DEFAULT_SYNC_INTERVAL_USEC;
         s->sync_scheduled = false;
+        s->sync_time = -1;
 
         s->forward_to_syslog = true;
         s->forward_to_wall = true;
