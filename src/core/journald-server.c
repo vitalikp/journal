@@ -286,12 +286,6 @@ void server_sync(Server *s) {
                         log_error("Failed to sync user journal: %s", strerror(-r));
         }
 
-        if (s->sync_event_source) {
-                r = sd_event_source_set_enabled(s->sync_event_source, SD_EVENT_OFF);
-                if (r < 0)
-                        log_error("Failed to disable sync timer source: %s", strerror(-r));
-        }
-
         s->sync_scheduled = false;
         s->sync_seqnum = s->seqnum;
         s->sync_time = now(CLOCK_MONOTONIC);
@@ -1131,15 +1125,6 @@ static int server_parse_config_file(Server *s) {
         return r;
 }
 
-static int server_dispatch_sync(sd_event_source *es, usec_t t, void *userdata) {
-        Server *s = userdata;
-
-        assert(s);
-
-        server_sync(s);
-        return 0;
-}
-
 int server_schedule_sync(Server *s, int priority) {
         int r;
 
@@ -1154,38 +1139,8 @@ int server_schedule_sync(Server *s, int priority) {
         if (s->sync_scheduled)
                 return 0;
 
-        if (s->sync_interval_usec > 0) {
-                usec_t when;
-
-                r = sd_event_now(s->event, CLOCK_MONOTONIC, &when);
-                if (r < 0)
-                        return r;
-
-                when += s->sync_interval_usec;
-
-                if (!s->sync_event_source) {
-                        r = sd_event_add_time(
-                                        s->event,
-                                        &s->sync_event_source,
-                                        CLOCK_MONOTONIC,
-                                        when, 0,
-                                        server_dispatch_sync, s);
-                        if (r < 0)
-                                return r;
-
-                        r = sd_event_source_set_priority(s->sync_event_source, SD_EVENT_PRIORITY_IMPORTANT);
-                } else {
-                        r = sd_event_source_set_time(s->sync_event_source, when);
-                        if (r < 0)
-                                return r;
-
-                        r = sd_event_source_set_enabled(s->sync_event_source, SD_EVENT_ONESHOT);
-                }
-                if (r < 0)
-                        return r;
-
+        if (s->sync_interval_usec > 0)
                 s->sync_scheduled = true;
-        }
 
         return 0;
 }
@@ -1357,7 +1312,6 @@ void server_done(Server *s) {
         sd_event_source_unref(s->native_event_source);
         sd_event_source_unref(s->stdout_event_source);
         sd_event_source_unref(s->dev_kmsg_event_source);
-        sd_event_source_unref(s->sync_event_source);
         sd_event_source_unref(s->sigusr1_event_source);
         sd_event_source_unref(s->sigusr2_event_source);
         sd_event_source_unref(s->sigterm_event_source);
