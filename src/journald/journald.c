@@ -80,6 +80,9 @@ int main(int argc, char *argv[]) {
                                 goto finish;
                         }
                 }
+
+                if (server.sync_time + server.sync_interval_usec > n)
+                        server_sync(&server);
         }
 
         log_debug("journald stopped as pid "PID_FMT, getpid());

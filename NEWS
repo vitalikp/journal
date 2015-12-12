@@ -93,6 +93,7 @@
    - not warn about forwarded missed syslog messages;
    - add sync_time to Server struct;
    - add sync_seqnum to Server struct;
+   - sync journal by sync_interval_usec;
  * vacuum:
    - use time of last modification journal files in realtime field;
    - don't check corrupt journal files;
