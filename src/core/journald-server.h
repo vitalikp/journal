@@ -137,7 +137,6 @@ typedef struct Server {
 
         struct udev *udev;
 
-        bool sync_scheduled;
         uint64_t sync_seqnum;
         usec_t sync_time;
 

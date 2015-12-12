@@ -95,6 +95,7 @@
    - add sync_seqnum to Server struct;
    - sync journal by sync_interval_usec;
    - don't sync journal by timer event;
+   - remove sync_scheduled field from Server struct;
  * vacuum:
    - use time of last modification journal files in realtime field;
    - don't check corrupt journal files;

@@ -286,7 +286,6 @@ void server_sync(Server *s) {
                         log_error("Failed to sync user journal: %s", strerror(-r));
         }
 
-        s->sync_scheduled = false;
         s->sync_seqnum = s->seqnum;
         s->sync_time = now(CLOCK_MONOTONIC);
 }
@@ -1136,12 +1135,6 @@ int server_schedule_sync(Server *s, int priority) {
                 return 0;
         }
 
-        if (s->sync_scheduled)
-                return 0;
-
-        if (s->sync_interval_usec > 0)
-                s->sync_scheduled = true;
-
         return 0;
 }
 
@@ -1199,7 +1192,6 @@ int server_init(Server *s) {
         s->compress = true;
 
         s->sync_interval_usec = DEFAULT_SYNC_INTERVAL_USEC;
-        s->sync_scheduled = false;
         s->sync_time = -1;
 
         s->forward_to_syslog = true;
