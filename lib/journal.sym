@@ -15,7 +15,6 @@ global:
         sd_journal_printv;
         sd_journal_send;
         sd_journal_sendv;
-        sd_journal_stream_fd;
         sd_journal_open;
         sd_journal_close;
         sd_journal_previous;
