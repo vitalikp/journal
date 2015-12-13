@@ -127,8 +127,6 @@ typedef struct Server {
 
         uint64_t *kernel_seqnum;
 
-        struct udev *udev;
-
         uint64_t sync_seqnum;
         usec_t sync_time;
 
