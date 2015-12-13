@@ -23,7 +23,6 @@ Journal.RateLimitBurst,     config_parse_unsigned,   0, offsetof(Server, rate_li
 Journal.MaxRetentionSec,    config_parse_sec,        0, offsetof(Server, max_retention_usec)
 Journal.MaxFileSec,         config_parse_sec,        0, offsetof(Server, max_file_usec)
 Journal.ForwardToSyslog,    config_parse_bool,       0, offsetof(Server, forward_to_syslog)
-Journal.ForwardToKMsg,      config_parse_bool,       0, offsetof(Server, forward_to_kmsg)
 Journal.ForwardToConsole,   config_parse_bool,       0, offsetof(Server, forward_to_console)
 Journal.ForwardToWall,      config_parse_bool,       0, offsetof(Server, forward_to_wall)
 Journal.TTYPath,            config_parse_path,       0, offsetof(Server, tty_path)

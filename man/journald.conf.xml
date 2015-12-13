@@ -354,7 +354,6 @@
 
                         <varlistentry>
                                 <term><varname>ForwardToSyslog=</varname></term>
-                                <term><varname>ForwardToKMsg=</varname></term>
                                 <term><varname>ForwardToConsole=</varname></term>
                                 <term><varname>ForwardToWall=</varname></term>
 
