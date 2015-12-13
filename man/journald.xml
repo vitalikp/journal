@@ -138,7 +138,6 @@
                 <variablelist class='kernel-commandline-options'>
                         <varlistentry>
                                 <term><varname>journald.forward_to_syslog=</varname></term>
-                                <term><varname>journald.forward_to_kmsg=</varname></term>
                                 <term><varname>journald.forward_to_console=</varname></term>
                                 <term><varname>journald.forward_to_wall=</varname></term>
 

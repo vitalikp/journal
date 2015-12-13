@@ -373,7 +373,6 @@
                                 overridden at boot time with the
                                 kernel command line options
                                 <literal>journald.forward_to_syslog=</literal>,
-                                <literal>journald.forward_to_kmsg=</literal>,
                                 <literal>journald.forward_to_console=</literal>
                                 and
                                 <literal>journald.forward_to_wall=</literal>.

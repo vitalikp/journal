@@ -97,7 +97,6 @@ typedef struct Server {
 
         bool compress;
 
-        bool forward_to_kmsg;
         bool forward_to_syslog;
         bool forward_to_console;
         bool forward_to_wall;
