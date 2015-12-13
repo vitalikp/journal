@@ -374,16 +374,6 @@
                                         <para>The kernel subsystem name.</para>
                                 </listitem>
                         </varlistentry>
-                        <varlistentry>
-                                <term><varname>_UDEV_DEVLINK=</varname></term>
-                                <listitem>
-                                        <para>Additional symlink names
-                                        pointing to the device node in
-                                        <filename>/dev</filename>. This
-                                        field is frequently set more
-                                        than once per entry.</para>
-                                </listitem>
-                        </varlistentry>
                 </variablelist>
         </refsect1>
 

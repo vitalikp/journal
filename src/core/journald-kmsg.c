@@ -44,7 +44,7 @@ static bool is_us(const char *pid) {
 }
 
 static void dev_kmsg_record(Server *s, char *p, size_t l) {
-        struct iovec iovec[N_IOVEC_META_FIELDS + 7 + N_IOVEC_KERNEL_FIELDS + 2 + N_IOVEC_UDEV_FIELDS];
+        struct iovec iovec[N_IOVEC_META_FIELDS + 7 + N_IOVEC_KERNEL_FIELDS];
         char *message = NULL, *syslog_priority = NULL, *syslog_pid = NULL, *syslog_facility = NULL, *syslog_identifier = NULL, *source_time = NULL;
         int priority, r;
         unsigned n = 0, z = 0, j;
@@ -52,7 +52,6 @@ static void dev_kmsg_record(Server *s, char *p, size_t l) {
         char *identifier = NULL, *pid = NULL, *e, *f, *k;
         uint64_t serial;
         size_t pl;
-        char *kernel_device = NULL;
 
         assert(s);
         assert(p);
@@ -142,46 +141,11 @@ static void dev_kmsg_record(Server *s, char *p, size_t l) {
                 if (!m)
                         break;
 
-                if (startswith(m, "_KERNEL_DEVICE="))
-                        kernel_device = m + 15;
-
                 IOVEC_SET_STRING(iovec[n++], m);
                 z++;
 
                 l -= (e - k) + 1;
                 k = e + 1;
-        }
-
-        if (kernel_device) {
-                struct udev_device *ud;
-
-                ud = udev_device_new_from_device_id(s->udev, kernel_device);
-                if (ud) {
-                        const char *g;
-                        struct udev_list_entry *ll;
-                        char *b;
-
-                        j = 0;
-                        ll = udev_device_get_devlinks_list_entry(ud);
-                        udev_list_entry_foreach(ll, ll) {
-
-                                if (j > N_IOVEC_UDEV_FIELDS)
-                                        break;
-
-                                g = udev_list_entry_get_name(ll);
-                                if (g) {
-                                        b = strappend("_UDEV_DEVLINK=", g);
-                                        if (b) {
-                                                IOVEC_SET_STRING(iovec[n++], b);
-                                                z++;
-                                        }
-                                }
-
-                                j++;
-                        }
-
-                        udev_device_unref(ud);
-                }
         }
 
         if (asprintf(&source_time, "_SOURCE_MONOTONIC_TIMESTAMP=%llu", usec) >= 0)
