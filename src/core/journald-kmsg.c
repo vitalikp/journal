@@ -161,15 +161,6 @@ static void dev_kmsg_record(Server *s, char *p, size_t l) {
                         struct udev_list_entry *ll;
                         char *b;
 
-                        g = udev_device_get_devnode(ud);
-                        if (g) {
-                                b = strappend("_UDEV_DEVNODE=", g);
-                                if (b) {
-                                        IOVEC_SET_STRING(iovec[n++], b);
-                                        z++;
-                                }
-                        }
-
                         g = udev_device_get_sysname(ud);
                         if (g) {
                                 b = strappend("_UDEV_SYSNAME=", g);

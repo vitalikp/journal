@@ -384,14 +384,6 @@
                                 </listitem>
                         </varlistentry>
                         <varlistentry>
-                                <term><varname>_UDEV_DEVNODE=</varname></term>
-                                <listitem>
-                                        <para>The device node path of
-                                        this device in
-                                        <filename>/dev</filename>.</para>
-                                </listitem>
-                        </varlistentry>
-                        <varlistentry>
                                 <term><varname>_UDEV_DEVLINK=</varname></term>
                                 <listitem>
                                         <para>Additional symlink names
