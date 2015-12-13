@@ -48,6 +48,7 @@
     - remove OBJECT_SYSTEMD_CGROUP field;
     - remove _SYSTEMD_CGROUP field;
     - remove _UDEV_DEVNODE field;
+    - remove _UDEV_SYSNAME field;
  * rate-limit:
     - add pools field to JournalRateLimit struct;
     - remove JournalRateLimitGroup struct;

@@ -375,15 +375,6 @@
                                 </listitem>
                         </varlistentry>
                         <varlistentry>
-                                <term><varname>_UDEV_SYSNAME=</varname></term>
-                                <listitem>
-                                        <para>The kernel device name
-                                        as it shows up in the device
-                                        tree below
-                                        <filename>/sys</filename>.</para>
-                                </listitem>
-                        </varlistentry>
-                        <varlistentry>
                                 <term><varname>_UDEV_DEVLINK=</varname></term>
                                 <listitem>
                                         <para>Additional symlink names
