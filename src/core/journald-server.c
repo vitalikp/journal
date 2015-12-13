@@ -43,7 +43,6 @@
 #include "journald-rate-limit.h"
 #include "journald-kmsg.h"
 #include "journald-syslog.h"
-#include "journald-stream.h"
 #include "journald-console.h"
 #include "journald-native.h"
 #include "journald-server.h"
@@ -1188,7 +1187,7 @@ int server_init(Server *s) {
         assert(s);
 
         zero(*s);
-        s->epoll_fd = s->syslog_fd = s->native_fd = s->stdout_fd = s->dev_kmsg_fd = s->hostname_fd = -1;
+        s->epoll_fd = s->syslog_fd = s->native_fd = s->dev_kmsg_fd = s->hostname_fd = -1;
         s->compress = true;
 
         s->sync_interval_usec = DEFAULT_SYNC_INTERVAL_USEC;
@@ -1244,10 +1243,6 @@ int server_init(Server *s) {
         if (r < 0)
                 return r;
 
-        r = server_open_stdout_socket(s);
-        if (r < 0)
-                return r;
-
         r = server_open_dev_kmsg(s);
         if (r < 0)
                 return r;
@@ -1286,9 +1281,6 @@ void server_done(Server *s) {
         JournalFile *f;
         assert(s);
 
-        while (s->stdout_streams)
-                stdout_stream_free(s->stdout_streams);
-
         if (s->system_journal)
                 journal_file_close(s->system_journal);
 
@@ -1302,7 +1294,6 @@ void server_done(Server *s) {
 
         sd_event_source_unref(s->syslog_event_source);
         sd_event_source_unref(s->native_event_source);
-        sd_event_source_unref(s->stdout_event_source);
         sd_event_source_unref(s->dev_kmsg_event_source);
         sd_event_source_unref(s->sigusr1_event_source);
         sd_event_source_unref(s->sigusr2_event_source);
@@ -1314,7 +1305,6 @@ void server_done(Server *s) {
         safe_close(s->epoll_fd);
         safe_close(s->syslog_fd);
         safe_close(s->native_fd);
-        safe_close(s->stdout_fd);
         safe_close(s->dev_kmsg_fd);
         safe_close(s->hostname_fd);
 

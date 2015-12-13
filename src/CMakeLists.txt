@@ -18,8 +18,6 @@ add_library(journal_core_obj STATIC
 	core/journald-kmsg.h
 	core/journald-syslog.c
 	core/journald-syslog.h
-	core/journald-stream.c
-	core/journald-stream.h
 	core/journald-server.c
 	core/journald-server.h
 	core/journald-console.c

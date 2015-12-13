@@ -59,13 +59,10 @@ typedef enum SplitMode {
         _SPLIT_INVALID = -1
 } SplitMode;
 
-typedef struct StdoutStream StdoutStream;
-
 typedef struct Server {
         int epoll_fd;
         int syslog_fd;
         int native_fd;
-        int stdout_fd;
         int dev_kmsg_fd;
         int hostname_fd;
 
@@ -74,7 +71,6 @@ typedef struct Server {
 
         sd_event_source *syslog_event_source;
         sd_event_source *native_event_source;
-        sd_event_source *stdout_event_source;
         sd_event_source *dev_kmsg_event_source;
         sd_event_source *sigusr1_event_source;
         sd_event_source *sigusr2_event_source;
@@ -114,9 +110,6 @@ typedef struct Server {
         usec_t max_retention_usec;
         usec_t max_file_usec;
         usec_t oldest_file_usec;
-
-        LIST_HEAD(StdoutStream, stdout_streams);
-        unsigned n_stdout_streams;
 
         char *tty_path;
 
