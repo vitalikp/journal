@@ -89,9 +89,6 @@ find_package(PkgConfig REQUIRED)
 # check bash-completion
 pkg_check_modules(BASH_COMPL bash-completion)
 
-# check libudev
-pkg_check_modules(LIBUDEV libudev)
-
 # check systemd library
 option(SYSTEMD_ENABLE "Disable optional systemd support" ON)
 if (${SYSTEMD_ENABLE})

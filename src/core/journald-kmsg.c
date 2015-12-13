@@ -25,8 +25,6 @@
 #include <sys/mman.h>
 #include <sys/socket.h>
 
-#include <libudev.h>
-
 #include "journald-server.h"
 #include "journald-kmsg.h"
 #include "journald-syslog.h"
