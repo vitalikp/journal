@@ -84,6 +84,7 @@
    - remove output syslog socket;
  * journald:
    - add socket module;
+   - add epollfd module;
    - init journal sockets without systemd daemon;
    - open journal sockets with socket module;
    - add ServerState enum type;
