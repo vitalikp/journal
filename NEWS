@@ -99,6 +99,7 @@
    - don't sync journal by timer event;
    - remove sync_scheduled field from Server struct;
    - remove support stream socket;
+   - don't forward log messages to /dev/kmsg socket;
  * vacuum:
    - use time of last modification journal files in realtime field;
    - don't check corrupt journal files;

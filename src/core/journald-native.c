@@ -257,9 +257,6 @@ void server_process_native_message(
                 if (s->forward_to_syslog)
                         server_forward_syslog(s, priority, identifier, message, ucred, tv);
 
-                if (s->forward_to_kmsg)
-                        server_forward_kmsg(s, priority, identifier, message, ucred);
-
                 if (s->forward_to_console)
                         server_forward_console(s, priority, identifier, message, ucred);
 

@@ -368,9 +368,6 @@ void server_process_syslog_message(
         syslog_skip_date((char**) &buf);
         syslog_parse_identifier(&buf, &identifier, &pid);
 
-        if (s->forward_to_kmsg)
-                server_forward_kmsg(s, priority, identifier, buf, ucred);
-
         if (s->forward_to_console)
                 server_forward_console(s, priority, identifier, buf, ucred);
 

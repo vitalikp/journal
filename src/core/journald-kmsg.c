@@ -31,66 +31,6 @@
 #include "journald-kmsg.h"
 #include "journald-syslog.h"
 
-void server_forward_kmsg(
-        Server *s,
-        int priority,
-        const char *identifier,
-        const char *message,
-        struct ucred *ucred) {
-
-        struct iovec iovec[5];
-        char header_priority[6], header_pid[16];
-        int n = 0;
-        char *ident_buf = NULL;
-
-        assert(s);
-        assert(priority >= 0);
-        assert(priority <= 999);
-        assert(message);
-
-        if (_unlikely_(LOG_PRI(priority) > s->max_level_kmsg))
-                return;
-
-        if (_unlikely_(s->dev_kmsg_fd < 0))
-                return;
-
-        /* Never allow messages with kernel facility to be written to
-         * kmsg, regardless where the data comes from. */
-        priority = syslog_fixup_facility(priority);
-
-        /* First: priority field */
-        snprintf(header_priority, sizeof(header_priority), "<%i>", priority);
-        char_array_0(header_priority);
-        IOVEC_SET_STRING(iovec[n++], header_priority);
-
-        /* Second: identifier and PID */
-        if (ucred) {
-                if (!identifier) {
-                        get_process_comm(ucred->pid, &ident_buf);
-                        identifier = ident_buf;
-                }
-
-                snprintf(header_pid, sizeof(header_pid), "["PID_FMT"]: ", ucred->pid);
-                char_array_0(header_pid);
-
-                if (identifier)
-                        IOVEC_SET_STRING(iovec[n++], identifier);
-
-                IOVEC_SET_STRING(iovec[n++], header_pid);
-        } else if (identifier) {
-                IOVEC_SET_STRING(iovec[n++], identifier);
-                IOVEC_SET_STRING(iovec[n++], ": ");
-        }
-
-        /* Fourth: message */
-        IOVEC_SET_STRING(iovec[n++], message);
-        IOVEC_SET_STRING(iovec[n++], "\n");
-
-        if (writev(s->dev_kmsg_fd, iovec, n) < 0)
-                log_debug("Failed to write to /dev/kmsg for logging: %m");
-
-        free(ident_buf);
-}
 
 static bool is_us(const char *pid) {
         pid_t t;
@@ -127,9 +67,6 @@ static void dev_kmsg_record(Server *s, char *p, size_t l) {
 
         r = safe_atoi(p, &priority);
         if (r < 0 || priority < 0 || priority > 999)
-                return;
-
-        if (s->forward_to_kmsg && (priority & LOG_FACMASK) != LOG_KERN)
                 return;
 
         l -= (e - p) + 1;
