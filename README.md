@@ -14,6 +14,7 @@ fork journal from [systemd 214](https://github.com/vitalikp/systemd)
 ```
 Use `cmake -D(OPTION) ..` instead of `cmake ..` for add config option.
 ##### Optional Features:
+ - Use **TESTS_ENABLE=ON** option to disable build tests(default=OFF);
  - Use **SELINUX_ENABLE=OFF** option to disable SELINUX support(default=ON);
  - Use **XZ_ENABLE=OFF** option to disable xz support(default=ON);
 
