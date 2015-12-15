@@ -106,6 +106,7 @@
    - don't forward log messages to /dev/kmsg socket;
    - remove forward_to_kmsg field from Server struct;
    - remove udev field from Server struct;
+   - don't check pid for kernel messages;
  * vacuum:
    - use time of last modification journal files in realtime field;
    - don't check corrupt journal files;

@@ -30,17 +30,6 @@
 #include "journald-syslog.h"
 
 
-static bool is_us(const char *pid) {
-        pid_t t;
-
-        assert(pid);
-
-        if (parse_pid(pid, &t) < 0)
-                return false;
-
-        return t == getpid();
-}
-
 static void dev_kmsg_record(Server *s, char *p, size_t l) {
         struct iovec iovec[N_IOVEC_META_FIELDS + 7 + N_IOVEC_KERNEL_FIELDS];
         char *message = NULL, *syslog_priority = NULL, *syslog_pid = NULL, *syslog_facility = NULL, *syslog_identifier = NULL, *source_time = NULL;
@@ -158,11 +147,6 @@ static void dev_kmsg_record(Server *s, char *p, size_t l) {
                 IOVEC_SET_STRING(iovec[n++], "SYSLOG_IDENTIFIER=kernel");
         else {
                 pl -= syslog_parse_identifier((const char**) &p, &identifier, &pid);
-
-                /* Avoid any messages we generated ourselves via
-                 * log_info() and friends. */
-                if (pid && is_us(pid))
-                        goto finish;
 
                 if (identifier) {
                         syslog_identifier = strappend("SYSLOG_IDENTIFIER=", identifier);
