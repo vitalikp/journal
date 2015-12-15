@@ -107,12 +107,14 @@ add_subdirectory(src)
 add_subdirectory(data)
 
 # tests
-enable_testing()
+if (${TESTS_ENABLE})
 add_subdirectory(test)
+endif()
 
 # show current config
 message("   ${CMAKE_PROJECT_NAME} ${VERSION}")
 message("      prefix:      ${CMAKE_INSTALL_PREFIX}")
+message("       tests:      ${TESTS_ENABLE}")
 message("     systemd:      ${SYSTEMD_ENABLE}")
 message("       AUDIT:      ${AUDIT_ENABLE}")
 message("     SELinux:      ${SELINUX_ENABLE}")
