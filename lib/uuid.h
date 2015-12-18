@@ -14,7 +14,7 @@
 #ifndef _JOURNAL_UUID_H_
 #define _JOURNAL_UUID_H_
 
-#include "types.h"
+#include <stdint.h>
 
 
 /*
