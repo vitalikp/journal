@@ -372,6 +372,30 @@ bool shall_try_append_again(JournalFile *f, int r) {
         return true;
 }
 
+static void dispatch_message(Server *s, struct iovec *iovec, unsigned n, unsigned m, struct timeval *tv) {
+        assert(s);
+        assert(iovec);
+        assert(n > 0);
+
+        char source_time[sizeof("_SOURCE_REALTIME_TIMESTAMP=") + DECIMAL_STR_MAX(usec_t)];
+
+        if (tv) {
+                sprintf(source_time, "_SOURCE_REALTIME_TIMESTAMP=%llu", (unsigned long long) timeval_load(tv));
+                IOVEC_SET_STRING(iovec[n++], source_time);
+        }
+
+        /* Note that strictly speaking storing the boot id here is
+         * redundant since the entry includes this in-line
+         * anyway. However, we need this indexed, too. */
+        if (!isempty(s->boot_id_field))
+                IOVEC_SET_STRING(iovec[n++], s->boot_id_field);
+
+        if (!isempty(s->hostname_field))
+                IOVEC_SET_STRING(iovec[n++], s->hostname_field);
+
+        assert(n <= m);
+}
+
 static void write_to_journal(Server *s, uid_t realuid, struct iovec *iovec, unsigned n, int priority) {
         JournalFile *f;
         bool vacuumed = false;
@@ -444,7 +468,6 @@ static void dispatch_message_real(
                 Server *s,
                 struct iovec *iovec, unsigned n, unsigned m,
                 struct ucred *ucred,
-                struct timeval *tv,
                 const char *label, size_t label_len,
                 const char *unit_id,
                 pid_t object_pid) {
@@ -452,7 +475,6 @@ static void dispatch_message_real(
         char    pid[sizeof("_PID=") + DECIMAL_STR_MAX(pid_t)],
                 uid[sizeof("_UID=") + DECIMAL_STR_MAX(uid_t)],
                 gid[sizeof("_GID=") + DECIMAL_STR_MAX(gid_t)],
-                source_time[sizeof("_SOURCE_REALTIME_TIMESTAMP=") + DECIMAL_STR_MAX(usec_t)],
                 o_uid[sizeof("OBJECT_UID=") + DECIMAL_STR_MAX(uid_t)],
                 o_gid[sizeof("OBJECT_GID=") + DECIMAL_STR_MAX(gid_t)];
         uid_t object_uid;
@@ -604,22 +626,6 @@ static void dispatch_message_real(
 #endif
         }
         assert(n <= m);
-
-        if (tv) {
-                sprintf(source_time, "_SOURCE_REALTIME_TIMESTAMP=%llu", (unsigned long long) timeval_load(tv));
-                IOVEC_SET_STRING(iovec[n++], source_time);
-        }
-
-        /* Note that strictly speaking storing the boot id here is
-         * redundant since the entry includes this in-line
-         * anyway. However, we need this indexed, too. */
-        if (!isempty(s->boot_id_field))
-                IOVEC_SET_STRING(iovec[n++], s->boot_id_field);
-
-        if (!isempty(s->hostname_field))
-                IOVEC_SET_STRING(iovec[n++], s->hostname_field);
-
-        assert(n <= m);
 }
 
 void server_driver_message(Server *s, const char *format, ...) {
@@ -646,7 +652,8 @@ void server_driver_message(Server *s, const char *format, ...) {
         ucred.uid = getuid();
         ucred.gid = getgid();
 
-        dispatch_message_real(s, iovec, n, ELEMENTSOF(iovec), &ucred, NULL, NULL, 0, NULL, 0);
+        dispatch_message_real(s, iovec, n, ELEMENTSOF(iovec), &ucred, NULL, 0, NULL, 0);
+        dispatch_message(s, iovec, n, ELEMENTSOF(iovec), NULL);
         write_to_journal(s, ucred.uid, iovec, n, LOG_INFO);
 }
 
@@ -695,7 +702,8 @@ void server_dispatch_message(
                 server_driver_message(s, "Suppressed %u messages from uid %u", rl - 1, realuid);
 
 finish:
-        dispatch_message_real(s, iovec, n, m, ucred, tv, label, label_len, unit_id, object_pid);
+        dispatch_message_real(s, iovec, n, m, ucred, label, label_len, unit_id, object_pid);
+        dispatch_message(s, iovec, n, m, tv);
         write_to_journal(s, realuid, iovec, n, priority);
 }
 
