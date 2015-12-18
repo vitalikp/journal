@@ -109,6 +109,7 @@
    - remove udev field from Server struct;
    - don't check pid for kernel messages;
    - add dispatch_message function;
+   - add dispatch_message_object function;
  * vacuum:
    - use time of last modification journal files in realtime field;
    - don't check corrupt journal files;

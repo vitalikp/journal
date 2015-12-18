@@ -396,6 +396,81 @@ static void dispatch_message(Server *s, struct iovec *iovec, unsigned n, unsigne
         assert(n <= m);
 }
 
+static void dispatch_message_object(Server *s, struct iovec *iovec, unsigned n, unsigned m, pid_t object_pid) {
+        assert(s);
+        assert(iovec);
+        assert(n > 0);
+        assert(n + (object_pid ? N_IOVEC_OBJECT_FIELDS : 0) <= m);
+
+        if (!object_pid)
+                return;
+
+        char o_uid[sizeof("OBJECT_UID=") + DECIMAL_STR_MAX(uid_t)],
+             o_gid[sizeof("OBJECT_GID=") + DECIMAL_STR_MAX(gid_t)];
+
+        uid_t object_uid;
+        gid_t object_gid;
+
+        char *x;
+        int r;
+        char *t;
+#ifdef HAVE_AUDIT
+        char o_audit_session[sizeof("OBJECT_AUDIT_SESSION=") + DECIMAL_STR_MAX(uint32_t)],
+             o_audit_loginuid[sizeof("OBJECT_AUDIT_LOGINUID=") + DECIMAL_STR_MAX(uid_t)];
+
+        uint32_t audit;
+        uid_t loginuid;
+#endif
+
+        r = get_process_uid(object_pid, &object_uid);
+        if (r >= 0) {
+                sprintf(o_uid, "OBJECT_UID="UID_FMT, object_uid);
+                IOVEC_SET_STRING(iovec[n++], o_uid);
+        }
+
+        r = get_process_gid(object_pid, &object_gid);
+        if (r >= 0) {
+                sprintf(o_gid, "OBJECT_GID="GID_FMT, object_gid);
+                IOVEC_SET_STRING(iovec[n++], o_gid);
+        }
+
+        r = get_process_comm(object_pid, &t);
+        if (r >= 0) {
+                x = strappenda("OBJECT_COMM=", t);
+                free(t);
+                IOVEC_SET_STRING(iovec[n++], x);
+        }
+
+        r = get_process_exe(object_pid, &t);
+        if (r >= 0) {
+                x = strappenda("OBJECT_EXE=", t);
+                free(t);
+                IOVEC_SET_STRING(iovec[n++], x);
+        }
+
+        r = get_process_cmdline(object_pid, 0, false, &t);
+        if (r >= 0) {
+                x = strappenda("OBJECT_CMDLINE=", t);
+                free(t);
+                IOVEC_SET_STRING(iovec[n++], x);
+        }
+
+#ifdef HAVE_AUDIT
+        r = audit_session_from_pid(object_pid, &audit);
+        if (r >= 0) {
+                sprintf(o_audit_session, "OBJECT_AUDIT_SESSION=%"PRIu32, audit);
+                IOVEC_SET_STRING(iovec[n++], o_audit_session);
+        }
+
+        r = audit_loginuid_from_pid(object_pid, &loginuid);
+        if (r >= 0) {
+                sprintf(o_audit_loginuid, "OBJECT_AUDIT_LOGINUID="UID_FMT, loginuid);
+                IOVEC_SET_STRING(iovec[n++], o_audit_loginuid);
+        }
+#endif
+        assert(n <= m);
+}
+
 static void write_to_journal(Server *s, uid_t realuid, struct iovec *iovec, unsigned n, int priority) {
         JournalFile *f;
         bool vacuumed = false;
@@ -469,25 +544,18 @@ static void dispatch_message_real(
                 struct iovec *iovec, unsigned n, unsigned m,
                 struct ucred *ucred,
                 const char *label, size_t label_len,
-                const char *unit_id,
-                pid_t object_pid) {
+                const char *unit_id) {
 
         char    pid[sizeof("_PID=") + DECIMAL_STR_MAX(pid_t)],
                 uid[sizeof("_UID=") + DECIMAL_STR_MAX(uid_t)],
-                gid[sizeof("_GID=") + DECIMAL_STR_MAX(gid_t)],
-                o_uid[sizeof("OBJECT_UID=") + DECIMAL_STR_MAX(uid_t)],
-                o_gid[sizeof("OBJECT_GID=") + DECIMAL_STR_MAX(gid_t)];
-        uid_t object_uid;
-        gid_t object_gid;
+                gid[sizeof("_GID=") + DECIMAL_STR_MAX(gid_t)];
         char *x;
         int r;
         char *t;
         bool owner_valid = false;
 #ifdef HAVE_AUDIT
         char    audit_session[sizeof("_AUDIT_SESSION=") + DECIMAL_STR_MAX(uint32_t)],
-                audit_loginuid[sizeof("_AUDIT_LOGINUID=") + DECIMAL_STR_MAX(uid_t)],
-                o_audit_session[sizeof("OBJECT_AUDIT_SESSION=") + DECIMAL_STR_MAX(uint32_t)],
-                o_audit_loginuid[sizeof("OBJECT_AUDIT_LOGINUID=") + DECIMAL_STR_MAX(uid_t)];
+                audit_loginuid[sizeof("_AUDIT_LOGINUID=") + DECIMAL_STR_MAX(uid_t)];
 
         uint32_t audit;
         uid_t loginuid;
@@ -496,7 +564,7 @@ static void dispatch_message_real(
         assert(s);
         assert(iovec);
         assert(n > 0);
-        assert(n + N_IOVEC_META_FIELDS + (object_pid ? N_IOVEC_OBJECT_FIELDS : 0) <= m);
+        assert(n + N_IOVEC_META_FIELDS <= m);
 
         if (ucred) {
                 sprintf(pid, "_PID="PID_FMT, ucred->pid);
@@ -576,56 +644,6 @@ static void dispatch_message_real(
 #endif
         }
         assert(n <= m);
-
-        if (object_pid) {
-                r = get_process_uid(object_pid, &object_uid);
-                if (r >= 0) {
-                        sprintf(o_uid, "OBJECT_UID="UID_FMT, object_uid);
-                        IOVEC_SET_STRING(iovec[n++], o_uid);
-                }
-
-                r = get_process_gid(object_pid, &object_gid);
-                if (r >= 0) {
-                        sprintf(o_gid, "OBJECT_GID="GID_FMT, object_gid);
-                        IOVEC_SET_STRING(iovec[n++], o_gid);
-                }
-
-                r = get_process_comm(object_pid, &t);
-                if (r >= 0) {
-                        x = strappenda("OBJECT_COMM=", t);
-                        free(t);
-                        IOVEC_SET_STRING(iovec[n++], x);
-                }
-
-                r = get_process_exe(object_pid, &t);
-                if (r >= 0) {
-                        x = strappenda("OBJECT_EXE=", t);
-                        free(t);
-                        IOVEC_SET_STRING(iovec[n++], x);
-                }
-
-                r = get_process_cmdline(object_pid, 0, false, &t);
-                if (r >= 0) {
-                        x = strappenda("OBJECT_CMDLINE=", t);
-                        free(t);
-                        IOVEC_SET_STRING(iovec[n++], x);
-                }
-
-#ifdef HAVE_AUDIT
-                r = audit_session_from_pid(object_pid, &audit);
-                if (r >= 0) {
-                        sprintf(o_audit_session, "OBJECT_AUDIT_SESSION=%"PRIu32, audit);
-                        IOVEC_SET_STRING(iovec[n++], o_audit_session);
-                }
-
-                r = audit_loginuid_from_pid(object_pid, &loginuid);
-                if (r >= 0) {
-                        sprintf(o_audit_loginuid, "OBJECT_AUDIT_LOGINUID="UID_FMT, loginuid);
-                        IOVEC_SET_STRING(iovec[n++], o_audit_loginuid);
-                }
-#endif
-        }
-        assert(n <= m);
 }
 
 void server_driver_message(Server *s, const char *format, ...) {
@@ -652,7 +670,7 @@ void server_driver_message(Server *s, const char *format, ...) {
         ucred.uid = getuid();
         ucred.gid = getgid();
 
-        dispatch_message_real(s, iovec, n, ELEMENTSOF(iovec), &ucred, NULL, 0, NULL, 0);
+        dispatch_message_real(s, iovec, n, ELEMENTSOF(iovec), &ucred, NULL, 0, NULL);
         dispatch_message(s, iovec, n, ELEMENTSOF(iovec), NULL);
         write_to_journal(s, ucred.uid, iovec, n, LOG_INFO);
 }
@@ -702,7 +720,8 @@ void server_dispatch_message(
                 server_driver_message(s, "Suppressed %u messages from uid %u", rl - 1, realuid);
 
 finish:
-        dispatch_message_real(s, iovec, n, m, ucred, label, label_len, unit_id, object_pid);
+        dispatch_message_real(s, iovec, n, m, ucred, label, label_len, unit_id);
+        dispatch_message_object(s, iovec, n, m, object_pid);
         dispatch_message(s, iovec, n, m, tv);
         write_to_journal(s, realuid, iovec, n, priority);
 }
