@@ -79,6 +79,7 @@
     - remove fstab_node_to_udev_node function;
     - remove device nodes from shared library;
     - remove id128_is_valid function;
+    - remove unused functions from util module;
  * remove prefix field from sd_journal struct;
  * don't add machine_id to root log path directory;
  * remove SD_JOURNAL_LOCAL_ONLY journal open flag;

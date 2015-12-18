@@ -434,8 +434,6 @@ int rm_rf_dangerous(const char *path, bool only_dirs, bool delete_root, bool hon
 
 int pipe_eof(int fd);
 
-cpu_set_t* cpu_set_malloc(unsigned *ncpus);
-
 int status_vprintf(const char *status, bool ellipse, bool ephemeral, const char *format, va_list ap) _printf_(4,0);
 int status_printf(const char *status, bool ellipse, bool ephemeral, const char *format, ...) _printf_(4,5);
 
@@ -487,8 +485,6 @@ char *normalize_env_assignment(const char *s);
 
 int wait_for_terminate(pid_t pid, siginfo_t *status);
 int wait_for_terminate_and_warn(const char *name, pid_t pid);
-
-noreturn void freeze(void);
 
 bool null_or_empty(struct stat *st) _pure_;
 int null_or_empty_path(const char *fn);
@@ -619,8 +615,6 @@ int getenv_for_pid(pid_t pid, const char *field, char **_value);
 bool is_valid_documentation_url(const char *url) _pure_;
 
 bool in_initrd(void);
-
-void warn_melody(void);
 
 int get_home_dir(char **ret);
 int get_shell(char **_ret);
@@ -893,10 +887,6 @@ static inline void _reset_locale_(struct _locale_struct_ *s) {
                      !_saved_locale_.quit; }) ;                         \
              _saved_locale_.quit = true)
 
-int split_pair(const char *s, const char *sep, char **l, char **r);
-
-int shall_restore_state(void);
-
 /**
  * Normal qsort requires base to be nonnull. Here were require
  * that only if nmemb > 0.
@@ -912,38 +902,7 @@ static inline void qsort_safe(void *base, size_t nmemb, size_t size,
 int proc_cmdline(char **ret);
 int parse_proc_cmdline(int (*parse_word)(const char *key, const char *value));
 
-int namespace_open(pid_t pid, int *pidns_fd, int *mntns_fd, int *netns_fd, int *root_fd);
-int namespace_enter(int pidns_fd, int mntns_fd, int netns_fd, int root_fd);
-
-bool pid_is_alive(pid_t pid);
-bool pid_is_unwaited(pid_t pid);
-
-int getpeercred(int fd, struct ucred *ucred);
-int getpeersec(int fd, char **ret);
-
-int writev_safe(int fd, const struct iovec *w, int j);
-
 int mkostemp_safe(char *pattern, int flags);
 int open_tmpfile(const char *path, int flags);
 
 int fd_warn_permissions(const char *path, int fd);
-
-unsigned long personality_from_string(const char *p);
-const char *personality_to_string(unsigned long);
-
-uint64_t physical_memory(void);
-
-char* mount_test_option(const char *haystack, const char *needle);
-
-void hexdump(FILE *f, const void *p, size_t s);
-
-union file_handle_union {
-        struct file_handle handle;
-        char padding[sizeof(struct file_handle) + MAX_HANDLE_SZ];
-};
-
-int update_reboot_param_file(const char *param);
-
-int umount_recursive(const char *target, int flags);
-
-int bind_remount_recursive(const char *prefix, bool ro);
