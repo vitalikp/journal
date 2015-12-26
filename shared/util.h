@@ -496,15 +496,8 @@ bool tty_is_vc(const char *tty);
 bool tty_is_vc_resolve(const char *tty);
 bool tty_is_console(const char *tty) _pure_;
 int vtnr_from_tty(const char *tty);
-const char *default_term_for_tty(const char *tty);
-
-void execute_directory(const char *directory, DIR *_d, usec_t timeout, char *argv[]);
-
-int kill_and_sigcont(pid_t pid, int sig);
 
 bool nulstr_contains(const char*nulstr, const char *needle);
-
-bool plymouth_running(void);
 
 bool hostname_is_valid(const char *s) _pure_;
 char* hostname_cleanup(char *s, bool lowercase);
