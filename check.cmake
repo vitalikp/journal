@@ -80,7 +80,7 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(BASH_COMPL bash-completion)
 
 # check tests option
-option(TESTS_ENABLE "Disable build tests" OFF)
+option(TESTS_ENABLE "Enable build tests" OFF)
 if (${TESTS_ENABLE})
 	enable_testing()
 endif()
