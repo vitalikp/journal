@@ -74,10 +74,6 @@ set(CMAKE_EXTRA_INCLUDE_FILES sched.h)
 check_function_exists(setns HAVE_DECL_SETNS)
 
 # cap
-check_include_file(sys/capability.h HAVE_SYS_CAPABILITY_H)
-if (NOT ${HAVE_SYS_CAPABILITY_H})
-	message(FATAL_ERROR "*** POSIX caps headers not found ***")
-endif()
 CHECK_LIBRARY_EXISTS(cap cap_init "" HAVE_CAP)
 if (${HAVE_CAP})
 	set(CAP_LIBS cap)

@@ -34,9 +34,6 @@
 /* Define if SMACK is available */
 #cmakedefine HAVE_SMACK @HAVE_SMACK@
 
-/* Define to 1 if you have the <sys/capability.h> header file. */
-#cmakedefine HAVE_SYS_CAPABILITY_H @HAVE_SYS_CAPABILITY_H@
-
 /* Define if XZ is available */
 #cmakedefine HAVE_XZ @HAVE_XZ@
 
