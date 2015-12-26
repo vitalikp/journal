@@ -73,12 +73,6 @@ CHECK_FUNCTION_EXISTS(name_to_handle_at HAVE_DECL_NAME_TO_HANDLE_AT)
 set(CMAKE_EXTRA_INCLUDE_FILES sched.h)
 check_function_exists(setns HAVE_DECL_SETNS)
 
-# cap
-CHECK_LIBRARY_EXISTS(cap cap_init "" HAVE_CAP)
-if (${HAVE_CAP})
-	set(CAP_LIBS cap)
-endif()
-
 # dependencies
 find_package(PkgConfig REQUIRED)
 
