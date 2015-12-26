@@ -4,9 +4,6 @@
 #cmakedefine _GNU_SOURCE @_GNU_SOURCE@ 
 #endif
 
-/* Define if systemd is available */
-#cmakedefine HAVE_SYSTEMD @HAVE_SYSTEMD@
-
 /* AUDIT available */
 #cmakedefine HAVE_AUDIT @HAVE_AUDIT@
 

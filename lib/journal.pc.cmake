@@ -13,6 +13,5 @@ includedir=@includedir@
 Name: journal
 Description: Journal Utility Library
 Version: @VERSION@
-Requires: libsystemd = @SYSTEMD_VERSION@
 Libs: -L${libdir} -lsystemd
 Cflags: -I${includedir}

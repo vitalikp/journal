@@ -85,13 +85,6 @@ if (${TESTS_ENABLE})
 	enable_testing()
 endif()
 
-# check systemd library
-option(SYSTEMD_ENABLE "Disable optional systemd support" ON)
-if (${SYSTEMD_ENABLE})
-	pkg_check_modules(SYSTEMD REQUIRED libsystemd>=214)
-	set(HAVE_SYSTEMD 1)
-endif()
-
 # check AUDIT option
 option(AUDIT_ENABLE "Disable optional AUDIT support" ON)
 if (${AUDIT_ENABLE})

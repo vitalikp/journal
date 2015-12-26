@@ -120,3 +120,4 @@
    - use seqnum_id and seqnum data from header journal files;
  * remove using libudev library;
  * remove using cap library;
+ * remove using systemd library;
