@@ -50,8 +50,6 @@ add_library(journal_shared_obj STATIC
 	smack-util.h
 	audit.c
 	audit.h
-	bus-label.c
-	bus-label.h
 )
 
 add_library(journal_logs_obj STATIC
