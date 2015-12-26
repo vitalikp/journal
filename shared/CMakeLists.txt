@@ -67,9 +67,3 @@ add_library(journal_label_obj STATIC
 #	dev-setup.h
 )
 target_link_libraries(journal_label_obj ${SELINUX_LIBRARIES} ${SMACK_LIBRARIES})
-
-add_library(journal_capability_obj STATIC
-	capability.c
-	capability.h
-)
-target_link_libraries(journal_capability_obj ${CAP_LIBRARIES})
