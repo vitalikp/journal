@@ -6,7 +6,7 @@ _list_fields() {
                     ERRNO SYSLOG_{FACILITY,IDENTIFIER,PID}
                     _{P,U,G}ID _COMM _EXE _CMDLINE
                     _AUDIT_{SESSION,LOGINUID}
-                    _SYSTEMD_{SESSION,UNIT,OWNER_UID}
+                    _SYSTEMD_{UNIT,OWNER_UID}
                     USER_UNIT
                     _SELINUX_CONTEXT _SOURCE_REALTIME_TIMESTAMP
                     _{BOOT,MACHINE}_ID _HOSTNAME _TRANSPORT
