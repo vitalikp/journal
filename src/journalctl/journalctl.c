@@ -48,7 +48,6 @@
 #include "journal-internal.h"
 #include "journal-def.h"
 #include "journal-verify.h"
-#include "unit-name.h"
 
 #define DEFAULT_FSS_INTERVAL_USEC (15*USEC_PER_MINUTE)
 
@@ -936,12 +935,9 @@ static int add_units(sd_journal *j) {
 
         assert(j);
 
+        char* u = NULL;
         STRV_FOREACH(i, arg_system_units) {
-                _cleanup_free_ char *u = NULL;
-
-                u = unit_name_mangle(*i, MANGLE_GLOB);
-                if (!u)
-                        return log_oom();
+                u = *i;
 
                 if (string_is_glob(u)) {
                         r = strv_push(&patterns, u);
