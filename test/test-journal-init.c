@@ -48,10 +48,8 @@ int main(int argc, char *argv[]) {
 
                 sd_journal_close(j);
 
-                j = NULL;
-                r = sd_journal_open_directory(&j, t, 0);
+                r = sd_journal_open_directory(NULL, t, 0);
                 assert_se(r == -EINVAL);
-                assert_se(j == NULL);
         }
 
         assert_se(rm_rf_dangerous(t, false, true, false) >= 0);
