@@ -118,6 +118,8 @@
    - use time of last modification journal files in realtime field;
    - don't check corrupt journal files;
    - use seqnum_id and seqnum data from header journal files;
+ * tests:
+   - don't check existence of machine-id file;
  * remove using libudev library;
  * remove using cap library;
  * remove using systemd library;

@@ -36,10 +36,6 @@ int main(int argc, char *argv[]) {
         unsigned n;
         JournalFile *f;
 
-        /* journal_file_open requires a valid machine id */
-        if (access("/etc/machine-id", F_OK) != 0)
-                return EXIT_TEST_SKIP;
-
         log_set_max_level(LOG_DEBUG);
 
         assert_se(mkdtemp(t));
