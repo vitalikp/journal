@@ -121,6 +121,7 @@
  * tests:
    - don't check existence of machine-id file;
    - fix run test-journal-init test;
+   - use test-journal-send as manual test;
  * remove using libudev library;
  * remove using cap library;
  * remove using systemd library;
