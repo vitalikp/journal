@@ -123,7 +123,6 @@ int journal_directory_vacuum(
                 struct dirent *de;
                 size_t q;
                 struct stat st;
-                char *p;
                 unsigned long long seqnum = 0;
                 uuid_t seqnum_id;
                 bool have_seqnum;
@@ -166,37 +165,29 @@ int journal_directory_vacuum(
 
                         /* Vacuum corrupted files */
 
-                        p = strdup(de->d_name);
-                        if (!p) {
-                                r = -ENOMEM;
-                                goto finish;
-                        }
-
                         have_seqnum = false;
                 } else
                         /* We do not vacuum active files or unknown files! */
                         continue;
 
-                if (journal_file_empty(dirfd(d), p)) {
+                if (journal_file_empty(dirfd(d), de->d_name)) {
                         /* Always vacuum empty non-online files. */
 
                         uint64_t size = 512UL * (uint64_t) st.st_blocks;
 
-                        if (unlinkat(dirfd(d), p, 0) >= 0) {
+                        if (unlinkat(dirfd(d), de->d_name, 0) >= 0) {
                                 log_info("Deleted empty journal %s/%s (%"PRIu64" bytes).",
-                                         directory, p, size);
+                                         directory, de->d_name, size);
                                 freed += size;
                         } else if (errno != ENOENT)
-                                log_warning("Failed to delete %s/%s: %m", directory, p);
-
-                        free(p);
+                                log_warning("Failed to delete %s/%s: %m", directory, de->d_name);
 
                         continue;
                 }
 
                 GREEDY_REALLOC(list, n_allocated, n_list + 1);
 
-                list[n_list].filename = p;
+                list[n_list].filename = de->d_name;
                 list[n_list].usage = 512UL * (uint64_t) st.st_blocks;
                 list[n_list].seqnum = seqnum;
                 list[n_list].realtime = timespec_load(&st.st_mtim);
@@ -240,8 +231,6 @@ int journal_directory_vacuum(
                 *oldest_usec = list[i].realtime;
 
 finish:
-        for (i = 0; i < n_list; i++)
-                free(list[i].filename);
         free(list);
 
         log_debug("Vacuuming done, freed %"PRIu64" bytes", freed);
