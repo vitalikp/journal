@@ -152,7 +152,7 @@ int journal_directory_vacuum(
 
                         JournalFile *f = NULL;
 
-                        if (journal_file_open(f->path, O_RDONLY, 0, false, NULL, NULL, NULL, &f) < 0)
+                        if (journal_file_open(de->d_name, O_RDONLY, 0, false, NULL, NULL, NULL, &f) < 0)
                                 continue;
 
                         seqnum_id = f->header->seqnum_id;
