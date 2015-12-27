@@ -7,7 +7,7 @@
 
 [Unit]
 Description=Trigger Flushing of Journal to Persistent Storage
-Documentation=man:journald.service(8) man:journald.conf(5)
+Documentation=man:journald(8) man:journald.conf(5)
 DefaultDependencies=no
 Requires=journald.service
 After=journald.service local-fs.target remote-fs.target

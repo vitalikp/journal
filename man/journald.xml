@@ -21,10 +21,10 @@
   along with systemd; If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<refentry id="journald.service">
+<refentry id="journald">
 
         <refentryinfo>
-                <title>journald.service</title>
+                <title>journald</title>
                 <productname>systemd</productname>
 
                 <authorgroup>
@@ -38,18 +38,17 @@
         </refentryinfo>
 
         <refmeta>
-                <refentrytitle>journald.service</refentrytitle>
+                <refentrytitle>journald</refentrytitle>
                 <manvolnum>8</manvolnum>
         </refmeta>
 
         <refnamediv>
-                <refname>journald.service</refname>
                 <refname>journald</refname>
-                <refpurpose>Journal service</refpurpose>
+                <refpurpose>Journal daemon</refpurpose>
         </refnamediv>
 
         <refsynopsisdiv>
-                <para><filename>journald.service</filename></para>
+                <para><filename>journald</filename></para>
                 <para><filename>/usr/sbin/journald</filename></para>
         </refsynopsisdiv>
 

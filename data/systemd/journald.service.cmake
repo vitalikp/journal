@@ -7,7 +7,7 @@
 
 [Unit]
 Description=Journal Service
-Documentation=man:journald.service(8) man:journald.conf(5)
+Documentation=man:journald(8) man:journald.conf(5)
 DefaultDependencies=no
 Before=sysinit.target
 

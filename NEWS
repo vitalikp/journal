@@ -118,6 +118,8 @@
    - use time of last modification journal files in realtime field;
    - don't check corrupt journal files;
    - use seqnum_id and seqnum data from header journal files;
+ * man:
+   - use journald name instead of journald.service;
  * tests:
    - don't check existence of machine-id file;
    - fix run test-journal-init test;
