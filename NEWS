@@ -120,6 +120,7 @@
    - use seqnum_id and seqnum data from header journal files;
  * man:
    - use journald name instead of journald.service;
+   - remove unused aliases;
  * tests:
    - don't check existence of machine-id file;
    - fix run test-journal-init test;

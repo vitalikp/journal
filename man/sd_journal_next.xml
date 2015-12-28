@@ -47,8 +47,6 @@
                 <refname>sd_journal_previous</refname>
                 <refname>sd_journal_next_skip</refname>
                 <refname>sd_journal_previous_skip</refname>
-                <refname>SD_JOURNAL_FOREACH</refname>
-                <refname>SD_JOURNAL_FOREACH_BACKWARDS</refname>
                 <refpurpose>Advance or set back the read pointer in the journal</refpurpose>
         </refnamediv>
 

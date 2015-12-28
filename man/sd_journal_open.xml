@@ -48,9 +48,6 @@
                 <refname>sd_journal_open_files</refname>
                 <refname>sd_journal_close</refname>
                 <refname>sd_journal</refname>
-                <refname>SD_JOURNAL_RUNTIME_ONLY</refname>
-                <refname>SD_JOURNAL_SYSTEM</refname>
-                <refname>SD_JOURNAL_CURRENT_USER</refname>
                 <refpurpose>Open the system journal for reading</refpurpose>
         </refnamediv>
 

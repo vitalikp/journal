@@ -46,7 +46,6 @@
                 <refname>sd_journal_get_data</refname>
                 <refname>sd_journal_enumerate_data</refname>
                 <refname>sd_journal_restart_data</refname>
-                <refname>SD_JOURNAL_FOREACH_DATA</refname>
                 <refname>sd_journal_set_data_threshold</refname>
                 <refname>sd_journal_get_data_threshold</refname>
                 <refpurpose>Read data fields from the current journal entry</refpurpose>
