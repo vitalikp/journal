@@ -25,7 +25,7 @@
 
         <refentryinfo>
                 <title>sd_journal_get_realtime_usec</title>
-                <productname>systemd</productname>
+                <productname>journal</productname>
 
                 <authorgroup>
                         <author>
@@ -122,7 +122,7 @@
                 <function>sd_journal_get_monotonic_usec()</function>
                 interfaces are available as a shared library, which can
                 be compiled and linked to with the
-                <constant>libsystemd</constant> <citerefentry><refentrytitle>pkg-config</refentrytitle><manvolnum>1</manvolnum></citerefentry>
+                <constant>journal</constant> <citerefentry><refentrytitle>pkg-config</refentrytitle><manvolnum>1</manvolnum></citerefentry>
                 file.</para>
         </refsect1>
 
@@ -130,7 +130,6 @@
                 <title>See Also</title>
 
                 <para>
-                        <citerefentry><refentrytitle>systemd</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
                         <citerefentry><refentrytitle>sd-journal</refentrytitle><manvolnum>3</manvolnum></citerefentry>,
                         <citerefentry><refentrytitle>sd_journal_open</refentrytitle><manvolnum>3</manvolnum></citerefentry>,
                         <citerefentry><refentrytitle>sd_journal_next</refentrytitle><manvolnum>3</manvolnum></citerefentry>,

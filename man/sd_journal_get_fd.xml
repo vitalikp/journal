@@ -25,7 +25,7 @@
 
         <refentryinfo>
                 <title>sd_journal_get_fd</title>
-                <productname>systemd</productname>
+                <productname>journal</productname>
 
                 <authorgroup>
                         <author>
@@ -252,7 +252,7 @@ else {
                 <function>sd_journal_wait()</function> interfaces are
                 available as a shared library, which can be compiled and
                 linked to with the
-                <constant>libsystemd</constant> <citerefentry><refentrytitle>pkg-config</refentrytitle><manvolnum>1</manvolnum></citerefentry>
+                <constant>journal</constant> <citerefentry><refentrytitle>pkg-config</refentrytitle><manvolnum>1</manvolnum></citerefentry>
                 file.</para>
         </refsect1>
 
@@ -334,7 +334,6 @@ int wait_for_changes(sd_journal *j) {
                 <title>See Also</title>
 
                 <para>
-                        <citerefentry><refentrytitle>systemd</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
                         <citerefentry><refentrytitle>sd-journal</refentrytitle><manvolnum>3</manvolnum></citerefentry>,
                         <citerefentry><refentrytitle>sd_journal_open</refentrytitle><manvolnum>3</manvolnum></citerefentry>,
                         <citerefentry><refentrytitle>sd_journal_next</refentrytitle><manvolnum>3</manvolnum></citerefentry>,

@@ -121,6 +121,7 @@
  * man:
    - use journald name instead of journald.service;
    - remove unused aliases;
+   - remove references to systemd;
  * tests:
    - don't check existence of machine-id file;
    - fix run test-journal-init test;

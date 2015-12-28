@@ -25,7 +25,7 @@
 
         <refentryinfo>
                 <title>sd_journal_open</title>
-                <productname>systemd</productname>
+                <productname>journal</productname>
 
                 <authorgroup>
                         <author>
@@ -192,32 +192,14 @@
                 <function>sd_journal_close()</function> interfaces are
                 available as a shared library, which can be compiled and
                 linked to with the
-                <constant>libsystemd</constant> <citerefentry><refentrytitle>pkg-config</refentrytitle><manvolnum>1</manvolnum></citerefentry>
+                <constant>journal</constant> <citerefentry><refentrytitle>pkg-config</refentrytitle><manvolnum>1</manvolnum></citerefentry>
                 file.</para>
-        </refsect1>
-
-        <refsect1>
-                <title>History</title>
-
-                <para><function>sd_journal_open()</function>,
-                <function>sd_journal_close()</function>,
-                <constant>SD_JOURNAL_RUNTIME_ONLY</constant>
-                </para>
-
-                <para><function>sd_journal_open_directory()</function>
-                was added in systemd-187.</para>
-
-                <para><constant>SD_JOURNAL_SYSTEM</constant>,
-                <constant>SD_JOURNAL_CURRENT_USER</constant>,
-                and <function>sd_journal_open_files()</function>
-                were added in systemd-205.</para>
         </refsect1>
 
         <refsect1>
                 <title>See Also</title>
 
                 <para>
-                        <citerefentry><refentrytitle>systemd</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
                         <citerefentry><refentrytitle>sd-journal</refentrytitle><manvolnum>3</manvolnum></citerefentry>,
                         <citerefentry><refentrytitle>sd_journal_next</refentrytitle><manvolnum>3</manvolnum></citerefentry>,
                         <citerefentry><refentrytitle>sd_journal_get_data</refentrytitle><manvolnum>3</manvolnum></citerefentry>,

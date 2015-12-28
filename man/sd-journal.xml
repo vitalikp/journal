@@ -26,7 +26,7 @@
 
         <refentryinfo>
                 <title>sd-journal</title>
-                <productname>systemd</productname>
+                <productname>journal</productname>
 
                 <authorgroup>
                         <author>
@@ -54,7 +54,7 @@
                 </funcsynopsis>
 
                 <cmdsynopsis>
-                        <command>pkg-config --cflags --libs libsystemd</command>
+                        <command>pkg-config --cflags --libs journal</command>
                 </cmdsynopsis>
 
         </refsynopsisdiv>
@@ -95,7 +95,6 @@
         <refsect1>
                 <title>See Also</title>
                 <para>
-                        <citerefentry><refentrytitle>systemd</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
                         <citerefentry><refentrytitle>sd_journal_print</refentrytitle><manvolnum>3</manvolnum></citerefentry>,
                         <citerefentry><refentrytitle>sd_journal_open</refentrytitle><manvolnum>3</manvolnum></citerefentry>,
                         <citerefentry><refentrytitle>sd_journal_next</refentrytitle><manvolnum>3</manvolnum></citerefentry>,
