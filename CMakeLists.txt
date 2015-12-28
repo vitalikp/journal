@@ -44,50 +44,72 @@ add_definitions(-include ${PROJECT_BINARY_DIR}/config.h)
 include(man/journal-man.cmake)
 add_man(docs 1 journalctl)
 add_man(docs 3 sd-journal)
-add_man(docs 3 sd_journal_add_match)
-add_man_install(3 sd_journal_add_conjunction)
-add_man_install(3 sd_journal_add_disjunction)
-add_man_install(3 sd_journal_flush_matches)
-add_man(docs 3 sd_journal_get_cursor)
-add_man_install(3 sd_journal_test_cursor)
-add_man(docs 3 sd_journal_get_cutoff_realtime_usec)
-add_man_install(3 sd_journal_get_cutoff_monotonic_usec)
-add_man(docs 3 sd_journal_get_data)
-add_man_install(3 sd_journal_enumerate_data)
-add_man_install(3 sd_journal_restart_data)
-add_man_install(3 sd_journal_set_data_threshold)
-add_man_install(3 sd_journal_get_data_threshold)
-add_man(docs 3 sd_journal_get_fd)
-add_man_install(3 sd_journal_get_events)
-add_man_install(3 sd_journal_get_timeout)
-add_man_install(3 sd_journal_process)
-add_man_install(3 sd_journal_wait)
-add_man_install(3 sd_journal_reliable_fd)
-add_man(docs 3 sd_journal_get_realtime_usec)
-add_man_install(3 sd_journal_get_monotonic_usec)
+add_man(docs 3
+	sd_journal_add_match
+	sd_journal_add_conjunction
+	sd_journal_add_disjunction
+	sd_journal_flush_matches
+)
+add_man(docs 3
+	sd_journal_get_cursor
+	sd_journal_test_cursor
+)
+add_man(docs 3
+	sd_journal_get_cutoff_realtime_usec
+	sd_journal_get_cutoff_monotonic_usec
+)
+add_man(docs 3
+	sd_journal_get_data
+	sd_journal_enumerate_data
+	sd_journal_restart_data
+	sd_journal_set_data_threshold
+	sd_journal_get_data_threshold
+)
+add_man(docs 3
+	sd_journal_get_fd
+	sd_journal_get_events
+	sd_journal_get_timeout
+	sd_journal_process
+	sd_journal_wait
+	sd_journal_reliable_fd
+)
+add_man(docs 3
+	sd_journal_get_realtime_usec
+	sd_journal_get_monotonic_usec
+)
 add_man(docs 3 sd_journal_get_usage)
-add_man(docs 3 sd_journal_next)
-add_man_install(3 sd_journal_previous)
-add_man_install(3 sd_journal_next_skip)
-add_man_install(3 sd_journal_previous_skip)
-add_man(docs 3 sd_journal_open)
-add_man_install(3 sd_journal_open_directory)
-add_man_install(3 sd_journal_open_files)
-add_man_install(3 sd_journal_close)
-add_man_install(3 sd_journal)
-add_man(docs 3 sd_journal_print)
-add_man_install(3 sd_journal_printv)
-add_man_install(3 sd_journal_send)
-add_man_install(3 sd_journal_sendv)
-add_man_install(3 sd_journal_perror)
-add_man(docs 3 sd_journal_query_unique)
-add_man_install(3 sd_journal_enumerate_unique)
-add_man_install(3 sd_journal_restart_unique)
-add_man(docs 3 sd_journal_seek_head)
-add_man_install(3 sd_journal_seek_tail)
-add_man_install(3 sd_journal_seek_monotonic_usec)
-add_man_install(3 sd_journal_seek_realtime_usec)
-add_man_install(3 sd_journal_seek_cursor)
+add_man(docs 3
+	sd_journal_next
+	sd_journal_previous
+	sd_journal_next_skip
+	sd_journal_previous_skip
+)
+add_man(docs 3
+	sd_journal_open
+	sd_journal_open_directory
+	sd_journal_open_files
+	sd_journal_close
+	sd_journal
+)
+add_man(docs 3
+	sd_journal_print
+	sd_journal_printv
+	sd_journal_send
+	sd_journal_sendv
+	sd_journal_perror
+)
+add_man(docs 3
+	sd_journal_query_unique
+	sd_journal_enumerate_unique
+	sd_journal_restart_unique
+)
+add_man(docs 3
+	sd_journal_seek_head
+	sd_journal_seek_tail
+	sd_journal_seek_monotonic_usec
+	sd_journal_seek_realtime_usec
+	sd_journal_seek_cursor
+)
 add_man(docs 5 journald.conf)
 add_man(docs 7 journal-fields)
 add_man(docs 8 journald)

@@ -9,15 +9,19 @@ set(XSLTPROC_OPT ${XSLTPROC_OPT} --path '${PROJECT_BINARY_DIR}/man:${CMAKE_SOURC
 
 
 macro(add_man var section name)
+    install(FILES ${PROJECT_BINARY_DIR}/${name}.${section} DESTINATION share/man/man${section})
+    set(aliases "")
+    if (${ARGC} GREATER 3)
+    	foreach(argval ${ARGN})
+    		list(APPEND aliases "${argval}.${section}")
+    		install(FILES ${PROJECT_BINARY_DIR}/${argval}.${section} DESTINATION share/man/man${section})
+    	endforeach()
+    endif()
 	add_custom_command(
-		OUTPUT ${name}.${section}
+		OUTPUT "${name}.${section}" ${aliases}
 		COMMAND ${XSLTPROC}
 		ARGS -o ${name}.${section} ${XSLTPROC_OPT} ${CMAKE_SOURCE_DIR}/man/custom-man.xsl ${CMAKE_SOURCE_DIR}/man/${name}.xml
 		COMMENT "  XSLT\t${name}.${section}" VERBATIM)
-		list(APPEND ${var} ${name}.${section})
-	add_man_install(${name} ${section})
+	list(APPEND ${var} "${name}.${section}")
+	list(APPEND ${var} ${aliases})
 endmacro(add_man)
-
-macro(add_man_install section name)
-	install(FILES ${PROJECT_BINARY_DIR}/${name}.${section} DESTINATION share/man/man${section})
-endmacro(add_man_install)
