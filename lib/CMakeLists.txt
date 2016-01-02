@@ -12,6 +12,10 @@ set(JOURNAL_VERSION ${JOURNAL_SOVERSION}.11.5)
 
 configure_file(journal.pc.cmake journal.pc @ONLY)
 
+
+# journal hash
+add_subdirectory(hash)
+
 # journal internal
 set(journal_int_src
 	uuid.c
