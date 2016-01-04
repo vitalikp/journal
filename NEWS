@@ -12,6 +12,8 @@
  * libjournal:
     - add uuid module;
     - add boot module;
+ * hash:
+    - add original lookup3 hash functions;
  * use uuid_t type instead of sd_id128_t;
  * don't print systemd features;
  * install journald program to sbin directory;
