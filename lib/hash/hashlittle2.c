@@ -194,3 +194,94 @@ void hashlittle2(
   final(a,b,c);
   *pc=c; *pb=b;
 }
+
+#ifdef TESTS
+#include <stdlib.h>
+#include <stdint.h>
+#include <assert.h>
+
+
+
+void test_empty(void)
+{
+	uint32_t hash1, hash2;
+
+	hash1 = 0;
+	hash2 = 0;
+	hashlittle2("", 0, &hash1, &hash2);
+	assert(hash1 == 0xdeadbeef);
+	assert(hash2 == 0xdeadbeef);
+
+	hash1 = 0;
+	hash2 = 0xdeadbeef;
+	hashlittle2("", 0, &hash1, &hash2);
+	assert(hash1 == 0xbd5b7dde);
+	assert(hash2 == 0xdeadbeef);
+
+	hash1 = 0xdeadbeef;
+	hash2 = 0xdeadbeef;
+	hashlittle2("", 0, &hash1, &hash2);
+	assert(hash1 == 0x9c093ccd);
+	assert(hash2 == 0xbd5b7dde);
+}
+
+void test_hash(void)
+{
+	uint32_t hash1, hash2;
+	const uint8_t value[] = "Four score and seven years ago";
+
+	hash1 = 0;
+	hash2 = 0;
+	hashlittle2(value, 30, &hash1, &hash2);
+	assert(hash1 == 0x17770551);
+	assert(hash2 == 0xce7226e6);
+
+	hash1 = 0;
+	hash2 = 1;
+	hashlittle2(value, 30, &hash1, &hash2);
+	assert(hash1 == 0xe3607cae);
+	assert(hash2 == 0xbd371de4);
+
+	hash1 = 1;
+	hash2 = 0;
+	hashlittle2(value, 30, &hash1, &hash2);
+	assert(hash1 == 0xcd628161);
+	assert(hash2 == 0x6cbea4b3);
+}
+
+void test_hashword_hash(void)
+{
+	uint32_t hash1, hash2;
+	const uint8_t value[] = "hashword value ... hashword value ...";
+
+	hash1 = 17;
+	hash2 = 0;
+	hashlittle2(value, 32, &hash1, &hash2);
+	assert(hash1 == 0x5f00134c);
+	assert(hash2 == 0x6fcf0c30);
+
+	hash1 = 17;
+	hash2 = 0;
+	hashlittle2(value, 28, &hash1, &hash2);
+	assert(hash1 == 0xd872b6d5);
+	assert(hash2 == 0xeb8c224e);
+
+	hash1 = 17;
+	hash2 = 0;
+	hashlittle2(value, 12, &hash1, &hash2);
+	assert(hash1 == 0x1f99cd19);
+	assert(hash2 == 0x9da41c7e);
+}
+
+int main()
+{
+	test_empty();
+
+	test_hash();
+
+	test_hashword_hash();
+
+	return EXIT_SUCCESS;
+}
+
+#endif

@@ -58,3 +58,28 @@ uint32_t        initval)         /* the previous hash, or an arbitrary value */
   /*------------------------------------------------------ report the result */
   return c;
 }
+
+#ifdef TESTS
+#include <stdlib.h>
+#include <stdint.h>
+#include <assert.h>
+
+
+int main()
+{
+	uint32_t hash;
+	const uint8_t value[] = "hashword value ... hashword value ...";
+
+	hash = hashword((const uint32_t *)value, 8, 17);
+	assert(hash == 0x5f00134c);
+
+	hash = hashword((const uint32_t *)value, 7, 17);
+	assert(hash == 0xd872b6d5);
+
+	hash = hashword((const uint32_t *)value, 3, 17);
+	assert(hash == 0x1f99cd19);
+
+	return EXIT_SUCCESS;
+}
+
+#endif

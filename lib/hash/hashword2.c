@@ -55,3 +55,36 @@ uint32_t       *pb)               /* IN: more seed OUT: secondary hash value */
   /*------------------------------------------------------ report the result */
   *pc=c; *pb=b;
 }
+
+#ifdef TESTS
+#include <stdlib.h>
+#include <stdint.h>
+#include <assert.h>
+
+int main()
+{
+	uint32_t hash1, hash2;
+	const uint8_t value[] = "hashword value ... hashword value ...";
+
+	hash1 = 17;
+	hash2 = 0;
+	hashword2((const uint32_t *)value, 8, &hash1, &hash2);
+	assert(hash1 == 0x5f00134c);
+	assert(hash2 == 0x6fcf0c30);
+
+	hash1 = 17;
+	hash2 = 0;
+	hashword2((const uint32_t *)value, 7, &hash1, &hash2);
+	assert(hash1 == 0xd872b6d5);
+	assert(hash2 == 0xeb8c224e);
+
+	hash1 = 17;
+	hash2 = 0;
+	hashword2((const uint32_t *)value, 3, &hash1, &hash2);
+	assert(hash1 == 0x1f99cd19);
+	assert(hash2 == 0x9da41c7e);
+
+	return EXIT_SUCCESS;
+}
+
+#endif

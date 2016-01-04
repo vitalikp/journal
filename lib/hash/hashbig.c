@@ -138,3 +138,27 @@ uint32_t hashbig( const void *key, size_t length, uint32_t initval)
   final(a,b,c);
   return c;
 }
+
+#ifdef TESTS
+#include <stdlib.h>
+#include <stdint.h>
+#include <assert.h>
+
+int main()
+{
+	uint32_t hash;
+	const uint8_t value[] = "hashbig value ... hashbig value ...";
+
+	hash = hashbig(value, 8, 17);
+	assert(hash == 0x65bb5600);
+
+	hash = hashbig(value, 7, 17);
+	assert(hash == 0x6c6d2a07);
+
+	hash = hashbig(value, 3, 17);
+	assert(hash == 0x194a449a);
+
+	return EXIT_SUCCESS;
+}
+
+#endif

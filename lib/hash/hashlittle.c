@@ -206,3 +206,136 @@ uint32_t hashlittle( const void *key, size_t length, uint32_t initval)
   final(a,b,c);
   return c;
 }
+
+#ifdef TESTS
+#include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
+#include <time.h>
+#include <assert.h>
+
+
+void test_interval(void)
+{
+	uint8_t buf[256];
+	uint32_t hash;
+	struct timespec ts1, ts2;
+	time_t t1, t2;
+
+	assert(time(&t1) > 0);
+
+	memset(buf, 'x', 256);
+	hash = hashlittle(&buf[0], 1, hash);
+
+	assert(time(&t2) > 0);
+
+	assert(t2 == t1);
+}
+
+void test_index(void)
+{
+	uint32_t hash, hash1, hash2;
+
+	size_t maxlen = 70;
+	uint8_t buf[maxlen + 20];
+	uint8_t* p;
+	size_t i;
+
+	p = buf;
+	while (p - buf < 8)
+	{
+		p++;
+		i = 0;
+		while (i < maxlen)
+		{
+			memset(p, 0, i);
+
+			hash = hashlittle(p, i, 1);
+			*(p+i) = (uint8_t)~0;
+			*(p-i) = (uint8_t)~0;
+
+			hash1 = hashlittle(p, i, 1);
+			hash2 = hashlittle(p, i, 1);
+			assert(hash == hash1 || hash == hash2);
+
+			i++;
+		}
+	}
+}
+
+void test_nulls(void)
+{
+	uint32_t hash;
+	uint8_t value;
+
+	hash = 0;
+	value = ~0;
+
+	hash = hashlittle(&value, 0, hash);
+	assert(hash == 0xdeadbeef);
+
+	hash = hashlittle(&value, 0, hash);
+	assert(hash == 0xbd5b7dde);
+
+	hash = hashlittle(&value, 0, hash);
+	assert(hash == 0x9c093ccd);
+
+	hash = hashlittle(&value, 0, hash);
+	assert(hash == 0x7ab6fbbc);
+
+	hash = hashlittle(&value, 0, hash);
+	assert(hash == 0x5964baab);
+
+	hash = hashlittle(&value, 0, hash);
+	assert(hash == 0x3812799a);
+
+	hash = hashlittle(&value, 0, hash);
+	assert(hash == 0x16c03889);
+
+	hash = hashlittle(&value, 0, hash);
+	assert(hash == 0xf56df778);
+}
+
+void test_hash(void)
+{
+	uint32_t hash;
+	const uint8_t value[] = "Four score and seven years ago";
+
+	hash = hashlittle(value, 30, 0);
+	assert(hash == 0x17770551);
+
+	hash = hashlittle(value, 30, 1);
+	assert(hash == 0xcd628161);
+}
+
+void test_hashword_hash(void)
+{
+	uint32_t hash;
+	const uint8_t value[] = "hashword value ... hashword value ...";
+
+	hash = hashlittle(value, 32, 17);
+	assert(hash == 0x5f00134c);
+
+	hash = hashlittle(value, 28, 17);
+	assert(hash == 0xd872b6d5);
+
+	hash = hashlittle(value, 12, 17);
+	assert(hash == 0x1f99cd19);
+}
+
+int main()
+{
+	test_interval();
+
+	test_index();
+
+	test_nulls();
+
+	test_hash();
+
+	test_hashword_hash();
+
+	return EXIT_SUCCESS;
+}
+
+#endif
