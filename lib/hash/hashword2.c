@@ -45,10 +45,10 @@ uint32_t       *pb)               /* IN: more seed OUT: secondary hash value */
   /*------------------------------------------- handle the last 3 uint32_t's */
   switch(length)                     /* all the case statements fall through */
   {
-  case 3 : c+=k[2];
-  case 2 : b+=k[1];
+  case 3 : c+=k[2];	/* fall through */	// no break
+  case 2 : b+=k[1];	/* fall through */	// no break
   case 1 : a+=k[0];
-    final(a,b,c);
+    final(a,b,c);	/* fall through */	// no break
   case 0:     /* case 0: nothing left to add */
     break;
   }
