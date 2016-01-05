@@ -1,6 +1,12 @@
 # journal hash library cmake file
 
 
+add_library(journal_hash_obj STATIC
+	hashlittle2.c
+	hash.h
+)
+
+
 # tests
 if (${TESTS_ENABLE})
 
@@ -34,10 +40,18 @@ add_executable(test-hashbig
 )
 target_compile_definitions(test-hashbig PRIVATE TESTS)
 
+# test hash
+add_executable(test-hash
+	hash.c
+)
+target_compile_definitions(test-hash PRIVATE TESTS)
+target_link_libraries(test-hash journal_hash_obj)
+
 add_test(NAME lookup3-hashword COMMAND ./test-hashword)
 add_test(NAME lookup3-hashword2 COMMAND ./test-hashword2)
 add_test(NAME lookup3-hashlittle COMMAND ./test-hashlittle)
 add_test(NAME lookup3-hashlittle2 COMMAND ./test-hashlittle2)
 add_test(NAME lookup3-hashbig COMMAND ./test-hashbig)
+add_test(NAME journal-hash COMMAND ./test-hash)
 
 endif()
