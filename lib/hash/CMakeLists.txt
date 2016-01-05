@@ -34,10 +34,10 @@ add_executable(test-hashbig
 )
 target_compile_definitions(test-hashbig PRIVATE TESTS)
 
-add_test(NAME jenkins-hashword COMMAND ./test-hashword)
-add_test(NAME jenkins-hashword2 COMMAND ./test-hashword2)
-add_test(NAME jenkins-hashlittle COMMAND ./test-hashlittle)
-add_test(NAME jenkins-hashlittle2 COMMAND ./test-hashlittle2)
-add_test(NAME jenkins-hashbig COMMAND ./test-hashbig)
+add_test(NAME lookup3-hashword COMMAND ./test-hashword)
+add_test(NAME lookup3-hashword2 COMMAND ./test-hashword2)
+add_test(NAME lookup3-hashlittle COMMAND ./test-hashlittle)
+add_test(NAME lookup3-hashlittle2 COMMAND ./test-hashlittle2)
+add_test(NAME lookup3-hashbig COMMAND ./test-hashbig)
 
 endif()
