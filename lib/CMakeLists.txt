@@ -14,6 +14,7 @@ configure_file(journal.pc.cmake journal.pc @ONLY)
 
 
 # journal hash
+include_directories(hash)
 add_subdirectory(hash)
 
 # journal internal
@@ -32,8 +33,6 @@ set(journal_int_src
 	journal-vacuum.h
 	journal-verify.c
 	journal-verify.h
-	lookup3.c
-	lookup3.h
 	journal-send.c
 	journal-def.h
 	compress.h
@@ -46,6 +45,7 @@ endif()
 add_library(journal_int_obj STATIC
 	${journal_int_src}
 )
+target_link_libraries(journal_int_obj journal_hash_obj)
 target_link_libraries(journal_int_obj ${XZ_LIBRARIES})
 target_link_libraries(journal_int_obj -pthread rt)
 
@@ -56,7 +56,7 @@ set_target_properties(journal PROPERTIES
 	VERSION ${JOURNAL_VERSION}
 	SOVERSION ${JOURNAL_SOVERSION}
 )
-target_link_libraries(journal journal_shared_obj ${LIBJOURNAL_C_FLAGS})
+target_link_libraries(journal journal_hash_obj journal_shared_obj ${LIBJOURNAL_C_FLAGS})
 target_link_libraries(journal ${XZ_LIBRARIES})
 target_link_libraries(journal -pthread rt)
 

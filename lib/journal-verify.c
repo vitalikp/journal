@@ -25,12 +25,12 @@
 #include <stddef.h>
 
 #include "uuid.h"
+#include "hash.h"
 #include "util.h"
 #include "macro.h"
 #include "journal-def.h"
 #include "journal-file.h"
 #include "journal-verify.h"
-#include "lookup3.h"
 #include "compress.h"
 
 static int journal_file_object_verify(JournalFile *f, uint64_t offset, Object *o) {
@@ -83,14 +83,14 @@ static int journal_file_object_verify(JournalFile *f, uint64_t offset, Object *o
                                 return -EBADMSG;
                         }
 
-                        h2 = hash64(b, b_size);
+                        hash64(b, b_size, &h2);
                         free(b);
 #else
                         log_error("Compression is not supported");
                         return -EPROTONOSUPPORT;
 #endif
                 } else
-                        h2 = hash64(o->data.payload, le64toh(o->object.size) - offsetof(Object, data.payload));
+                        hash64(o->data.payload, le64toh(o->object.size) - offsetof(Object, data.payload), &h2);
 
                 if (h1 != h2) {
                         log_error(OFSfmt": invalid hash (%08"PRIx64" vs. %08"PRIx64, offset, h1, h2);

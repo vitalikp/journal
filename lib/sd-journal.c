@@ -30,13 +30,13 @@
 
 #include "journal.h"
 #include "boot.h"
+#include "hash.h"
 #include "journal-def.h"
 #include "journal-file.h"
 #include "hashmap.h"
 #include "list.h"
 #include "strv.h"
 #include "path-util.h"
-#include "lookup3.h"
 #include "compress.h"
 #include "journal-internal.h"
 #include "missing.h"
@@ -217,6 +217,7 @@ static void match_free_if_empty(Match *m) {
 
 _public_ int sd_journal_add_match(sd_journal *j, const void *data, size_t size) {
         Match *l3, *l4, *add_here = NULL, *m;
+        uint64_t hash;
         le64_t le_hash;
 
         assert_return(j, -EINVAL);
@@ -256,7 +257,8 @@ _public_ int sd_journal_add_match(sd_journal *j, const void *data, size_t size) 
         assert(j->level1->type == MATCH_OR_TERM);
         assert(j->level2->type == MATCH_AND_TERM);
 
-        le_hash = htole64(hash64(data, size));
+        hash64(data, size, &hash);
+        le_hash = htole64(hash);
 
         LIST_FOREACH(matches, l3, j->level2->matches) {
                 assert(l3->type == MATCH_OR_TERM);

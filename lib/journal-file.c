@@ -29,9 +29,9 @@
 #include <sys/xattr.h>
 
 #include "boot.h"
+#include "hash.h"
 #include "journal-def.h"
 #include "journal-file.h"
-#include "lookup3.h"
 #include "compress.h"
 
 #define DEFAULT_DATA_HASH_TABLE_SIZE (2047ULL*sizeof(HashItem))
@@ -730,7 +730,7 @@ int journal_file_find_field_object(
         assert(f);
         assert(field && size > 0);
 
-        hash = hash64(field, size);
+        hash64(field, size, &hash);
 
         return journal_file_find_field_object_with_hash(f,
                                                         field, size, hash,
@@ -823,7 +823,7 @@ int journal_file_find_data_object(
         assert(f);
         assert(data || size == 0);
 
-        hash = hash64(data, size);
+        hash64(data, size, &hash);
 
         return journal_file_find_data_object_with_hash(f,
                                                        data, size, hash,
@@ -843,7 +843,7 @@ static int journal_file_append_field(
         assert(f);
         assert(field && size > 0);
 
-        hash = hash64(field, size);
+        hash64(field, size, &hash);
 
         r = journal_file_find_field_object_with_hash(f, field, size, hash, &o, &p);
         if (r < 0)
@@ -901,7 +901,7 @@ static int journal_file_append_data(
         assert(f);
         assert(data || size == 0);
 
-        hash = hash64(data, size);
+        hash64(data, size, &hash);
 
         r = journal_file_find_data_object_with_hash(f, data, size, hash, &o, &p);
         if (r < 0)

@@ -12,6 +12,7 @@
  * libjournal:
     - add uuid module;
     - add boot module;
+    - use journal hash library instead of lookup3 module;
  * hash:
     - add original lookup3 hash functions;
     - add unit tests;
