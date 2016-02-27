@@ -37,9 +37,11 @@ target_link_libraries(journal_core_obj -pthread rt)
 
 # journalctl
 add_executable(journalctl
+	journalctl/logs-show.c
+	journalctl/logs-show.h
 	journalctl/journalctl.c
 )
-target_link_libraries(journalctl journal_int_obj journal_logs_obj journal_shared_obj)
+target_link_libraries(journalctl journal_int_obj journal_shared_obj)
 #target_link_libraries(journalctl -pthread rt)
 
 # install

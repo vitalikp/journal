@@ -52,11 +52,6 @@ add_library(journal_shared_obj STATIC
 	audit.h
 )
 
-add_library(journal_logs_obj STATIC
-	logs-show.c
-	logs-show.h
-)
-
 add_library(journal_label_obj STATIC
 	label.c
 	label.h
