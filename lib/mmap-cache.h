@@ -41,13 +41,6 @@ int mmap_cache_get(
         size_t size,
         struct stat *st,
         void **ret);
-int mmap_cache_release(
-        MMapCache *m,
-        int fd,
-        int prot,
-        unsigned context,
-        uint64_t offset,
-        size_t size);
 void mmap_cache_close_fd(MMapCache *m, int fd);
 void mmap_cache_close_context(MMapCache *m, unsigned context);
 

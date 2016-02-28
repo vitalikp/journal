@@ -562,42 +562,6 @@ int mmap_cache_get(
         return add_mmap(m, fd, prot, context, keep_always, offset, size, st, ret);
 }
 
-int mmap_cache_release(
-                MMapCache *m,
-                int fd,
-                int prot,
-                unsigned context,
-                uint64_t offset,
-                size_t size) {
-
-        FileDescriptor *f;
-        Window *w;
-
-        assert(m);
-        assert(m->n_ref > 0);
-        assert(fd >= 0);
-        assert(size > 0);
-
-        f = hashmap_get(m->fds, INT_TO_PTR(fd + 1));
-        if (!f)
-                return -EBADF;
-
-        assert(f->fd == fd);
-
-        LIST_FOREACH(by_fd, w, f->windows)
-                if (window_matches(w, fd, prot, offset, size))
-                        break;
-
-        if (!w)
-                return -ENOENT;
-
-        if (w->keep_always == 0)
-                return -ENOLCK;
-
-        w->keep_always -= 1;
-        return 0;
-}
-
 void mmap_cache_close_fd(MMapCache *m, int fd) {
         FileDescriptor *f;
 
