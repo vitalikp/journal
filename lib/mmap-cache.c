@@ -38,7 +38,7 @@ typedef struct FileDescriptor FileDescriptor;
 struct Window {
         MMapCache *cache;
 
-        unsigned keep_always;
+        bool keep_always;
         bool in_unused;
 
         int prot;
@@ -185,7 +185,7 @@ static void context_detach_window(Context *c) {
         c->window = NULL;
         LIST_REMOVE(by_window, w->contexts, c);
 
-        if (!w->contexts && w->keep_always == 0) {
+        if (!w->contexts && !w->keep_always) {
                 /* Not used anymore? */
                 LIST_PREPEND(unused, c->cache->unused, w);
                 if (!c->cache->last_unused)
@@ -377,7 +377,7 @@ static int try_context(
                 return 0;
         }
 
-        c->window->keep_always += keep_always;
+        c->window->keep_always |= keep_always;
 
         if (ret)
                 *ret = (uint8_t*) c->window->ptr + (offset - c->window->offset);
@@ -421,7 +421,7 @@ static int find_mmap(
                 return -ENOMEM;
 
         context_attach_window(c, w);
-        w->keep_always += keep_always;
+        w->keep_always |= keep_always;
 
         if (ret)
                 *ret = (uint8_t*) w->ptr + (offset - w->offset);
