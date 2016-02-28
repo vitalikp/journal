@@ -16,6 +16,7 @@
     - remove lookup3 module;
     - remove journal_file_object_keep and journal_file_object_release functions;
     - remove mmap_cache_release function;
+    - remove mmap_cache_close_context function;
     - change type keep_always to bool in Window struct;
  * hash:
     - add original lookup3 hash functions;
