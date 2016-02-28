@@ -181,17 +181,3 @@ static unsigned type_to_context(int type) {
         /* One context for each type, plus one catch-all for the rest */
         return type > 0 && type < _OBJECT_TYPE_MAX ? type : 0;
 }
-
-static inline int journal_file_object_keep(JournalFile *f, Object *o, uint64_t offset) {
-        unsigned context = type_to_context(o->object.type);
-
-        return mmap_cache_get(f->mmap, f->fd, f->prot, context, true,
-                              offset, o->object.size, &f->last_stat, NULL);
-}
-
-static inline int journal_file_object_release(JournalFile *f, Object *o, uint64_t offset) {
-        unsigned context = type_to_context(o->object.type);
-
-        return mmap_cache_release(f->mmap, f->fd, f->prot, context,
-                                  offset, o->object.size);
-}

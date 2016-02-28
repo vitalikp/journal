@@ -2501,10 +2501,6 @@ _public_ int sd_journal_enumerate_unique(sd_journal *j, const void **data, size_
                         return -EBADMSG;
                 }
 
-                r = journal_file_object_keep(j->unique_file, o, j->unique_offset);
-                if (r < 0)
-                        return r;
-
                 r = return_data(j, j->unique_file, o, &odata, &ol);
                 if (r < 0)
                         return r;
@@ -2536,10 +2532,6 @@ _public_ int sd_journal_enumerate_unique(sd_journal *j, const void **data, size_
 
                 if (found)
                         continue;
-
-                r = journal_file_object_release(j->unique_file, o, j->unique_offset);
-                if (r < 0)
-                        return r;
 
                 r = return_data(j, j->unique_file, o, data, l);
                 if (r < 0)

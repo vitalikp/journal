@@ -14,6 +14,7 @@
     - add boot module;
     - use journal hash library instead of lookup3 module;
     - remove lookup3 module;
+    - remove journal_file_object_keep and journal_file_object_release functions;
  * hash:
     - add original lookup3 hash functions;
     - add unit tests;
