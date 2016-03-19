@@ -185,7 +185,8 @@ finish:
 
 _public_ int sd_journal_sendv(const struct iovec *iov, int n) {
         PROTECT_ERRNO;
-        int fd, buffer_fd;
+        int fd;
+        _cleanup_close_ int buffer_fd = -1;
         struct iovec *w;
         uint64_t *l;
         int i, j = 0;
@@ -302,10 +303,8 @@ _public_ int sd_journal_sendv(const struct iovec *iov, int n) {
                 return buffer_fd;
 
         n = writev(buffer_fd, w, j);
-        if (n < 0) {
-                safe_close(buffer_fd);
+        if (n < 0)
                 return -errno;
-        }
 
         mh.msg_iov = NULL;
         mh.msg_iovlen = 0;
@@ -323,7 +322,6 @@ _public_ int sd_journal_sendv(const struct iovec *iov, int n) {
         mh.msg_controllen = cmsg->cmsg_len;
 
         k = sendmsg(fd, &mh, MSG_NOSIGNAL);
-        safe_close(buffer_fd);
 
         if (k < 0)
                 return -errno;
