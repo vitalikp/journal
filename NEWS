@@ -132,6 +132,7 @@
    - use time of last modification journal files in realtime field;
    - don't check corrupt journal files;
    - use seqnum_id and seqnum data from header journal files;
+   - remove redundant code;
  * man:
    - use journald name instead of journald.service;
    - remove unused aliases;
