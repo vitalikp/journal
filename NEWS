@@ -19,6 +19,7 @@
     - remove mmap_cache_close_context function;
     - change type keep_always to bool in Window struct;
     - use automatic cleanup;
+    - simplify compress_blob;
  * hash:
     - add original lookup3 hash functions;
     - add unit tests;
