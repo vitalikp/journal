@@ -140,6 +140,7 @@
    - remove references to systemd;
    - update info for journald.conf;
    - fix argument in example;
+   - fix variable naming in example;
  * tests:
    - don't check existence of machine-id file;
    - fix run test-journal-init test;
