@@ -66,6 +66,14 @@ add_executable(test-mmap-cache
 )
 target_link_libraries(test-mmap-cache journal_core_obj)
 
+# test-compress
+if (${HAVE_XZ})
+add_executable(test-compress
+	test-compress.c
+)
+target_link_libraries(test-compress journal_int_obj journal_shared_obj)
+endif()
+
 add_test(NAME journal COMMAND ./test-journal)
 add_test(NAME journal-enum COMMAND ./test-journal-enum)
 add_test(NAME journal-flush COMMAND ./test-journal-flush)
@@ -76,3 +84,6 @@ add_test(NAME journal-stream COMMAND ./test-journal-stream)
 add_test(NAME journal-syslog COMMAND ./test-journal-syslog)
 add_test(NAME journal-verify COMMAND ./test-journal-verify)
 add_test(NAME mmap-cache COMMAND ./test-mmap-cache)
+if (${HAVE_XZ})
+add_test(NAME journal-compress COMMAND ./test-compress)
+endif()
