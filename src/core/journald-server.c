@@ -52,6 +52,7 @@
 #define USER_JOURNALS_MAX 1024
 
 #define DEFAULT_SYNC_INTERVAL_USEC (5*USEC_PER_MINUTE)
+#define DEFAULT_MAX_FILE_USEC USEC_PER_MONTH
 
 #define RECHECK_AVAILABLE_SPACE_USEC (30*USEC_PER_SEC)
 
@@ -1214,6 +1215,8 @@ int server_init(Server *s) {
 
         s->forward_to_syslog = true;
         s->forward_to_wall = true;
+
+        s->max_file_usec = DEFAULT_MAX_FILE_USEC;
 
         s->max_level_store = LOG_DEBUG;
         s->max_level_syslog = LOG_DEBUG;
