@@ -26,6 +26,7 @@
 
 #include "compress.h"
 #include "macro.h"
+#include "util.h"
 
 bool compress_blob(const void *src, uint64_t src_size, void *dst, uint64_t *dst_size) {
         lzma_ret ret;
