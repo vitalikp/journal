@@ -20,6 +20,7 @@
     - change type keep_always to bool in Window struct;
     - use automatic cleanup;
     - simplify compress_blob;
+    - decode stream only with size prefix_len in uncompress_startswith function;
  * hash:
     - add original lookup3 hash functions;
     - add unit tests;

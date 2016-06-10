@@ -174,9 +174,7 @@ bool uncompress_startswith(const void *src, uint64_t src_size,
                 if (ret != LZMA_STREAM_END && ret != LZMA_OK)
                         goto fail;
 
-                if ((*buffer_size - s.avail_out > prefix_len) &&
-                    memcmp(*buffer, prefix, prefix_len) == 0 &&
-                    ((const uint8_t*) *buffer)[prefix_len] == extra)
+                if (*buffer_size - s.avail_out > prefix_len)
                         break;
 
                 if (ret == LZMA_STREAM_END)
@@ -193,7 +191,10 @@ bool uncompress_startswith(const void *src, uint64_t src_size,
                 *buffer_size *= 2;
         }
 
-        b = true;
+        if (memcmp(*buffer, prefix, prefix_len) != 0)
+                b = false;
+        else
+                b = ((const uint8_t*) *buffer)[prefix_len] == extra;
 
 fail:
         lzma_end(&s);
