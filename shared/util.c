@@ -4977,7 +4977,8 @@ bool filename_is_safe(const char *p) {
 bool string_is_safe(const char *p) {
         const char *t;
 
-        assert(p);
+        if (!p)
+                return false;
 
         for (t = p; *t; t++) {
                 if (*t > 0 && *t < ' ')

@@ -98,6 +98,7 @@
     - remove unit-name module from shared library;
     - remove bus-label module from shared library;
     - move logs-show module to journalctl;
+    - don't assert in string_is_safe function;
  * remove journal_capability_obj library;
  * remove prefix field from sd_journal struct;
  * don't add machine_id to root log path directory;
