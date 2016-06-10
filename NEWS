@@ -94,7 +94,7 @@
     - remove fstab_node_to_udev_node function;
     - remove device nodes from shared library;
     - remove id128_is_valid function;
-    - remove unused functions from util module;
+    - remove unused functions;
     - remove unit-name module from shared library;
     - remove bus-label module from shared library;
     - move logs-show module to journalctl;

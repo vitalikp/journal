@@ -4990,22 +4990,6 @@ bool string_is_safe(const char *p) {
         return true;
 }
 
-/**
- * Check if a string contains control characters.
- * Spaces and tabs are not considered control characters.
- */
-bool string_has_cc(const char *p) {
-        const char *t;
-
-        assert(p);
-
-        for (t = p; *t; t++)
-                if (*t > 0 && *t < ' ' && *t != '\t')
-                        return true;
-
-        return false;
-}
-
 bool path_is_safe(const char *p) {
 
         if (isempty(p))

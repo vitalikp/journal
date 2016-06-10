@@ -25,14 +25,6 @@
 #include <sys/types.h>
 
 bool env_name_is_valid(const char *e);
-bool env_value_is_valid(const char *e);
-bool env_assignment_is_valid(const char *e);
-
-bool strv_env_is_valid(char **e);
-char **strv_env_clean(char **l);
-char **strv_env_clean_log(char **e, const char *message);
-
-bool strv_env_name_or_assignment_is_valid(char **l);
 
 char **strv_env_merge(unsigned n_lists, ...);
 char **strv_env_delete(char **x, unsigned n_lists, ...); /* New copy */

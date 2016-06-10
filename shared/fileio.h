@@ -35,7 +35,6 @@ ssize_t sendfile_full(int out_fd, const char *fn);
 
 int parse_env_file(const char *fname, const char *separator, ...) _sentinel_;
 int load_env_file(const char *fname, const char *separator, char ***l);
-int write_env_file(const char *fname, char **l);
 
 int executable_is_script(const char *path, char **interpreter);
 
