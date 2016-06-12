@@ -52,6 +52,7 @@ static int journal_file_object_verify(JournalFile *f, uint64_t offset, Object *o
 
         case OBJECT_DATA: {
                 uint64_t h1, h2;
+                int compression, r;
 
                 if (le64toh(o->data.entry_offset) == 0)
                         log_warning(OFSfmt": unused data (entry_offset==0)", offset);
@@ -71,24 +72,22 @@ static int journal_file_object_verify(JournalFile *f, uint64_t offset, Object *o
 
                 h1 = le64toh(o->data.hash);
 
-                if (o->object.flags & OBJECT_COMPRESSED_XZ) {
-#ifdef HAVE_XZ
-                        void *b = NULL;
+                compression = o->object.flags & OBJECT_COMPRESSION_MASK;
+                if (compression) {
+                        _cleanup_free_ void *b = NULL;
                         uint64_t alloc = 0, b_size;
 
-                        if (!uncompress_blob(o->data.payload,
-                                             le64toh(o->object.size) - offsetof(Object, data.payload),
-                                             &b, &alloc, &b_size, 0)) {
-                                log_error(OFSfmt": uncompression failed", offset);
-                                return -EBADMSG;
+                        r = decompress_blob(compression,
+                                            o->data.payload,
+                                            le64toh(o->object.size) - offsetof(Object, data.payload),
+                                            &b, &alloc, &b_size, 0);
+                        if (r < 0) {
+                                log_error(OFSfmt": %s decompression failed: %s", offset,
+                                          object_compressed_to_string(compression), strerror(-r));
+                                return r;
                         }
 
                         hash64(b, b_size, &h2);
-                        free(b);
-#else
-                        log_error("Compression is not supported");
-                        return -EPROTONOSUPPORT;
-#endif
                 } else
                         hash64(o->data.payload, le64toh(o->object.size) - offsetof(Object, data.payload), &h2);
 
@@ -836,7 +835,7 @@ int journal_file_verify(
                 }
 
                 if ((o->object.flags & OBJECT_COMPRESSED_XZ) && !JOURNAL_HEADER_COMPRESSED_XZ(f->header)) {
-                        log_error("Compressed object in file without compression at "OFSfmt, p);
+                        log_error("XZ compressed object in file without XZ compression at "OFSfmt, p);
                         r = -EBADMSG;
                         goto fail;
                 }

@@ -139,7 +139,7 @@ void journal_file_close(JournalFile *f) {
 }
 
 static int journal_file_init_header(JournalFile *f, JournalFile *template) {
-        Header h;
+        Header h = {};
         ssize_t k;
         int r;
 
@@ -149,8 +149,7 @@ static int journal_file_init_header(JournalFile *f, JournalFile *template) {
         memcpy(h.signature, HEADER_SIGNATURE, 8);
         h.header_size = htole64(ALIGN64(sizeof(h)));
 
-        h.incompatible_flags =
-                htole32(f->compress_xz ? HEADER_INCOMPATIBLE_COMPRESSED_XZ : 0);
+        h.incompatible_flags |= htole32(f->compress_xz * HEADER_INCOMPATIBLE_COMPRESSED_XZ);
 
         h.compatible_flags = 0;
 
@@ -773,7 +772,6 @@ int journal_file_find_data_object_with_hash(
                         goto next;
 
                 if (o->object.flags & OBJECT_COMPRESSION_MASK) {
-#ifdef HAVE_XZ
                         uint64_t l, rsize;
 
                         l = le64toh(o->object.size);
@@ -782,8 +780,10 @@ int journal_file_find_data_object_with_hash(
 
                         l -= offsetof(Object, data.payload);
 
-                        if (!uncompress_blob(o->data.payload, l, &f->compress_buffer, &f->compress_buffer_size, &rsize, 0))
-                                return -EBADMSG;
+                        if (!decompress_blob(o->object.flags & OBJECT_COMPRESSION_MASK,
+                                             o->data.payload, l, &f->compress_buffer, &f->compress_buffer_size, &rsize, 0))
+                        if (r < 0)
+                                return r;
 
                         if (rsize == size &&
                             memcmp(f->compress_buffer, data, size) == 0) {
@@ -796,9 +796,6 @@ int journal_file_find_data_object_with_hash(
 
                                 return 1;
                         }
-#else
-                        return -EPROTONOSUPPORT;
-#endif
 
                 } else if (le64toh(o->object.size) == osize &&
                            memcmp(o->data.payload, data, size) == 0) {
@@ -900,8 +897,7 @@ static int journal_file_append_data(
         uint64_t hash, p;
         uint64_t osize;
         Object *o;
-        int r;
-        bool compressed = false;
+        int r, compression = 0;
         const void *eq;
 
         assert(f);
@@ -935,18 +931,19 @@ static int journal_file_append_data(
             size >= COMPRESSION_SIZE_THRESHOLD) {
                 uint64_t rsize;
 
-                compressed = compress_blob(data, size, o->data.payload, &rsize);
+                compression = compress_blob(data, size, o->data.payload, &rsize);
 
-                if (compressed) {
+                if (compression) {
                         o->object.size = htole64(offsetof(Object, data.payload) + rsize);
-                        o->object.flags |= OBJECT_COMPRESSED_XZ;
+                        o->object.flags |= compression;
 
-                        log_debug("Compressed data object %"PRIu64" -> %"PRIu64, size, rsize);
+                        log_debug("Compressed data object %"PRIu64" -> %"PRIu64" using %s",
+                                  size, rsize, object_compressed_to_string(compression));
                 }
         }
 #endif
 
-        if (!compressed && size > 0)
+        if (!compression && size > 0)
                 memcpy(o->data.payload, data, size);
 
         r = journal_file_link_data(f, o, p, hash);
@@ -2260,7 +2257,8 @@ void journal_file_dump(JournalFile *f) {
                 }
 
                 if (o->object.flags & OBJECT_COMPRESSION_MASK)
-                        printf("Flags: COMPRESSED\n");
+                        printf("Flags: %s\n",
+                               object_compressed_to_string(o->object.flags & OBJECT_COMPRESSION_MASK));
 
                 if (p == le64toh(f->header->tail_object_offset))
                         p = 0;
@@ -2329,7 +2327,7 @@ void journal_file_print_header(JournalFile *f) {
                f->header->state == STATE_OFFLINE ? "OFFLINE" :
                f->header->state == STATE_ONLINE ? "ONLINE" :
                f->header->state == STATE_ARCHIVED ? "ARCHIVED" : "UNKNOWN",
-               JOURNAL_HEADER_COMPRESSED_XZ(f->header) ? " COMPRESSED" : "",
+               JOURNAL_HEADER_COMPRESSED_XZ(f->header) ? " COMPRESSED-XZ" : "",
                (le32toh(f->header->incompatible_flags) & ~HEADER_INCOMPATIBLE_ANY) ? " ???" : "",
                le64toh(f->header->header_size),
                le64toh(f->header->arena_size),
@@ -2658,17 +2656,15 @@ int journal_file_copy_entry(JournalFile *from, JournalFile *to, Object *o, uint6
                         return -E2BIG;
 
                 if (o->object.flags & OBJECT_COMPRESSION_MASK) {
-#ifdef HAVE_XZ
                         uint64_t rsize;
 
-                        if (!uncompress_blob(o->data.payload, l, &from->compress_buffer, &from->compress_buffer_size, &rsize, 0))
-                                return -EBADMSG;
+                        r = decompress_blob(o->object.flags & OBJECT_COMPRESSION_MASK,
+                                            o->data.payload, l, &from->compress_buffer, &from->compress_buffer_size, &rsize, 0);
+                        if (r < 0)
+                                return r;
 
                         data = from->compress_buffer;
                         l = rsize;
-#else
-                        return -EPROTONOSUPPORT;
-#endif
                 } else
                         data = o->data.payload;
 

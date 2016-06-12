@@ -35,13 +35,11 @@ set(journal_int_src
 	journal-verify.h
 	journal-send.c
 	journal-def.h
+	compress.c
 	compress.h
 	mmap-cache.c
 	mmap-cache.h
 )
-if (${HAVE_XZ})
-	list(APPEND journal_int_src compress.c)
-endif()
 add_library(journal_int_obj STATIC
 	${journal_int_src}
 )
