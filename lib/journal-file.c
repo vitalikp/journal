@@ -196,6 +196,8 @@ static int journal_file_refresh_header(JournalFile *f) {
 }
 
 static int journal_file_verify_header(JournalFile *f) {
+        uint32_t flags;
+
         assert(f);
 
         if (memcmp(f->header->signature, HEADER_SIGNATURE, 8))
@@ -203,13 +205,17 @@ static int journal_file_verify_header(JournalFile *f) {
 
         /* In both read and write mode we refuse to open files with
          * incompatible flags we don't know */
-#ifdef HAVE_XZ
-        if ((le32toh(f->header->incompatible_flags) & ~HEADER_INCOMPATIBLE_COMPRESSED_XZ) != 0)
+        flags = le32toh(f->header->incompatible_flags);
+        if (flags & ~HEADER_INCOMPATIBLE_SUPPORTED) {
+                if (flags & ~HEADER_INCOMPATIBLE_ANY)
+                        log_debug("Journal file %s has unknown incompatible flags %"PRIx32,
+                                  f->path, flags & ~HEADER_INCOMPATIBLE_ANY);
+                flags = (flags & HEADER_INCOMPATIBLE_ANY) & ~HEADER_INCOMPATIBLE_SUPPORTED;
+                if (flags)
+                        log_debug("Journal file %s uses incompatible flags %"PRIx32
+                                  " disabled at compilation time.", f->path, flags);
                 return -EPROTONOSUPPORT;
-#else
-        if (f->header->incompatible_flags != 0)
-                return -EPROTONOSUPPORT;
-#endif
+        }
 
         /* When open for writing we refuse to open files with
          * compatible flags, too */
@@ -2324,7 +2330,7 @@ void journal_file_print_header(JournalFile *f) {
                f->header->state == STATE_ONLINE ? "ONLINE" :
                f->header->state == STATE_ARCHIVED ? "ARCHIVED" : "UNKNOWN",
                JOURNAL_HEADER_COMPRESSED_XZ(f->header) ? " COMPRESSED" : "",
-               (le32toh(f->header->incompatible_flags) & ~HEADER_INCOMPATIBLE_COMPRESSED_XZ) ? " ???" : "",
+               (le32toh(f->header->incompatible_flags) & ~HEADER_INCOMPATIBLE_ANY) ? " ???" : "",
                le64toh(f->header->header_size),
                le64toh(f->header->arena_size),
                le64toh(f->header->data_hash_table_size) / sizeof(HashItem),
