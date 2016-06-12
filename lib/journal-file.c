@@ -150,7 +150,7 @@ static int journal_file_init_header(JournalFile *f, JournalFile *template) {
         h.header_size = htole64(ALIGN64(sizeof(h)));
 
         h.incompatible_flags =
-                htole32(f->compress ? HEADER_INCOMPATIBLE_COMPRESSED : 0);
+                htole32(f->compress ? HEADER_INCOMPATIBLE_COMPRESSED_XZ : 0);
 
         h.compatible_flags = 0;
 
@@ -204,7 +204,7 @@ static int journal_file_verify_header(JournalFile *f) {
         /* In both read and write mode we refuse to open files with
          * incompatible flags we don't know */
 #ifdef HAVE_XZ
-        if ((le32toh(f->header->incompatible_flags) & ~HEADER_INCOMPATIBLE_COMPRESSED) != 0)
+        if ((le32toh(f->header->incompatible_flags) & ~HEADER_INCOMPATIBLE_COMPRESSED_XZ) != 0)
                 return -EPROTONOSUPPORT;
 #else
         if (f->header->incompatible_flags != 0)
@@ -262,7 +262,7 @@ static int journal_file_verify_header(JournalFile *f) {
                 }
         }
 
-        f->compress = JOURNAL_HEADER_COMPRESSED(f->header);
+        f->compress = JOURNAL_HEADER_COMPRESSED_XZ(f->header);
 
         return 0;
 }
@@ -2323,8 +2323,8 @@ void journal_file_print_header(JournalFile *f) {
                f->header->state == STATE_OFFLINE ? "OFFLINE" :
                f->header->state == STATE_ONLINE ? "ONLINE" :
                f->header->state == STATE_ARCHIVED ? "ARCHIVED" : "UNKNOWN",
-               JOURNAL_HEADER_COMPRESSED(f->header) ? " COMPRESSED" : "",
-               (le32toh(f->header->incompatible_flags) & ~HEADER_INCOMPATIBLE_COMPRESSED) ? " ???" : "",
+               JOURNAL_HEADER_COMPRESSED_XZ(f->header) ? " COMPRESSED" : "",
+               (le32toh(f->header->incompatible_flags) & ~HEADER_INCOMPATIBLE_COMPRESSED_XZ) ? " ???" : "",
                le64toh(f->header->header_size),
                le64toh(f->header->arena_size),
                le64toh(f->header->data_hash_table_size) / sizeof(HashItem),

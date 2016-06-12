@@ -126,8 +126,8 @@ static inline bool VALID_EPOCH(uint64_t u) {
 #define JOURNAL_HEADER_CONTAINS(h, field) \
         (le64toh((h)->header_size) >= offsetof(Header, field) + sizeof((h)->field))
 
-#define JOURNAL_HEADER_COMPRESSED(h) \
-        (!!(le32toh((h)->incompatible_flags) & HEADER_INCOMPATIBLE_COMPRESSED))
+#define JOURNAL_HEADER_COMPRESSED_XZ(h) \
+        (!!(le32toh((h)->incompatible_flags) & HEADER_INCOMPATIBLE_COMPRESSED_XZ))
 
 int journal_file_move_to_object(JournalFile *f, int type, uint64_t offset, Object **ret);
 

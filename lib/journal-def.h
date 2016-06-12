@@ -142,7 +142,7 @@ enum {
 
 /* Header flags */
 enum {
-        HEADER_INCOMPATIBLE_COMPRESSED = 1
+        HEADER_INCOMPATIBLE_COMPRESSED_XZ = 1 << 0
 };
 
 /* LPKSHHRH -

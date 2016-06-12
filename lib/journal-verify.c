@@ -835,7 +835,7 @@ int journal_file_verify(
                         goto fail;
                 }
 
-                if ((o->object.flags & OBJECT_COMPRESSED_XZ) && !JOURNAL_HEADER_COMPRESSED(f->header)) {
+                if ((o->object.flags & OBJECT_COMPRESSED_XZ) && !JOURNAL_HEADER_COMPRESSED_XZ(f->header)) {
                         log_error("Compressed object in file without compression at "OFSfmt, p);
                         r = -EBADMSG;
                         goto fail;
