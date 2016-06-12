@@ -17,6 +17,7 @@ Use `cmake -D(OPTION) ..` instead of `cmake ..` for add config option.
  - Use **TESTS_ENABLE=ON** option to enable build tests(default=OFF);
  - Use **SELINUX_ENABLE=OFF** option to disable SELINUX support(default=ON);
  - Use **XZ_ENABLE=OFF** option to disable xz support(default=ON);
+ - Use **LZ4_ENABLE=OFF** option to enable lz4 support(default=OFF);
 
 # License
 Original forked code is LGPLv2.1+.<br/>
