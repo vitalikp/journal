@@ -72,6 +72,12 @@ add_executable(test-compress
 )
 target_link_libraries(test-compress journal_int_obj journal_shared_obj)
 
+# test-compress-benchmark
+add_executable(test-compress-benchmark
+	test-compress-benchmark.c
+)
+target_link_libraries(test-compress-benchmark journal_int_obj journal_shared_obj)
+
 add_test(NAME journal COMMAND ./test-journal)
 add_test(NAME journal-enum COMMAND ./test-journal-enum)
 add_test(NAME journal-flush COMMAND ./test-journal-flush)
@@ -83,3 +89,4 @@ add_test(NAME journal-syslog COMMAND ./test-journal-syslog)
 add_test(NAME journal-verify COMMAND ./test-journal-verify)
 add_test(NAME mmap-cache COMMAND ./test-mmap-cache)
 add_test(NAME journal-compress COMMAND ./test-compress)
+add_test(NAME journal-compress-benchmark COMMAND ./test-compress-benchmark)
