@@ -106,6 +106,13 @@ if (${XZ_ENABLE})
 	set(HAVE_XZ 1)
 endif()
 
+# check lz4 library
+option(LZ4_ENABLE "Enable optional LZ4 support" OFF)
+if (${LZ4_ENABLE})
+	pkg_check_modules(LZ4 REQUIRED liblz4>=125)
+	set(HAVE_LZ4 1)
+endif()
+
 # get sys_uid_max
 EXECUTE_PROCESS(
 	COMMAND ${AWK} "BEGIN { uid=999 } /^\\s*SYS_UID_MAX\\s+/ { uid=$2 } END { printf uid }"

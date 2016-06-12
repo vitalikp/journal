@@ -34,6 +34,9 @@
 /* Define if XZ is available */
 #cmakedefine HAVE_XZ @HAVE_XZ@
 
+/* Define if LZ4 is available */
+#cmakedefine HAVE_LZ4 @HAVE_LZ4@
+
 /* The size of `pid_t', as computed by sizeof. */
 #cmakedefine SIZEOF_PID_T @SIZEOF_PID_T@
 
