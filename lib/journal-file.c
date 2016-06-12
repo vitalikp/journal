@@ -150,7 +150,7 @@ static int journal_file_init_header(JournalFile *f, JournalFile *template) {
         h.header_size = htole64(ALIGN64(sizeof(h)));
 
         h.incompatible_flags =
-                htole32(f->compress ? HEADER_INCOMPATIBLE_COMPRESSED_XZ : 0);
+                htole32(f->compress_xz ? HEADER_INCOMPATIBLE_COMPRESSED_XZ : 0);
 
         h.compatible_flags = 0;
 
@@ -262,7 +262,7 @@ static int journal_file_verify_header(JournalFile *f) {
                 }
         }
 
-        f->compress = JOURNAL_HEADER_COMPRESSED_XZ(f->header);
+        f->compress_xz = JOURNAL_HEADER_COMPRESSED_XZ(f->header);
 
         return 0;
 }
@@ -925,7 +925,7 @@ static int journal_file_append_data(
         o->data.hash = htole64(hash);
 
 #ifdef HAVE_XZ
-        if (f->compress &&
+        if (f->compress_xz &&
             size >= COMPRESSION_SIZE_THRESHOLD) {
                 uint64_t rsize;
 
@@ -2394,7 +2394,7 @@ int journal_file_open(
         f->prot = prot_from_flags(flags);
         f->writable = (flags & O_ACCMODE) != O_RDONLY;
 #ifdef HAVE_XZ
-        f->compress = compress;
+        f->compress_xz = compress;
 #endif
 
         if (mmap_cache)

@@ -52,7 +52,7 @@ typedef struct JournalFile {
         int flags;
         int prot;
         bool writable:1;
-        bool compress:1;
+        bool compress_xz:1;
 
         bool tail_entry_monotonic_valid:1;
 
