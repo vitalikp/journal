@@ -62,7 +62,8 @@ typedef enum ObjectType {
 
 /* Object flags */
 enum {
-        OBJECT_COMPRESSED = 1
+        OBJECT_COMPRESSED = 1,
+		_OBJECT_COMPRESSED_MAX
 };
 
 struct ObjectHeader {
