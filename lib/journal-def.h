@@ -66,6 +66,8 @@ enum {
 		_OBJECT_COMPRESSED_MAX
 };
 
+#define OBJECT_COMPRESSION_MASK (OBJECT_COMPRESSED_XZ)
+
 struct ObjectHeader {
         uint8_t type;
         uint8_t flags;

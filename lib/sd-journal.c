@@ -1942,7 +1942,7 @@ _public_ int sd_journal_get_data(sd_journal *j, const char *field, const void **
 
                 l = le64toh(o->object.size) - offsetof(Object, data.payload);
 
-                if (o->object.flags & OBJECT_COMPRESSED_XZ) {
+                if (o->object.flags & OBJECT_COMPRESSION_MASK) {
 
 #ifdef HAVE_XZ
                         if (uncompress_startswith(o->data.payload, l,
