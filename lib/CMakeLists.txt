@@ -44,7 +44,7 @@ add_library(journal_int_obj STATIC
 	${journal_int_src}
 )
 target_link_libraries(journal_int_obj journal_hash_obj)
-target_link_libraries(journal_int_obj ${XZ_LIBRARIES})
+target_link_libraries(journal_int_obj ${XZ_LIBRARIES} ${LZ4_LIBRARIES})
 target_link_libraries(journal_int_obj -pthread rt)
 
 add_library(journal SHARED
@@ -55,7 +55,7 @@ set_target_properties(journal PROPERTIES
 	SOVERSION ${JOURNAL_SOVERSION}
 )
 target_link_libraries(journal journal_hash_obj journal_shared_obj ${LIBJOURNAL_C_FLAGS})
-target_link_libraries(journal ${XZ_LIBRARIES})
+target_link_libraries(journal ${XZ_LIBRARIES} ${LZ4_LIBRARIES})
 target_link_libraries(journal -pthread rt)
 
 # install
