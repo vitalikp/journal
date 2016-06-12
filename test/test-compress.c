@@ -27,6 +27,12 @@
 # define XZ_OK -EPROTONOSUPPORT
 #endif
 
+#ifdef HAVE_LZ4
+# define LZ4_OK 0
+#else
+# define LZ4_OK -EPROTONOSUPPORT
+#endif
+
 typedef int (compress_blob_t)(const void *src, uint64_t src_size,
                               void *dst, uint64_t *dst_size);
 typedef int (decompress_blob_t)(const void *src, uint64_t src_size,
@@ -118,11 +124,16 @@ static void test_decompress_startswith(int compression,
 int main(int argc, char *argv[]) {
 
 #ifdef HAVE_XZ
-        log_info("/* testing XZ blob compression/decompression */");
         test_compress_decompress(OBJECT_COMPRESSED_XZ, compress_blob_xz, decompress_blob_xz);
         test_decompress_startswith(OBJECT_COMPRESSED_XZ, compress_blob_xz, decompress_startswith_xz);
 #else
         log_info("/* XZ test skipped */");
+#endif
+#ifdef HAVE_LZ4
+        test_compress_decompress(OBJECT_COMPRESSED_LZ4, compress_blob_lz4, decompress_blob_lz4);
+        test_decompress_startswith(OBJECT_COMPRESSED_LZ4, compress_blob_lz4, decompress_startswith_lz4);
+#else
+        log_info("/* LZ4 test skipped */");
 #endif
 
         return 0;

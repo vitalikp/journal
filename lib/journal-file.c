@@ -131,7 +131,7 @@ void journal_file_close(JournalFile *f) {
 
         hashmap_free_free(f->chain_cache);
 
-#ifdef HAVE_XZ
+#if defined(HAVE_XZ) || defined(HAVE_LZ4)
         free(f->compress_buffer);
 #endif
 
@@ -150,6 +150,7 @@ static int journal_file_init_header(JournalFile *f, JournalFile *template) {
         h.header_size = htole64(ALIGN64(sizeof(h)));
 
         h.incompatible_flags |= htole32(f->compress_xz * HEADER_INCOMPATIBLE_COMPRESSED_XZ);
+        h.incompatible_flags |= htole32(f->compress_lz4 * HEADER_INCOMPATIBLE_COMPRESSED_LZ4);
 
         h.compatible_flags = 0;
 
@@ -268,6 +269,7 @@ static int journal_file_verify_header(JournalFile *f) {
         }
 
         f->compress_xz = JOURNAL_HEADER_COMPRESSED_XZ(f->header);
+        f->compress_lz4 = JOURNAL_HEADER_COMPRESSED_LZ4(f->header);
 
         return 0;
 }
@@ -926,7 +928,7 @@ static int journal_file_append_data(
 
         o->data.hash = htole64(hash);
 
-#ifdef HAVE_XZ
+#if defined(HAVE_XZ) || defined(HAVE_LZ4)
         if (f->compress_xz &&
             size >= COMPRESSION_SIZE_THRESHOLD) {
                 uint64_t rsize;
@@ -2307,7 +2309,7 @@ void journal_file_print_header(JournalFile *f) {
                "Sequential Number ID: %s\n"
                "State: %s\n"
                "Compatible Flags:\n"
-               "Incompatible Flags:%s%s\n"
+               "Incompatible Flags:%s%s%s\n"
                "Header size: %"PRIu64"\n"
                "Arena size: %"PRIu64"\n"
                "Data Hash Table Size: %"PRIu64"\n"
@@ -2328,6 +2330,7 @@ void journal_file_print_header(JournalFile *f) {
                f->header->state == STATE_ONLINE ? "ONLINE" :
                f->header->state == STATE_ARCHIVED ? "ARCHIVED" : "UNKNOWN",
                JOURNAL_HEADER_COMPRESSED_XZ(f->header) ? " COMPRESSED-XZ" : "",
+               JOURNAL_HEADER_COMPRESSED_LZ4(f->header) ? " COMPRESSED-LZ4" : "",
                (le32toh(f->header->incompatible_flags) & ~HEADER_INCOMPATIBLE_ANY) ? " ???" : "",
                le64toh(f->header->header_size),
                le64toh(f->header->arena_size),
@@ -2397,7 +2400,9 @@ int journal_file_open(
         f->flags = flags;
         f->prot = prot_from_flags(flags);
         f->writable = (flags & O_ACCMODE) != O_RDONLY;
-#ifdef HAVE_XZ
+#if defined(HAVE_LZ4)
+        f->compress_lz4 = compress;
+#elif defined(HAVE_XZ)
         f->compress_xz = compress;
 #endif
 

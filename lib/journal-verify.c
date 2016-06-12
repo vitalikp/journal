@@ -834,8 +834,21 @@ int journal_file_verify(
                         goto fail;
                 }
 
+                if ((o->object.flags & OBJECT_COMPRESSED_XZ) &&
+                    (o->object.flags & OBJECT_COMPRESSED_LZ4)) {
+                        log_error("Objected with double compression at "OFSfmt, p);
+                        r = -EBADMSG;
+                        goto fail;
+                }
+
                 if ((o->object.flags & OBJECT_COMPRESSED_XZ) && !JOURNAL_HEADER_COMPRESSED_XZ(f->header)) {
                         log_error("XZ compressed object in file without XZ compression at "OFSfmt, p);
+                        r = -EBADMSG;
+                        goto fail;
+                }
+
+                if ((o->object.flags & OBJECT_COMPRESSED_LZ4) && !JOURNAL_HEADER_COMPRESSED_LZ4(f->header)) {
+                        log_error("LZ4 compressed object in file without LZ4 compression at "OFSfmt, p);
                         r = -EBADMSG;
                         goto fail;
                 }

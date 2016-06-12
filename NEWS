@@ -21,6 +21,7 @@
     - use automatic cleanup;
     - simplify compress_blob;
     - decode stream only with size prefix_len in uncompress_startswith function;
+    - add lz4 compress optional support;
  * hash:
     - add original lookup3 hash functions;
     - add unit tests;
