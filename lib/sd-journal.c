@@ -1942,7 +1942,7 @@ _public_ int sd_journal_get_data(sd_journal *j, const char *field, const void **
 
                 l = le64toh(o->object.size) - offsetof(Object, data.payload);
 
-                if (o->object.flags & OBJECT_COMPRESSED) {
+                if (o->object.flags & OBJECT_COMPRESSED_XZ) {
 
 #ifdef HAVE_XZ
                         if (uncompress_startswith(o->data.payload, l,
@@ -1999,7 +1999,7 @@ static int return_data(sd_journal *j, JournalFile *f, Object *o, const void **da
         if ((uint64_t) t != l)
                 return -E2BIG;
 
-        if (o->object.flags & OBJECT_COMPRESSED) {
+        if (o->object.flags & OBJECT_COMPRESSED_XZ) {
 #ifdef HAVE_XZ
                 uint64_t rsize;
 

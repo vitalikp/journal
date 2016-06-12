@@ -62,7 +62,7 @@ typedef enum ObjectType {
 
 /* Object flags */
 enum {
-        OBJECT_COMPRESSED = 1,
+        OBJECT_COMPRESSED_XZ = 1 << 0,
 		_OBJECT_COMPRESSED_MAX
 };
 

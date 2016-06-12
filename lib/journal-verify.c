@@ -44,7 +44,7 @@ static int journal_file_object_verify(JournalFile *f, uint64_t offset, Object *o
          * possible field values. It does not follow any references to
          * other objects. */
 
-        if ((o->object.flags & OBJECT_COMPRESSED) &&
+        if ((o->object.flags & OBJECT_COMPRESSED_XZ) &&
             o->object.type != OBJECT_DATA)
                 return -EBADMSG;
 
@@ -71,7 +71,7 @@ static int journal_file_object_verify(JournalFile *f, uint64_t offset, Object *o
 
                 h1 = le64toh(o->data.hash);
 
-                if (o->object.flags & OBJECT_COMPRESSED) {
+                if (o->object.flags & OBJECT_COMPRESSED_XZ) {
 #ifdef HAVE_XZ
                         void *b = NULL;
                         uint64_t alloc = 0, b_size;
@@ -835,7 +835,7 @@ int journal_file_verify(
                         goto fail;
                 }
 
-                if ((o->object.flags & OBJECT_COMPRESSED) && !JOURNAL_HEADER_COMPRESSED(f->header)) {
+                if ((o->object.flags & OBJECT_COMPRESSED_XZ) && !JOURNAL_HEADER_COMPRESSED(f->header)) {
                         log_error("Compressed object in file without compression at "OFSfmt, p);
                         r = -EBADMSG;
                         goto fail;

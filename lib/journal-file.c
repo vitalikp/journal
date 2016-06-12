@@ -766,7 +766,7 @@ int journal_file_find_data_object_with_hash(
                 if (le64toh(o->data.hash) != hash)
                         goto next;
 
-                if (o->object.flags & OBJECT_COMPRESSED) {
+                if (o->object.flags & OBJECT_COMPRESSED_XZ) {
 #ifdef HAVE_XZ
                         uint64_t l, rsize;
 
@@ -933,7 +933,7 @@ static int journal_file_append_data(
 
                 if (compressed) {
                         o->object.size = htole64(offsetof(Object, data.payload) + rsize);
-                        o->object.flags |= OBJECT_COMPRESSED;
+                        o->object.flags |= OBJECT_COMPRESSED_XZ;
 
                         log_debug("Compressed data object %"PRIu64" -> %"PRIu64, size, rsize);
                 }
@@ -2253,7 +2253,7 @@ void journal_file_dump(JournalFile *f) {
                         break;
                 }
 
-                if (o->object.flags & OBJECT_COMPRESSED)
+                if (o->object.flags & OBJECT_COMPRESSED_XZ)
                         printf("Flags: COMPRESSED\n");
 
                 if (p == le64toh(f->header->tail_object_offset))
@@ -2651,7 +2651,7 @@ int journal_file_copy_entry(JournalFile *from, JournalFile *to, Object *o, uint6
                 if ((uint64_t) t != l)
                         return -E2BIG;
 
-                if (o->object.flags & OBJECT_COMPRESSED) {
+                if (o->object.flags & OBJECT_COMPRESSED_XZ) {
 #ifdef HAVE_XZ
                         uint64_t rsize;
 
