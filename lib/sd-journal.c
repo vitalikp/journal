@@ -1944,26 +1944,30 @@ _public_ int sd_journal_get_data(sd_journal *j, const char *field, const void **
                 l = le64toh(o->object.size) - offsetof(Object, data.payload);
 
                 compression = o->object.flags & OBJECT_COMPRESSION_MASK;
-                if (compression &&
-                    decompress_startswith(compression,
-                                          o->data.payload, l,
-                                          &f->compress_buffer, &f->compress_buffer_size,
-                                          field, field_length, '=')) {
+                if (compression) {
+#if defined(HAVE_XZ) || defined(HAVE_LZ4)
+                        if (decompress_startswith(compression,
+                                                  o->data.payload, l,
+                                                  &f->compress_buffer, &f->compress_buffer_size,
+                                                  field, field_length, '=')) {
 
-                        uint64_t rsize;
+                                uint64_t rsize;
 
-                        r = decompress_blob(compression,
-                                            o->data.payload, l,
-                                            &f->compress_buffer, &f->compress_buffer_size, &rsize,
-                                            j->data_threshold);
-                        if (r < 0)
-                                return r;
+                                r = decompress_blob(compression,
+                                                    o->data.payload, l,
+                                                    &f->compress_buffer, &f->compress_buffer_size, &rsize,
+                                                    j->data_threshold);
+                                if (r < 0)
+                                        return r;
 
-                        *data = f->compress_buffer;
-                        *size = (size_t) rsize;
+                                *data = f->compress_buffer;
+                                *size = (size_t) rsize;
 
-                        return 0;
-
+                                return 0;
+                        }
+#else
+                        return -EPROTONOSUPPORT;
+#endif
                 } else if (l >= field_length+1 &&
                            memcmp(o->data.payload, field, field_length) == 0 &&
                            o->data.payload[field_length] == '=') {
@@ -1990,7 +1994,7 @@ _public_ int sd_journal_get_data(sd_journal *j, const char *field, const void **
 static int return_data(sd_journal *j, JournalFile *f, Object *o, const void **data, size_t *size) {
         size_t t;
         uint64_t l;
-        int compression, r;
+        int compression;
 
         l = le64toh(o->object.size) - offsetof(Object, data.payload);
         t = (size_t) l;
@@ -2001,7 +2005,9 @@ static int return_data(sd_journal *j, JournalFile *f, Object *o, const void **da
 
         compression = o->object.flags & OBJECT_COMPRESSION_MASK;
         if (compression) {
+#if defined(HAVE_XZ) || defined(HAVE_LZ4)
                 uint64_t rsize;
+                int r;
 
                 r = decompress_blob(compression,
                                     o->data.payload, l, &f->compress_buffer,
@@ -2011,6 +2017,9 @@ static int return_data(sd_journal *j, JournalFile *f, Object *o, const void **da
 
                 *data = f->compress_buffer;
                 *size = (size_t) rsize;
+#else
+                return -EPROTONOSUPPORT;
+#endif
         } else {
                 *data = o->data.payload;
                 *size = t;
