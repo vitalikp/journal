@@ -1213,7 +1213,7 @@ int server_init(Server *s) {
         s->sync_interval_usec = DEFAULT_SYNC_INTERVAL_USEC;
         s->sync_time = -1;
 
-        s->forward_to_syslog = true;
+        s->forward_to_syslog = false;
         s->forward_to_wall = true;
 
         s->max_file_usec = DEFAULT_MAX_FILE_USEC;

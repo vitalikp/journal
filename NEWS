@@ -133,6 +133,7 @@
    - add dispatch_message function;
    - add dispatch_message_object function;
    - fix using 1month by default for MaxFileSec;
+   - don't forward to syslog by default;
  * vacuum:
    - use time of last modification journal files in realtime field;
    - don't check corrupt journal files;
