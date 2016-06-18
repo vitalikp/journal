@@ -135,6 +135,7 @@
    - add dispatch_message_object function;
    - fix using 1month by default for MaxFileSec;
    - don't forward to syslog by default;
+   - mark ENTRY_SIZE_MAX and DATA_SIZE_MAX as unsigned values;
  * vacuum:
    - use time of last modification journal files in realtime field;
    - don't check corrupt journal files;

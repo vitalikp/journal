@@ -23,8 +23,8 @@
 
 #include "journald-server.h"
 
-#define ENTRY_SIZE_MAX (1024*1024*768)
-#define DATA_SIZE_MAX (1024*1024*768)
+#define ENTRY_SIZE_MAX (1024*1024*768u)
+#define DATA_SIZE_MAX (1024*1024*768u)
 
 bool valid_user_field(const char *p, size_t l, bool allow_protected);
 
