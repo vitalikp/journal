@@ -72,7 +72,7 @@ int log_syntax_internal(const char *unit, int level,
 }
 
 int config_item_table_lookup(
-                void *table,
+                const void *table,
                 const char *section,
                 const char *lvalue,
                 ConfigParserCallback *func,
@@ -80,7 +80,7 @@ int config_item_table_lookup(
                 void **data,
                 void *userdata) {
 
-        ConfigTableItem *t;
+        const ConfigTableItem *t;
 
         assert(table);
         assert(lvalue);
@@ -106,7 +106,7 @@ int config_item_table_lookup(
 }
 
 int config_item_perf_lookup(
-                void *table,
+                const void *table,
                 const char *section,
                 const char *lvalue,
                 ConfigParserCallback *func,
@@ -150,7 +150,7 @@ static int next_assignment(const char *unit,
                            const char *filename,
                            unsigned line,
                            ConfigItemLookup lookup,
-                           void *table,
+                           const void *table,
                            const char *section,
                            unsigned section_line,
                            const char *lvalue,
@@ -195,7 +195,7 @@ static int parse_line(const char* unit,
                       unsigned line,
                       const char *sections,
                       ConfigItemLookup lookup,
-                      void *table,
+                      const void *table,
                       bool relaxed,
                       bool allow_include,
                       char **section,
@@ -319,7 +319,7 @@ int config_parse(const char *unit,
                  FILE *f,
                  const char *sections,
                  ConfigItemLookup lookup,
-                 void *table,
+                 const void *table,
                  bool relaxed,
                  bool allow_include,
                  void *userdata) {
