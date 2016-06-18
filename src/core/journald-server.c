@@ -1136,7 +1136,7 @@ static int server_parse_config_file(Server *s) {
         }
 
         r = config_parse(NULL, fn, f, "Journal\0System\0Runtime\0", config_item_perf_lookup,
-                         (void*) journald_gperf_lookup, false, false, s);
+                         journald_gperf_lookup, false, false, s);
         if (r < 0)
                 log_warning("Failed to parse configuration file: %s", strerror(-r));
 
