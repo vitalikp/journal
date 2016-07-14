@@ -33,6 +33,58 @@
 #include "journal-verify.h"
 #include "compress.h"
 
+static void draw_progress(uint64_t p, usec_t *last_usec) {
+        unsigned n, i, j, k;
+        usec_t z, x;
+
+        if (!on_tty())
+                return;
+
+        z = now(CLOCK_MONOTONIC);
+        x = *last_usec;
+
+        if (x != 0 && x + 40 * USEC_PER_MSEC > z)
+                return;
+
+        *last_usec = z;
+
+        n = (3 * columns()) / 4;
+        j = (n * (unsigned) p) / 65535ULL;
+        k = n - j;
+
+        fputs("\r\x1B[?25l" ANSI_LIGHTGREEN_ON, stdout);
+
+        for (i = 0; i < j; i++)
+                fputs("\xe2\x96\x88", stdout);
+
+        fputs(ANSI_HIGHLIGHT_OFF, stdout);
+
+        for (i = 0; i < k; i++)
+                fputs("\xe2\x96\x91", stdout);
+
+        printf(" %3"PRIu64"%%", 100U * p / 65535U);
+
+        fputs("\r\x1B[?25h", stdout);
+        fflush(stdout);
+}
+
+static void flush_progress(void) {
+        unsigned n, i;
+
+        if (!on_tty())
+                return;
+
+        n = (3 * columns()) / 4;
+
+        putchar('\r');
+
+        for (i = 0; i < n + 5; i++)
+                putchar(' ');
+
+        putchar('\r');
+        fflush(stdout);
+}
+
 static int journal_file_object_verify(JournalFile *f, uint64_t offset, Object *o) {
         uint64_t i;
 
@@ -256,58 +308,6 @@ static int journal_file_object_verify(JournalFile *f, uint64_t offset, Object *o
         }
 
         return 0;
-}
-
-static void draw_progress(uint64_t p, usec_t *last_usec) {
-        unsigned n, i, j, k;
-        usec_t z, x;
-
-        if (!on_tty())
-                return;
-
-        z = now(CLOCK_MONOTONIC);
-        x = *last_usec;
-
-        if (x != 0 && x + 40 * USEC_PER_MSEC > z)
-                return;
-
-        *last_usec = z;
-
-        n = (3 * columns()) / 4;
-        j = (n * (unsigned) p) / 65535ULL;
-        k = n - j;
-
-        fputs("\r\x1B[?25l" ANSI_LIGHTGREEN_ON, stdout);
-
-        for (i = 0; i < j; i++)
-                fputs("\xe2\x96\x88", stdout);
-
-        fputs(ANSI_HIGHLIGHT_OFF, stdout);
-
-        for (i = 0; i < k; i++)
-                fputs("\xe2\x96\x91", stdout);
-
-        printf(" %3"PRIu64"%%", 100U * p / 65535U);
-
-        fputs("\r\x1B[?25h", stdout);
-        fflush(stdout);
-}
-
-static void flush_progress(void) {
-        unsigned n, i;
-
-        if (!on_tty())
-                return;
-
-        n = (3 * columns()) / 4;
-
-        putchar('\r');
-
-        for (i = 0; i < n + 5; i++)
-                putchar(' ');
-
-        putchar('\r');
-        fflush(stdout);
 }
 
 static int write_uint64(int fd, uint64_t p) {
