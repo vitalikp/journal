@@ -852,7 +852,7 @@ int journal_file_verify(
                 if ((o->object.flags & OBJECT_COMPRESSED_XZ) &&
                     (o->object.flags & OBJECT_COMPRESSED_LZ4)) {
                         log_error("Objected with double compression at "OFSfmt, p);
-                        r = -EBADMSG;
+                        r = -EINVAL;
                         goto fail;
                 }
 
