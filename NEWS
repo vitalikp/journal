@@ -23,6 +23,7 @@
     - decode stream only with size prefix_len in uncompress_startswith function;
     - add lz4 compress optional support;
     - allow files with no data whatsoever;
+    - flush progress bar, print offset in more places for verify module;
  * hash:
     - add original lookup3 hash functions;
     - add unit tests;
@@ -149,6 +150,7 @@
    - update info for journald.conf;
    - fix argument in example;
    - fix variable naming in example;
+   - add note about sd_journal_get_cutoff_monotonic_usec return value;
  * tests:
    - don't check existence of machine-id file;
    - fix run test-journal-init test;
