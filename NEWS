@@ -113,6 +113,7 @@
  * dont't notify status to systemd;
  * data:
    - remove output syslog socket;
+   - add priority values for p journalctl argument option;
  * journald:
    - add socket module;
    - add epollfd module;

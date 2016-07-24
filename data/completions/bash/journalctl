@@ -34,6 +34,8 @@ __journal_fields=(MESSAGE PRIORITY CODE_{FILE,LINE,FUNC}
                   _KERNEL_{DEVICE,SUBSYSTEM}
                   __CURSOR __{REALTIME,MONOTONIC}_TIMESTAMP)
 
+__syslog_priorities=(emerg alert crit err warning notice info debug)
+
 _journalctl() {
         local field_vals= cur=${COMP_WORDS[COMP_CWORD]} prev=${COMP_WORDS[COMP_CWORD-1]}
         local -A OPTS=(
@@ -43,8 +45,8 @@ _journalctl() {
                               --no-tail -q --quiet --setup-keys --this-boot --verify
                               --version --list-boots'
                        [ARG]='-b --boot --this-boot -D --directory --file -F --field
-                              -o --output -u --unit'
-                [ARGUNKNOWN]='-c --cursor --interval -n --lines -p --priority --since --until
+                              -o --output -u --unit -p --priority'
+                [ARGUNKNOWN]='-c --cursor --interval -n --lines --since --until
                               --verify-key'
         )
 
@@ -66,6 +68,9 @@ _journalctl() {
                         ;;
                         --field|-F)
                                 comps=${__journal_fields[*]}
+                        ;;
+                        --priority|-p)
+                                comps=${__syslog_priorities[*]}
                         ;;
                         --unit|-u)
                                 comps=$(journalctl -F '_SYSTEMD_UNIT' 2>/dev/null)
