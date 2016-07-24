@@ -52,6 +52,7 @@
     - don't match coredumps of the service;
     - parse boot argument option value in add_boot function;
     - don't parse unit name;
+    - allow + only between terms;
  * journal-fields:
     - remove MESSAGE_ID field;
     - remove coredump fields;
