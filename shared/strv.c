@@ -242,6 +242,9 @@ char **strv_split_quoted(const char *s) {
         n = 0;
         FOREACH_WORD_QUOTED(word, l, s, state)
                 n++;
+        if (*state)
+                /* bad syntax */
+                return NULL;
 
         r = new(char*, n+1);
         if (!r)
