@@ -871,14 +871,14 @@ void log_parse_environment(void) {
         if (r < 0)
                 log_warning("Failed to read /proc/cmdline. Ignoring: %s", strerror(-r));
         else if (r > 0) {
-                char *w, *state;
+                const char *word, *state;
                 size_t l;
 
-                FOREACH_WORD_QUOTED(w, l, line, state) {
-                        if (l == 5 && startswith(w, "debug")) {
+                FOREACH_WORD_QUOTED(word, l, line, state) {
+                        if (l == 5 && startswith(word, "debug")) {
                                 log_set_max_level(LOG_DEBUG);
                                 break;
-                        } else if (l == 5 && startswith(w, "quiet")) {
+                        } else if (l == 5 && startswith(word, "quiet")) {
                                 log_set_max_level(LOG_WARNING);
                                 break;
                         }

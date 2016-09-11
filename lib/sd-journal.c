@@ -999,7 +999,7 @@ _public_ int sd_journal_get_cursor(sd_journal *j, char **cursor) {
 }
 
 _public_ int sd_journal_seek_cursor(sd_journal *j, const char *cursor) {
-        char *w, *state;
+        const char *word, *state;
         size_t l;
         unsigned long long seqnum, monotonic, realtime, xor_hash;
         bool
@@ -1015,18 +1015,18 @@ _public_ int sd_journal_seek_cursor(sd_journal *j, const char *cursor) {
         assert_return(!journal_pid_changed(j), -ECHILD);
         assert_return(!isempty(cursor), -EINVAL);
 
-        FOREACH_WORD_SEPARATOR(w, l, cursor, ";", state) {
+        FOREACH_WORD_SEPARATOR(word, l, cursor, ";", state) {
                 char *item;
                 int k = 0;
 
-                if (l < 2 || w[1] != '=')
+                if (l < 2 || word[1] != '=')
                         return -EINVAL;
 
-                item = strndup(w, l);
+                item = strndup(word, l);
                 if (!item)
                         return -ENOMEM;
 
-                switch (w[0]) {
+                switch (word[0]) {
 
                 case 's':
                         seqnum_id_set = true;
@@ -1107,7 +1107,7 @@ _public_ int sd_journal_seek_cursor(sd_journal *j, const char *cursor) {
 
 _public_ int sd_journal_test_cursor(sd_journal *j, const char *cursor) {
         int r;
-        char *w, *state;
+        const char *word, *state;
         size_t l;
         Object *o;
 
@@ -1122,20 +1122,20 @@ _public_ int sd_journal_test_cursor(sd_journal *j, const char *cursor) {
         if (r < 0)
                 return r;
 
-        FOREACH_WORD_SEPARATOR(w, l, cursor, ";", state) {
+        FOREACH_WORD_SEPARATOR(word, l, cursor, ";", state) {
                 _cleanup_free_ char *item = NULL;
                 uuid_t id;
                 unsigned long long ll;
                 int k = 0;
 
-                if (l < 2 || w[1] != '=')
+                if (l < 2 || word[1] != '=')
                         return -EINVAL;
 
-                item = strndup(w, l);
+                item = strndup(word, l);
                 if (!item)
                         return -ENOMEM;
 
-                switch (w[0]) {
+                switch (word[0]) {
 
                 case 's':
                         if (uuid_parse(item+2, &id) < 0)

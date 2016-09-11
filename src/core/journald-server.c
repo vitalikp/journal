@@ -1077,7 +1077,7 @@ static int setup_signals(Server *s) {
 
 static int server_parse_proc_cmdline(Server *s) {
         _cleanup_free_ char *line = NULL;
-        char *w, *state;
+        const char *w, *state;
         size_t l;
         int r;
 
