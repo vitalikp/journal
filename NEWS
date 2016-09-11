@@ -110,6 +110,7 @@
     - fix split function when slash char escaped;
     - remove 'c' parameter from split function;
     - change return type to int in strv_split_quoted function;
+    - report invalid quoted strings;
  * remove journal_capability_obj library;
  * remove prefix field from sd_journal struct;
  * don't add machine_id to root log path directory;
