@@ -393,31 +393,43 @@ static size_t strcspn_escaped(const char *s, const char *reject) {
 }
 
 /* Split a string into words. */
-char *split(const char *c, size_t *l, const char *separator, bool quoted, char **state) {
-        char *current;
+const char* split(const char **state, size_t *l, const char *separator, bool quoted) {
+        const char *current;
 
-        current = *state ? *state : (char*) c;
+        current = *state;
 
-        if (!*current || *c == 0)
+        if (!*current) {
+                assert(**state == '\0');
                 return NULL;
-
-        current += strspn(current, separator);
-        if (!*current)
-                return NULL;
-
-        if (quoted && strchr("\'\"", *current)) {
-                char quotechar = *(current++);
-                *l = strcspn_escaped(current, (char[]){quotechar, '\0'});
-                *state = current+*l+1;
-        } else if (quoted) {
-                *l = strcspn_escaped(current, separator);
-                *state = current+*l;
-        } else {
-                *l = strcspn(current, separator);
-                *state = current+*l;
         }
 
-        return (char*) current;
+        current += strspn(current, separator);
+        if (!*current) {
+                *state = current;
+                return NULL;
+        }
+
+        if (quoted && strchr("\'\"", *current)) {
+                char quotechars[2] = {*current, '\0'};
+
+                *l = strcspn_escaped(current + 1, quotechars);
+                if (current[*l + 1] == '\0' ||
+                    (current[*l + 2] && !strchr(separator, current[*l + 2]))) {
+                        /* right quote missing or garbage at the end*/
+                        *state = current;
+                        return NULL;
+                }
+                assert(current[*l + 1] == quotechars[0]);
+                *state = current++ + *l + 2;
+        } else if (quoted) {
+                *l = strcspn_escaped(current, separator);
+                *state = current + *l;
+        } else {
+                *l = strcspn(current, separator);
+                *state = current + *l;
+        }
+
+        return current;
 }
 
 int get_parent_of_pid(pid_t pid, pid_t *_ppid) {
@@ -5541,7 +5553,7 @@ int proc_cmdline(char **ret) {
 
 int parse_proc_cmdline(int (*parse_item)(const char *key, const char *value)) {
         _cleanup_free_ char *line = NULL;
-        char *w, *state;
+        const char *w, *state;
         size_t l;
         int r;
 
