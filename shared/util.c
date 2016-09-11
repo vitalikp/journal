@@ -2954,12 +2954,13 @@ fail:
 }
 
 char **replace_env_argv(char **argv, char **env) {
-        char **r, **i;
+        char **ret, **i;
         unsigned k = 0, l = 0;
 
         l = strv_length(argv);
 
-        if (!(r = new(char*, l+1)))
+        ret = new(char*, l+1);
+        if (!ret)
                 return NULL;
 
         STRV_FOREACH(i, argv) {
@@ -2972,10 +2973,12 @@ char **replace_env_argv(char **argv, char **env) {
 
                         e = strv_env_get(env, *i+1);
                         if (e) {
+                                int r;
 
-                                if (!(m = strv_split_quoted(e))) {
-                                        r[k] = NULL;
-                                        strv_free(r);
+                                r = strv_split_quoted(&m, e);
+                                if (r < 0) {
+                                        ret[k] = NULL;
+                                        strv_free(ret);
                                         return NULL;
                                 }
                         } else
@@ -2984,16 +2987,17 @@ char **replace_env_argv(char **argv, char **env) {
                         q = strv_length(m);
                         l = l + q - 1;
 
-                        if (!(w = realloc(r, sizeof(char*) * (l+1)))) {
-                                r[k] = NULL;
-                                strv_free(r);
+                        w = realloc(ret, sizeof(char*) * (l+1));
+                        if (!w) {
+                                ret[k] = NULL;
+                                strv_free(ret);
                                 strv_free(m);
                                 return NULL;
                         }
 
-                        r = w;
+                        ret = w;
                         if (m) {
-                                memcpy(r + k, m, q * sizeof(char*));
+                                memcpy(ret + k, m, q * sizeof(char*));
                                 free(m);
                         }
 
@@ -3002,14 +3006,16 @@ char **replace_env_argv(char **argv, char **env) {
                 }
 
                 /* If ${FOO} appears as part of a word, replace it by the variable as-is */
-                if (!(r[k++] = replace_env(*i, env))) {
-                        strv_free(r);
+                ret[k] = replace_env(*i, env);
+                if (!ret[k]) {
+                        strv_free(ret);
                         return NULL;
                 }
+                k++;
         }
 
-        r[k] = NULL;
-        return r;
+        ret[k] = NULL;
+        return ret;
 }
 
 int fd_columns(int fd) {
