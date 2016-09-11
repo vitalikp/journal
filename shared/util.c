@@ -386,9 +386,10 @@ static size_t strcspn_escaped(const char *s, const char *reject) {
                 else if (s[n] == '\\')
                         escaped = true;
                 else if (strchr(reject, s[n]))
-                        return n;
+                        break;
         }
-        return n;
+        /* if s ends in \, return index of previous char */
+        return n - escaped;
 }
 
 /* Split a string into words. */
