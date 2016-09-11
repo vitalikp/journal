@@ -1738,11 +1738,11 @@ int acquire_terminal(
          * on the same tty as an untrusted user this should not be a
          * problem. (Which he probably should not do anyway.) */
 
-        if (timeout != (usec_t) -1)
+        if (timeout != USEC_INFINITY)
                 ts = now(CLOCK_MONOTONIC);
 
         if (!fail && !force) {
-                notify = inotify_init1(IN_CLOEXEC | (timeout != (usec_t) -1 ? IN_NONBLOCK : 0));
+                notify = inotify_init1(IN_CLOEXEC | (timeout != USEC_INFINITY ? IN_NONBLOCK : 0));
                 if (notify < 0) {
                         r = -errno;
                         goto fail;
@@ -1806,7 +1806,7 @@ int acquire_terminal(
                         ssize_t l;
                         struct inotify_event *e;
 
-                        if (timeout != (usec_t) -1) {
+                        if (timeout != USEC_INFINITY) {
                                 usec_t n;
 
                                 n = now(CLOCK_MONOTONIC);
@@ -1988,7 +1988,7 @@ ssize_t loop_read(int fd, void *buf, size_t nbytes, bool do_poll) {
                          * and expect that any error/EOF is reported
                          * via read() */
 
-                        fd_wait_for_event(fd, POLLIN, (usec_t) -1);
+                        fd_wait_for_event(fd, POLLIN, USEC_INFINITY);
                         continue;
                 }
 
@@ -2023,7 +2023,7 @@ ssize_t loop_write(int fd, const void *buf, size_t nbytes, bool do_poll) {
                          * and expect that any error/EOF is reported
                          * via write() */
 
-                        fd_wait_for_event(fd, POLLOUT, (usec_t) -1);
+                        fd_wait_for_event(fd, POLLOUT, USEC_INFINITY);
                         continue;
                 }
 
@@ -3239,7 +3239,7 @@ int touch_file(const char *path, bool parents, usec_t stamp, uid_t uid, gid_t gi
                         return -errno;
         }
 
-        if (stamp != (usec_t) -1) {
+        if (stamp != USEC_INFINITY) {
                 struct timespec ts[2];
 
                 timespec_store(&ts[0], stamp);
@@ -3254,7 +3254,7 @@ int touch_file(const char *path, bool parents, usec_t stamp, uid_t uid, gid_t gi
 }
 
 int touch(const char *path) {
-        return touch_file(path, false, (usec_t) -1, (uid_t) -1, (gid_t) -1, 0);
+        return touch_file(path, false, USEC_INFINITY, (uid_t) -1, (gid_t) -1, 0);
 }
 
 char *unquote(const char *s, const char* quotes) {
@@ -3662,7 +3662,7 @@ int fd_wait_for_event(int fd, int event, usec_t t) {
         struct timespec ts;
         int r;
 
-        r = ppoll(&pollfd, 1, t == (usec_t) -1 ? NULL : timespec_store(&ts, t), NULL);
+        r = ppoll(&pollfd, 1, t == USEC_INFINITY ? NULL : timespec_store(&ts, t), NULL);
         if (r < 0)
                 return -errno;
 
@@ -4845,7 +4845,7 @@ int make_console_stdio(void) {
 
         /* Make /dev/console the controlling terminal and stdin/stdout/stderr */
 
-        fd = acquire_terminal("/dev/console", false, true, true, (usec_t) -1);
+        fd = acquire_terminal("/dev/console", false, true, true, USEC_INFINITY);
         if (fd < 0) {
                 log_error("Failed to acquire terminal: %s", strerror(-fd));
                 return fd;

@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
         server_driver_message(&server, "Journal started");
 
         while (server.state != SERVER_FINISHED) {
-                usec_t t = (usec_t) -1, n;
+                usec_t t = USEC_INFINITY, n;
 
                 n = now(CLOCK_REALTIME);
 
