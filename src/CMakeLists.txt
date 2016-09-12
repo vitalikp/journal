@@ -44,5 +44,18 @@ add_executable(journalctl
 target_link_libraries(journalctl journal_int_obj journal_shared_obj)
 #target_link_libraries(journalctl -pthread rt)
 
+# tests
+if (${TESTS_ENABLE})
+
+# test-journal-syslog
+add_executable(test-journal-syslog
+	test-journal-syslog.c
+)
+target_link_libraries(test-journal-syslog journal_core_obj)
+
+add_test(NAME journal-syslog COMMAND ./test-journal-syslog)
+
+endif()
+
 # install
 install(TARGETS journalctl DESTINATION ${bindir})

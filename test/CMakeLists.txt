@@ -48,12 +48,6 @@ add_executable(test-journal-stream
 )
 target_link_libraries(test-journal-stream journal_core_obj)
 
-# test-journal-syslog
-add_executable(test-journal-syslog
-	test-journal-syslog.c
-)
-target_link_libraries(test-journal-syslog journal_core_obj)
-
 # test-journal-verify
 add_executable(test-journal-verify
 	test-journal-verify.c
@@ -85,7 +79,6 @@ add_test(NAME journal-init COMMAND ./test-journal-init)
 add_test(NAME journal-interleaving COMMAND ./test-journal-interleaving)
 add_test(NAME journal-match COMMAND ./test-journal-match)
 add_test(NAME journal-stream COMMAND ./test-journal-stream)
-add_test(NAME journal-syslog COMMAND ./test-journal-syslog)
 add_test(NAME journal-verify COMMAND ./test-journal-verify)
 add_test(NAME mmap-cache COMMAND ./test-mmap-cache)
 add_test(NAME journal-compress COMMAND ./test-compress)
