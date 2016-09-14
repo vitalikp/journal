@@ -4,17 +4,24 @@ cmake_minimum_required(VERSION 3.0)
 
 
 set(VERSION 214.3-dev)
+if (NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE Release)
+endif()
 set(CMAKE_C_COMPILER /usr/bin/gcc)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -pipe")
 # preprocessor flags
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wp,-D_FORTIFY_SOURCE=2")
+set(CMAKE_C_FLAGS_RELEASE "-Wp,-D_FORTIFY_SOURCE=2")
+set(CMAKE_C_FLAGS_RELWITHDEBINFO "-Wp,-D_FORTIFY_SOURCE=2")
 # warnings flags
 #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -pedantic")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-result")
 # code generation flags
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-common -fno-strict-aliasing -ffunction-sections -fdata-sections -fstack-protector -fstack-protector-strong -fexceptions")
 # debugging and optimizations flags
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pie --param=ssp-buffer-size=4 -flto -ffat-lto-objects -ffast-math -g -O2 -fvisibility=hidden")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pie --param=ssp-buffer-size=4 -flto -ffat-lto-objects -ffast-math -fvisibility=hidden")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O2 -DNDEBUG")
+set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} -g -O2 -DNDEBUG")
 set(CMAKE_SHARED_LIBRARY_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 set(CMAKE_EXE_C_FLAGS "${CMAKE_C_FLAGS} -fPIE")
 set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--as-needed -Wl,--no-undefined -Wl,--gc-sections -Wl,-z,relro -Wl,-z,now -Wl,-fuse-ld=gold")
@@ -134,7 +141,7 @@ add_subdirectory(test)
 endif()
 
 # show current config
-message("   ${CMAKE_PROJECT_NAME} ${VERSION}")
+message("   ${CMAKE_PROJECT_NAME} ${VERSION}(${CMAKE_BUILD_TYPE})")
 message("      prefix:      ${CMAKE_INSTALL_PREFIX}")
 message("       tests:      ${TESTS_ENABLE}")
 message("       AUDIT:      ${AUDIT_ENABLE}")

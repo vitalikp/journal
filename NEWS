@@ -173,6 +173,8 @@
    - add test-compress-benchmark test;
    - reduce test-journal-send timeout from 10s to 1s;
    - add test-epollfd test;
+ * build:
+ 	- don't use optimizations for debug build type;
  * remove using libudev library;
  * remove using cap library;
  * remove using systemd library;
