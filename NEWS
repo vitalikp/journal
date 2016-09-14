@@ -154,6 +154,7 @@
    - use epollfd in native module;
    - use epollfd in kmsg module;
    - use epollfd for signals;
+   - use epollfd for hostname fd;
  * vacuum:
    - use time of last modification journal files in realtime field;
    - don't check corrupt journal files;

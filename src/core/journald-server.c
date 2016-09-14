@@ -1187,6 +1187,11 @@ static int dispatch_hostname_change(sd_event_source *es, int fd, uint32_t revent
         return 0;
 }
 
+static int dispatch_hostname_change_epoll(int fd, uint32_t events, Server *s)
+{
+	return dispatch_hostname_change(NULL, fd, events, s);
+}
+
 static int server_open_hostname(Server *s) {
         int r;
 
@@ -1218,6 +1223,22 @@ static int server_open_hostname(Server *s) {
                 log_error("Failed to adjust priority of host name event source: %s", strerror(-r));
                 return r;
         }
+
+        r = epollfd_add(s->epoll, s->hostname_fd, 0, (event_cb)dispatch_hostname_change_epoll, s);
+		if (r < 0)
+		{
+			/* kernels prior to 3.2 don't support polling this file. Ignore
+			 * the failure. */
+			if (errno == EPERM)
+			{
+				log_warning("Failed to register hostname fd in epoll event loop: %m. Ignoring.");
+				s->hostname_fd = safe_close(s->hostname_fd);
+				return 0;
+			}
+
+			log_error("Failed to register hostname fd in epoll event loop: %m.");
+			return -1;
+		}
 
         return 0;
 }
