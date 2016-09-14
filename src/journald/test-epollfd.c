@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <unistd.h>
+#include <signal.h>
 #include <sys/epoll.h>
 #include <sys/socket.h>
 #include <sys/un.h>
@@ -102,11 +103,56 @@ static void test_io()
 	assert(res == 0);
 }
 
+static int signal_sigusr1(const struct signalfd_siginfo* si, int* val)
+{
+	*val = si->ssi_signo;
+
+	return 0;
+}
+
+static void test_signal()
+{
+	epollfd_t* epoll;
+	int res;
+	int fd;
+
+	res = epollfd_create(&epoll);
+	assert(res == 0 && epoll);
+
+	int val = 1;
+
+	res = epollfd_signal_add(epoll, SIGUSR1, (signal_cb)signal_sigusr1, &val);
+	assert(res == 0);
+
+	res = epollfd_signal_setup(epoll);
+	assert(res == 0);
+
+	pid_t pid;
+
+	pid = fork();
+	assert(pid >= 0);
+
+	if (!pid)
+	{
+		kill(getppid(), SIGUSR1);
+		exit(0);
+	}
+
+	res = epollfd_run(epoll);
+	assert(res == 0);
+	assert(val == SIGUSR1);
+
+	epollfd_close(&epoll);
+	assert(epoll == NULL);
+}
+
 int main(int argc, char *argv[])
 {
 	test_create();
 
 	test_io();
+
+	test_signal();
 
 	return EXIT_SUCCESS;
 }
