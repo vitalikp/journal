@@ -71,7 +71,6 @@ typedef struct Server {
         epollfd_t* epoll;
         sd_event *event;
 
-        sd_event_source *native_event_source;
         sd_event_source *dev_kmsg_event_source;
         sd_event_source *sigusr1_event_source;
         sd_event_source *sigusr2_event_source;
@@ -164,5 +163,4 @@ void server_vacuum(Server *s);
 void server_rotate(Server *s);
 int server_schedule_sync(Server *s, int priority);
 int server_flush_to_var(Server *s);
-int process_datagram_epoll(int fd, uint32_t events, void *userdata);
-int process_datagram(sd_event_source *es, int fd, uint32_t revents, void *userdata);
+int process_datagram(int fd, uint32_t events, void *userdata);

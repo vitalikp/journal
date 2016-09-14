@@ -898,19 +898,15 @@ finish:
         return r;
 }
 
-int process_datagram_epoll(int fd, uint32_t events, void *userdata)
+int process_datagram(int fd, uint32_t events, void *userdata)
 {
-	return process_datagram(NULL, fd, events, userdata);
-}
-
-int process_datagram(sd_event_source *es, int fd, uint32_t revents, void *userdata) {
         Server *s = userdata;
 
         assert(s);
         assert(fd == s->native_fd || fd == s->syslog_fd);
 
-        if (revents != EPOLLIN) {
-                log_error("Got invalid event from epoll for datagram fd: %"PRIx32, revents);
+        if (events != EPOLLIN) {
+                log_error("Got invalid event from epoll for datagram fd: %"PRIx32, events);
                 return -EIO;
         }
 
@@ -1356,7 +1352,6 @@ void server_done(Server *s) {
 
         hashmap_free(s->user_journals);
 
-        sd_event_source_unref(s->native_event_source);
         sd_event_source_unref(s->dev_kmsg_event_source);
         sd_event_source_unref(s->sigusr1_event_source);
         sd_event_source_unref(s->sigusr2_event_source);
