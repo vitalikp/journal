@@ -23,8 +23,6 @@ set(journal_int_src
 	uuid.h
 	boot.c
 	boot.h
-	sd-event.c
-	sd-event.h
 	sd-journal.c
 	journal.h
 	journal-file.c
