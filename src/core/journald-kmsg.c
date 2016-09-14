@@ -200,6 +200,7 @@ static int server_read_dev_kmsg(Server *s) {
                  * but don' try to ever read from it again. */
                 if (errno == EINVAL) {
                         s->dev_kmsg_event_source = sd_event_source_unref(s->dev_kmsg_event_source);
+                        epollfd_del(s->epoll, s->dev_kmsg_fd);
                         return 0;
                 }
 
@@ -242,7 +243,6 @@ int server_flush_dev_kmsg(Server *s) {
 static int dispatch_dev_kmsg(sd_event_source *es, int fd, uint32_t revents, void *userdata) {
         Server *s = userdata;
 
-        assert(es);
         assert(fd == s->dev_kmsg_fd);
         assert(s);
 
@@ -253,6 +253,11 @@ static int dispatch_dev_kmsg(sd_event_source *es, int fd, uint32_t revents, void
                 log_error("Got invalid event from epoll for /dev/kmsg: %"PRIx32, revents);
 
         return server_read_dev_kmsg(s);
+}
+
+static int dispatch_dev_kmsg_epoll(int fd, uint32_t events, void *userdata)
+{
+	return dispatch_dev_kmsg(NULL, fd, events, userdata);
 }
 
 int server_open_dev_kmsg(Server *s) {
@@ -285,6 +290,13 @@ int server_open_dev_kmsg(Server *s) {
         if (r < 0) {
                 log_error("Failed to adjust priority of kmsg event source: %s", strerror(-r));
                 goto fail;
+        }
+
+        r = epollfd_add(s->epoll, s->dev_kmsg_fd, EPOLLIN, (event_cb)dispatch_dev_kmsg_epoll, s);
+        if (r < 0)
+        {
+        	log_error("Failed to add /dev/kmsg fd to epoll event loop: %m");
+        	goto fail;
         }
 
         s->dev_kmsg_readable = true;

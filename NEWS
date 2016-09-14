@@ -152,6 +152,7 @@
    - add epoll field to Server struct;
    - use epollfd in syslog module;
    - use epollfd in native module;
+   - use epollfd in kmsg module;
  * vacuum:
    - use time of last modification journal files in realtime field;
    - don't check corrupt journal files;
