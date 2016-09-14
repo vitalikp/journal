@@ -23,6 +23,8 @@ struct event_t
 	int			fd;
 	event_cb	callback;
 	void*		data;
+
+	event_t*	next;
 };
 
 typedef struct sigdata_t sigdata_t;
@@ -35,6 +37,7 @@ struct sigdata_t
 
 struct epollfd_t
 {
+	/* epoll fd */
 	int			fd;
 
 	/* signals */
@@ -43,7 +46,6 @@ struct epollfd_t
 	sigdata_t	signals[_NSIG];
 
 	/* epoll events */
-	size_t		len;		/* allocated size */
 	event_t*	events;
 };
 
@@ -74,17 +76,16 @@ int epollfd_create(epollfd_t** pepoll)
 
 static void epollfd_free(epollfd_t* epoll)
 {
-	int fd = 0;
-
-	event_t* events = epoll->events;
-	while (fd < epoll->len)
+	event_t* event = epoll->events;
+	event_t* curr;
+	while (event)
 	{
-		epollfd_del(epoll, fd);
+		curr = event;
+		event = event->next;
 
-		events[fd].callback = NULL;
-		events[fd].data = NULL;
+		epollfd_del(epoll, curr->fd);
 
-		fd++;
+		free(curr);
 	}
 }
 
@@ -107,45 +108,26 @@ void epollfd_close(epollfd_t** pepoll)
 	}
 }
 
-static int epollfd_increase(epollfd_t* epoll, size_t size)
-{
-	if (epoll->len < size)
-	{
-		size_t len;
-		event_t* events;
-
-		events = epoll->events;
-
-		len = epoll->len+(epoll->len>>1);
-		if (len < 10)
-			len = 10;
-
-		events = realloc(events, len * sizeof(event_t));
-		if (!events)
-			return -1;
-
-		epoll->events = events;
-		epoll->len = len;
-	}
-
-	return 0;
-}
-
 int epollfd_add(epollfd_t* epoll, int fd, uint32_t events, event_cb callback, void* data)
 {
-	if (epollfd_increase(epoll, fd + 1) < 0)
+	event_t* event = malloc(sizeof(event_t));
+	if (!event)
 		return -1;
-
-	event_t* event = &epoll->events[fd];
 
 	event->fd = fd;
 	event->callback = callback;
 	event->data = data;
+	event->next = epoll->events;
 
 	struct epoll_event ev = { events, event };
 
 	if (epoll_ctl(epoll->fd, EPOLL_CTL_ADD, fd, &ev) < 0)
+	{
+		free(event);
 		return -1;
+	}
+
+	epoll->events = event;
 
 	return 0;
 }
