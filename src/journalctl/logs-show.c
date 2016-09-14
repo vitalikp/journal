@@ -88,6 +88,7 @@ static bool shall_print(const char *p, size_t l, OutputFlags flags) {
         return true;
 }
 
+#define ANSI_LIGHTBLUE "\x1B[38;5;153m"
 static bool print_multiline(FILE *f, unsigned prefix, unsigned n_columns, OutputFlags flags, int priority, const char* message, size_t message_len) {
         const char *color_on = "", *color_off = "";
         const char *pos, *end;
@@ -99,7 +100,7 @@ static bool print_multiline(FILE *f, unsigned prefix, unsigned n_columns, Output
                         color_on = ANSI_LIGHTRED_ON;
                         color_off = ANSI_HIGHLIGHT_OFF;
                 } else if (priority <= LOG_NOTICE) {
-                        color_on = ANSI_HIGHLIGHT_ON;
+                        color_on = ANSI_LIGHTBLUE;
                         color_off = ANSI_HIGHLIGHT_OFF;
                 }
         }

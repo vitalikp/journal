@@ -55,6 +55,7 @@
     - don't parse unit name;
     - allow + only between terms;
     - check asprintf return code;
+    - use lightblue color for debug messages;
  * journal-fields:
     - remove MESSAGE_ID field;
     - remove coredump fields;
