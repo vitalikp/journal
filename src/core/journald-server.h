@@ -165,4 +165,5 @@ void server_vacuum(Server *s);
 void server_rotate(Server *s);
 int server_schedule_sync(Server *s, int priority);
 int server_flush_to_var(Server *s);
+int process_datagram_epoll(int fd, uint32_t events, void *userdata);
 int process_datagram(sd_event_source *es, int fd, uint32_t revents, void *userdata);

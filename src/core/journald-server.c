@@ -898,6 +898,11 @@ finish:
         return r;
 }
 
+int process_datagram_epoll(int fd, uint32_t events, void *userdata)
+{
+	return process_datagram(NULL, fd, events, userdata);
+}
+
 int process_datagram(sd_event_source *es, int fd, uint32_t revents, void *userdata) {
         Server *s = userdata;
 
