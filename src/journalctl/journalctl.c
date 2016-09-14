@@ -62,6 +62,7 @@ static bool arg_no_tail = false;
 static bool arg_show_color = true;
 static bool arg_quiet = false;
 static bool arg_boot = false;
+static int arg_boot_offset = 0;
 static const char* arg_boot_id = NULL;
 static bool arg_dmesg = false;
 static const char *arg_cursor = NULL;
@@ -342,6 +343,16 @@ static int parse_argv(int argc, char *argv[]) {
                 case 'b':
                         arg_boot = true;
                         arg_boot_id = optarg;
+                        if (!optarg && optind < argc)
+                        {
+                        	int boot_offset;
+
+                        	if (!safe_atoi(argv[optind], &boot_offset))
+                        	{
+                        		arg_boot_offset = boot_offset;
+                        		optind++;
+                        	}
+                        }
                         break;
 
                 case ARG_LIST_BOOTS:
@@ -826,7 +837,7 @@ static int list_boots(sd_journal *j) {
 }
 
 static int add_boot(sd_journal *j) {
-        int boot_offset = 0;
+        int boot_offset = arg_boot_offset;
         uuid_t bid = {};
         char match[9+32+1] = "_BOOT_ID=";
         int r;
