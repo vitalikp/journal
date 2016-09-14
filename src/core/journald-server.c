@@ -1006,7 +1006,7 @@ int process_datagram(int fd, uint32_t events, void *userdata)
         }
 }
 
-static int dispatch_sigusr1(sd_event_source *es, const struct signalfd_siginfo *si, void *userdata) {
+static int dispatch_sigusr1(const struct signalfd_siginfo *si, void *userdata) {
         Server *s = userdata;
 
         assert(s);
@@ -1020,12 +1020,7 @@ static int dispatch_sigusr1(sd_event_source *es, const struct signalfd_siginfo *
         return 0;
 }
 
-static int dispatch_sigusr1_epoll(const struct signalfd_siginfo *si, Server *s)
-{
-	return dispatch_sigusr1(NULL, si, s);
-}
-
-static int dispatch_sigusr2(sd_event_source *es, const struct signalfd_siginfo *si, void *userdata) {
+static int dispatch_sigusr2(const struct signalfd_siginfo *si, void *userdata) {
         Server *s = userdata;
 
         assert(s);
@@ -1037,12 +1032,7 @@ static int dispatch_sigusr2(sd_event_source *es, const struct signalfd_siginfo *
         return 0;
 }
 
-static int dispatch_sigusr2_epoll(const struct signalfd_siginfo *si, Server *s)
-{
-	return dispatch_sigusr2(NULL, si, s);
-}
-
-static int dispatch_sigterm(sd_event_source *es, const struct signalfd_siginfo *si, void *userdata) {
+static int dispatch_sigterm(const struct signalfd_siginfo *si, void *userdata) {
         Server *s = userdata;
 
         assert(s);
@@ -1057,47 +1047,21 @@ static int dispatch_sigterm(sd_event_source *es, const struct signalfd_siginfo *
         return 0;
 }
 
-static int dispatch_sigterm_epoll(const struct signalfd_siginfo *si, Server *s)
-{
-	return dispatch_sigterm(NULL, si, s);
-}
-
 static int setup_signals(Server *s) {
-        sigset_t mask;
         int r;
 
         assert(s);
 
-        assert_se(sigemptyset(&mask) == 0);
-        sigset_add_many(&mask, SIGINT, SIGTERM, SIGUSR1, SIGUSR2, -1);
-        assert_se(sigprocmask(SIG_SETMASK, &mask, NULL) == 0);
-
-        r = sd_event_add_signal(s->event, &s->sigusr1_event_source, SIGUSR1, dispatch_sigusr1, s);
-        if (r < 0)
-                return r;
-
-        r = sd_event_add_signal(s->event, &s->sigusr2_event_source, SIGUSR2, dispatch_sigusr2, s);
-        if (r < 0)
-                return r;
-
-        r = sd_event_add_signal(s->event, &s->sigterm_event_source, SIGTERM, dispatch_sigterm, s);
-        if (r < 0)
-                return r;
-
-        r = sd_event_add_signal(s->event, &s->sigint_event_source, SIGINT, dispatch_sigterm, s);
-        if (r < 0)
-                return r;
-
-        if (epollfd_signal_add(s->epoll, SIGUSR1, (signal_cb)dispatch_sigusr1_epoll, s) < 0)
+        if (epollfd_signal_add(s->epoll, SIGUSR1, (signal_cb)dispatch_sigusr1, s) < 0)
         	return -1;
 
-        if (epollfd_signal_add(s->epoll, SIGUSR2, (signal_cb)dispatch_sigusr2_epoll, s) < 0)
+        if (epollfd_signal_add(s->epoll, SIGUSR2, (signal_cb)dispatch_sigusr2, s) < 0)
         	return -1;
 
-        if (epollfd_signal_add(s->epoll, SIGTERM, (signal_cb)dispatch_sigterm_epoll, s) < 0)
+        if (epollfd_signal_add(s->epoll, SIGTERM, (signal_cb)dispatch_sigterm, s) < 0)
         	return -1;
 
-        if (epollfd_signal_add(s->epoll, SIGINT, (signal_cb)dispatch_sigterm_epoll, s) < 0)
+        if (epollfd_signal_add(s->epoll, SIGINT, (signal_cb)dispatch_sigterm, s) < 0)
         	return -1;
 
         if (epollfd_signal_setup(s->epoll) < 0)
@@ -1352,10 +1316,6 @@ void server_done(Server *s) {
 
         hashmap_free(s->user_journals);
 
-        sd_event_source_unref(s->sigusr1_event_source);
-        sd_event_source_unref(s->sigusr2_event_source);
-        sd_event_source_unref(s->sigterm_event_source);
-        sd_event_source_unref(s->sigint_event_source);
         sd_event_source_unref(s->hostname_event_source);
         sd_event_unref(s->event);
 

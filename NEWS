@@ -153,7 +153,7 @@
    - remove syslog_event_source field from Server struct;
    - remove native_event_source field from Server struct;
    - remove dev_kmsg_event_source field from Server struct;
-   - use epollfd for signals;
+   - remove sig*_event_source fields from Server struct;
    - use epollfd for hostname fd;
    - use epollfd module;
  * vacuum:
