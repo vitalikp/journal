@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 - Vitaliy Perevertun
+ * Copyright © 2015-2016 - Vitaliy Perevertun
  *
  * This file is part of journal
  *
@@ -14,7 +14,7 @@
 #include <sys/signalfd.h>
 
 
-typedef int (*event_cb)(int fd, void* data);
+typedef int (*event_cb)(int fd, uint32_t events, void* data);
 
 typedef int (*signal_cb)(const struct signalfd_siginfo* si, void* data);
 

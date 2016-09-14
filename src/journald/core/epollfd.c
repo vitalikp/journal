@@ -165,7 +165,7 @@ int epollfd_signal_add(epollfd_t* epoll, int signo, signal_cb callback, void* da
 	return 0;
 }
 
-static int signal_process(int fd, epollfd_t* epoll)
+static int signal_process(int fd, uint32_t events, epollfd_t* epoll)
 {
 	struct signalfd_siginfo si;
 	ssize_t sz;
@@ -218,12 +218,12 @@ int epollfd_signal_setup(epollfd_t* epoll)
 	return 0;
 }
 
-static int event_process(int fd, event_t* event)
+static int event_process(int fd, uint32_t events, event_t* event)
 {
 	if (!event->callback)
 		return 0;
 
-	return event->callback(fd, event->data);
+	return event->callback(fd, events, event->data);
 }
 
 int epollfd_run(epollfd_t* epoll)
@@ -242,17 +242,19 @@ int epollfd_run(epollfd_t* epoll)
 	}
 
 	int fd;
+	uint32_t events;
 	event_t* event;
 
 	int i = 0;
 	while (i < num)
 	{
 		fd = ev_queue[i].data.fd;
+		events = ev_queue[i].events;
 
 		if (fd > 0)
 		{
 			event = &epoll->events[fd];
-			if (event_process(fd, event) < 0)
+			if (event_process(fd, events, event) < 0)
 				return -1;
 		}
 
