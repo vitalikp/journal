@@ -1356,7 +1356,6 @@ void server_done(Server *s) {
 
         hashmap_free(s->user_journals);
 
-        sd_event_source_unref(s->syslog_event_source);
         sd_event_source_unref(s->native_event_source);
         sd_event_source_unref(s->dev_kmsg_event_source);
         sd_event_source_unref(s->sigusr1_event_source);

@@ -419,16 +419,10 @@ int server_open_syslog_socket(Server *s) {
         if (s->syslog_fd < 0)
         	return -errno;
 
-        r = sd_event_add_io(s->event, &s->syslog_event_source, s->syslog_fd, EPOLLIN, process_datagram, s);
-        if (r < 0) {
-                log_error("Failed to add syslog server fd to event loop: %s", strerror(-r));
-                return r;
-        }
-
         r = epollfd_add(s->epoll, s->syslog_fd, EPOLLIN, (event_cb)process_datagram_epoll, s);
         if (r < 0)
         {
-        	log_error("Failed to add syslog server fd to epoll event loop: %m");
+        	log_error("Failed to add syslog server fd to event loop: %m");
         	return -1;
         }
 
