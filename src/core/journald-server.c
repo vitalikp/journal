@@ -1223,15 +1223,12 @@ int server_init(Server *s) {
                 return log_oom();
 
         s->state = SERVER_RUNNING;
-        r = sd_event_default(&s->event);
-        if (r < 0) {
-                log_error("Failed to create event loop: %s", strerror(-r));
-                return r;
-        }
-
         r = epollfd_create(&s->epoll);
         if (r < 0)
-        	return -errno;
+        {
+        	log_error("Failed to create event loop: %m");
+        	return -1;
+        }
 
         s->epoll_fd = epoll_create1(EPOLL_CLOEXEC);
         if (s->epoll_fd < 0)
@@ -1289,8 +1286,6 @@ void server_done(Server *s) {
                 journal_file_close(f);
 
         hashmap_free(s->user_journals);
-
-        sd_event_unref(s->event);
 
         epollfd_close(&s->epoll);
         safe_close(s->epoll_fd);

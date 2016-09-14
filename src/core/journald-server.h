@@ -28,7 +28,6 @@
 #include <sys/socket.h>
 
 #include "epollfd.h"
-#include "sd-event.h"
 #include "journal-file.h"
 #include "hashmap.h"
 #include "util.h"
@@ -69,7 +68,6 @@ typedef struct Server {
 
         ServerState state;
         epollfd_t* epoll;
-        sd_event *event;
 
         JournalFile *runtime_journal;
         JournalFile *system_journal;
