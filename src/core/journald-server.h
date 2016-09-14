@@ -27,6 +27,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
+#include "epollfd.h"
 #include "sd-event.h"
 #include "journal-file.h"
 #include "hashmap.h"
@@ -67,6 +68,7 @@ typedef struct Server {
         int hostname_fd;
 
         ServerState state;
+        epollfd_t* epoll;
         sd_event *event;
 
         sd_event_source *syslog_event_source;

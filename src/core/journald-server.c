@@ -1239,6 +1239,10 @@ int server_init(Server *s) {
                 return r;
         }
 
+        r = epollfd_create(&s->epoll);
+        if (r < 0)
+        	return -errno;
+
         s->epoll_fd = epoll_create1(EPOLL_CLOEXEC);
         if (s->epoll_fd < 0)
                 return -errno;
@@ -1306,6 +1310,7 @@ void server_done(Server *s) {
         sd_event_source_unref(s->hostname_event_source);
         sd_event_unref(s->event);
 
+        epollfd_close(&s->epoll);
         safe_close(s->epoll_fd);
         safe_close(s->syslog_fd);
         safe_close(s->native_fd);

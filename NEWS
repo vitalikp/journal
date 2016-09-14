@@ -149,6 +149,7 @@
    - mark ENTRY_SIZE_MAX and DATA_SIZE_MAX as unsigned values;
    - clear up confusion wrt. ENTRY_SIZE_MAX and DATA_SIZE_MAX;
    - always add syslog facility for messages coming from kmsg;
+   - add epoll field to Server struct;
  * vacuum:
    - use time of last modification journal files in realtime field;
    - don't check corrupt journal files;
