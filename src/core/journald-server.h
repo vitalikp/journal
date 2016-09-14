@@ -71,7 +71,6 @@ typedef struct Server {
         epollfd_t* epoll;
         sd_event *event;
 
-        sd_event_source *dev_kmsg_event_source;
         sd_event_source *sigusr1_event_source;
         sd_event_source *sigusr2_event_source;
         sd_event_source *sigterm_event_source;

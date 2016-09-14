@@ -199,7 +199,6 @@ static int server_read_dev_kmsg(Server *s) {
                  * return EINVAL when we try. So handle this cleanly,
                  * but don' try to ever read from it again. */
                 if (errno == EINVAL) {
-                        s->dev_kmsg_event_source = sd_event_source_unref(s->dev_kmsg_event_source);
                         epollfd_del(s->epoll, s->dev_kmsg_fd);
                         return 0;
                 }
@@ -240,7 +239,7 @@ int server_flush_dev_kmsg(Server *s) {
         return 0;
 }
 
-static int dispatch_dev_kmsg(sd_event_source *es, int fd, uint32_t revents, void *userdata) {
+static int dispatch_dev_kmsg(int fd, uint32_t revents, void *userdata) {
         Server *s = userdata;
 
         assert(fd == s->dev_kmsg_fd);
@@ -255,11 +254,6 @@ static int dispatch_dev_kmsg(sd_event_source *es, int fd, uint32_t revents, void
         return server_read_dev_kmsg(s);
 }
 
-static int dispatch_dev_kmsg_epoll(int fd, uint32_t events, void *userdata)
-{
-	return dispatch_dev_kmsg(NULL, fd, events, userdata);
-}
-
 int server_open_dev_kmsg(Server *s) {
         int r;
 
@@ -272,30 +266,18 @@ int server_open_dev_kmsg(Server *s) {
                 return 0;
         }
 
-        r = sd_event_add_io(s->event, &s->dev_kmsg_event_source, s->dev_kmsg_fd, EPOLLIN, dispatch_dev_kmsg, s);
-        if (r < 0) {
-
-                /* This will fail with EPERM on older kernels where
-                 * /dev/kmsg is not readable. */
-                if (r == -EPERM) {
-                        r = 0;
-                        goto fail;
-                }
-
-                log_error("Failed to add /dev/kmsg fd to event loop: %s", strerror(-r));
-                goto fail;
-        }
-
-        r = sd_event_source_set_priority(s->dev_kmsg_event_source, SD_EVENT_PRIORITY_IMPORTANT+10);
-        if (r < 0) {
-                log_error("Failed to adjust priority of kmsg event source: %s", strerror(-r));
-                goto fail;
-        }
-
-        r = epollfd_add(s->epoll, s->dev_kmsg_fd, EPOLLIN, (event_cb)dispatch_dev_kmsg_epoll, s);
+        r = epollfd_add(s->epoll, s->dev_kmsg_fd, EPOLLIN, (event_cb)dispatch_dev_kmsg, s);
         if (r < 0)
         {
-        	log_error("Failed to add /dev/kmsg fd to epoll event loop: %m");
+        	/* This will fail with EPERM on older kernels where
+			 * /dev/kmsg is not readable. */
+			if (errno == -EPERM)
+			{
+				r = 0;
+				goto fail;
+			}
+
+        	log_error("Failed to add /dev/kmsg fd to event loop: %m");
         	goto fail;
         }
 
@@ -304,7 +286,6 @@ int server_open_dev_kmsg(Server *s) {
         return 0;
 
 fail:
-        s->dev_kmsg_event_source = sd_event_source_unref(s->dev_kmsg_event_source);
         s->dev_kmsg_fd = safe_close(s->dev_kmsg_fd);
 
         return r;

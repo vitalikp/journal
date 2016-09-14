@@ -152,7 +152,7 @@
    - add epoll field to Server struct;
    - remove syslog_event_source field from Server struct;
    - remove native_event_source field from Server struct;
-   - use epollfd in kmsg module;
+   - remove dev_kmsg_event_source field from Server struct;
    - use epollfd for signals;
    - use epollfd for hostname fd;
    - use epollfd module;
