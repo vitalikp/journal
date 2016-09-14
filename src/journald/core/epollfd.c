@@ -20,6 +20,7 @@
 
 struct event_t
 {
+	int			fd;
 	event_cb	callback;
 	void*		data;
 };
@@ -135,13 +136,16 @@ int epollfd_add(epollfd_t* epoll, int fd, uint32_t events, event_cb callback, vo
 	if (epollfd_increase(epoll, fd + 1) < 0)
 		return -1;
 
-	struct epoll_event ev = { events, (epoll_data_t)fd };
+	event_t* event = &epoll->events[fd];
+
+	event->fd = fd;
+	event->callback = callback;
+	event->data = data;
+
+	struct epoll_event ev = { events, event };
 
 	if (epoll_ctl(epoll->fd, EPOLL_CTL_ADD, fd, &ev) < 0)
 		return -1;
-
-	epoll->events[fd].callback = callback;
-	epoll->events[fd].data = data;
 
 	return 0;
 }
@@ -218,12 +222,12 @@ int epollfd_signal_setup(epollfd_t* epoll)
 	return 0;
 }
 
-static int event_process(int fd, uint32_t events, event_t* event)
+static int event_process(event_t* event, uint32_t events)
 {
 	if (!event->callback)
 		return 0;
 
-	return event->callback(fd, events, event->data);
+	return event->callback(event->fd, events, event->data);
 }
 
 int epollfd_run(epollfd_t* epoll)
@@ -241,20 +245,18 @@ int epollfd_run(epollfd_t* epoll)
 		return -1;
 	}
 
-	int fd;
 	uint32_t events;
 	event_t* event;
 
 	int i = 0;
 	while (i < num)
 	{
-		fd = ev_queue[i].data.fd;
+		event = ev_queue[i].data.ptr;
 		events = ev_queue[i].events;
 
-		if (fd > 0)
+		if (event)
 		{
-			event = &epoll->events[fd];
-			if (event_process(fd, events, event) < 0)
+			if (event_process(event, events) < 0)
 				return -1;
 		}
 
