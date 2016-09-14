@@ -217,6 +217,13 @@
                         </varlistentry>
 
                         <varlistentry>
+                                <term><option>--no-color</option></term>
+
+                                <listitem><para>Do not use ansi colors
+                                when outputting to tty.</para></listitem>
+                        </varlistentry>
+
+                        <varlistentry>
                                 <term><option>-r</option></term>
                                 <term><option>--reverse</option></term>
 

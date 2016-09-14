@@ -46,6 +46,7 @@
  * remove sd_journal_open_container function;
  * remove SD_JOURNAL_SYSTEM_ONLY open flag;
  * journalctl:
+    - add no-color argument option;
     - remove machine argument option;
     - remove new-id128 argument option;
     - remove user-unit argument option;

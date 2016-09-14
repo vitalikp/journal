@@ -59,6 +59,7 @@ static bool arg_all = false;
 static bool arg_no_pager = false;
 static int arg_lines = -1;
 static bool arg_no_tail = false;
+static bool arg_show_color = true;
 static bool arg_quiet = false;
 static bool arg_boot = false;
 static const char* arg_boot_id = NULL;
@@ -156,6 +157,7 @@ static int help(void) {
                "  -f --follow              Follow the journal\n"
                "  -n --lines[=INTEGER]     Number of journal entries to show\n"
                "     --no-tail             Show all lines, even in follow mode\n"
+               "     --no-color            Do not use ansi colors\n"
                "  -r --reverse             Show the newest entries first\n"
                "  -o --output=STRING       Change journal output mode (short, short-iso,\n"
                "                                   short-precise, short-monotonic, verbose,\n"
@@ -185,6 +187,7 @@ static int parse_argv(int argc, char *argv[]) {
                 ARG_NO_PAGER,
                 ARG_NO_FULL,
                 ARG_NO_TAIL,
+                ARG_NO_COLOR,
                 ARG_LIST_BOOTS,
                 ARG_USER,
                 ARG_SYSTEM,
@@ -210,6 +213,7 @@ static int parse_argv(int argc, char *argv[]) {
                 { "no-full",        no_argument,       NULL, ARG_NO_FULL        },
                 { "lines",          optional_argument, NULL, 'n'                },
                 { "no-tail",        no_argument,       NULL, ARG_NO_TAIL        },
+                { "no-color",       no_argument,       NULL, ARG_NO_COLOR       },
                 { "quiet",          no_argument,       NULL, 'q'                },
                 { "boot",           optional_argument, NULL, 'b'                },
                 { "list-boots",     no_argument,       NULL, ARG_LIST_BOOTS     },
@@ -325,6 +329,10 @@ static int parse_argv(int argc, char *argv[]) {
 
                 case ARG_NO_TAIL:
                         arg_no_tail = true;
+                        break;
+
+                case ARG_NO_COLOR:
+                        arg_show_color = false;
                         break;
 
                 case 'q':
@@ -1411,7 +1419,7 @@ int main(int argc, char *argv[]) {
                         flags =
                                 arg_all * OUTPUT_SHOW_ALL |
                                 arg_full * OUTPUT_FULL_WIDTH |
-                                on_tty() * OUTPUT_COLOR;
+                                arg_show_color * on_tty() * OUTPUT_COLOR;
 
                         r = output_journal(stdout, j, arg_output, 0, flags, &ellipsized);
                         need_seek = true;
