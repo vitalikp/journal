@@ -154,7 +154,7 @@
    - remove native_event_source field from Server struct;
    - remove dev_kmsg_event_source field from Server struct;
    - remove sig*_event_source fields from Server struct;
-   - use epollfd for hostname fd;
+   - remove hostname_event_source field from Server struct;
    - use epollfd module;
  * vacuum:
    - use time of last modification journal files in realtime field;

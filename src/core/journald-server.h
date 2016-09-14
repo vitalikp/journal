@@ -71,8 +71,6 @@ typedef struct Server {
         epollfd_t* epoll;
         sd_event *event;
 
-        sd_event_source *hostname_event_source;
-
         JournalFile *runtime_journal;
         JournalFile *system_journal;
         Hashmap *user_journals;

@@ -1138,18 +1138,13 @@ int server_schedule_sync(Server *s, int priority) {
         return 0;
 }
 
-static int dispatch_hostname_change(sd_event_source *es, int fd, uint32_t revents, void *userdata) {
+static int dispatch_hostname_change(int fd, uint32_t events, void *userdata) {
         Server *s = userdata;
 
         assert(s);
 
         server_cache_hostname(s);
         return 0;
-}
-
-static int dispatch_hostname_change_epoll(int fd, uint32_t events, Server *s)
-{
-	return dispatch_hostname_change(NULL, fd, events, s);
 }
 
 static int server_open_hostname(Server *s) {
@@ -1163,40 +1158,19 @@ static int server_open_hostname(Server *s) {
                 return -errno;
         }
 
-        r = sd_event_add_io(s->event, &s->hostname_event_source, s->hostname_fd, 0, dispatch_hostname_change, s);
-        if (r < 0) {
-                /* kernels prior to 3.2 don't support polling this file. Ignore
-                 * the failure. */
-                if (r == -EPERM) {
-                        log_warning("Failed to register hostname fd in event loop: %s. Ignoring.",
-                                        strerror(-r));
-                        s->hostname_fd = safe_close(s->hostname_fd);
-                        return 0;
-                }
-
-                log_error("Failed to register hostname fd in event loop: %s", strerror(-r));
-                return r;
-        }
-
-        r = sd_event_source_set_priority(s->hostname_event_source, SD_EVENT_PRIORITY_IMPORTANT-10);
-        if (r < 0) {
-                log_error("Failed to adjust priority of host name event source: %s", strerror(-r));
-                return r;
-        }
-
-        r = epollfd_add(s->epoll, s->hostname_fd, 0, (event_cb)dispatch_hostname_change_epoll, s);
+        r = epollfd_add(s->epoll, s->hostname_fd, 0, (event_cb)dispatch_hostname_change, s);
 		if (r < 0)
 		{
 			/* kernels prior to 3.2 don't support polling this file. Ignore
 			 * the failure. */
 			if (errno == EPERM)
 			{
-				log_warning("Failed to register hostname fd in epoll event loop: %m. Ignoring.");
+				log_warning("Failed to register hostname fd in event loop: %m. Ignoring.");
 				s->hostname_fd = safe_close(s->hostname_fd);
 				return 0;
 			}
 
-			log_error("Failed to register hostname fd in epoll event loop: %m.");
+			log_error("Failed to register hostname fd in event loop: %m.");
 			return -1;
 		}
 
@@ -1316,7 +1290,6 @@ void server_done(Server *s) {
 
         hashmap_free(s->user_journals);
 
-        sd_event_source_unref(s->hostname_event_source);
         sd_event_unref(s->event);
 
         epollfd_close(&s->epoll);
