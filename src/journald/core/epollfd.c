@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 - Vitaliy Perevertun
+ * Copyright © 2015-2016 - Vitaliy Perevertun
  *
  * This file is part of journal
  *
@@ -79,8 +79,6 @@ static void epollfd_free(epollfd_t* epoll)
 	while (fd < epoll->len)
 	{
 		epollfd_del(epoll, fd);
-
-		close(fd);
 
 		events[fd].callback = NULL;
 		events[fd].data = NULL;
