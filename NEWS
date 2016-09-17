@@ -57,6 +57,7 @@
     - allow + only between terms;
     - check asprintf return code;
     - use lightblue color for debug messages;
+    - change return type to void in help function;
  * journal-fields:
     - remove MESSAGE_ID field;
     - remove coredump fields;

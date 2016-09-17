@@ -135,7 +135,7 @@ static int parse_boot_descriptor(const char *x, uuid_t *boot_id, int *offset) {
         return 0;
 }
 
-static int help(void) {
+static void help(void) {
 
         pager_open_if_enabled();
 
@@ -177,8 +177,6 @@ static int help(void) {
                "  -F --field=FIELD         List all values that a specified field takes\n"
                "     --verify              Verify journal file consistency\n"
                , program_invocation_short_name);
-
-        return 0;
 }
 
 static int parse_argv(int argc, char *argv[]) {
@@ -249,7 +247,8 @@ static int parse_argv(int argc, char *argv[]) {
                 switch (c) {
 
                 case 'h':
-                        return help();
+                        help();
+                        return 0;
 
                 case ARG_VERSION:
                         printf("journalctl: %s\n", VERSION);
