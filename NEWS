@@ -155,6 +155,7 @@
    - always add syslog facility for messages coming from kmsg;
    - add epoll field to Server struct;
    - use epollfd module;
+   - properly sum up entry size counter;
  * vacuum:
    - use time of last modification journal files in realtime field;
    - don't check corrupt journal files;
@@ -178,6 +179,8 @@
    - add test-epollfd test;
  * build:
  	- don't use optimizations for debug build type;
+ * bugfix:
+ 	- fix misuse of uint64_t as size_t;
  * remove using libudev library;
  * remove using cap library;
  * remove using systemd library;
