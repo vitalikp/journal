@@ -157,6 +157,7 @@
    - add epoll field to Server struct;
    - use epollfd module;
    - properly sum up entry size counter;
+   - fix off-by-one error in "Missed X kernel messages" warning;
  * vacuum:
    - use time of last modification journal files in realtime field;
    - don't check corrupt journal files;
