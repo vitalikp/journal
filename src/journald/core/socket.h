@@ -12,5 +12,6 @@
 
 
 int socket_open(const char* path, int type);
+int socket_set_sndbuf(int fd, int len);
 
 #endif	/* _JOURNALD_SOCKET_H_ */

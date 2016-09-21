@@ -91,3 +91,14 @@ int socket_open(const char* path, int type)
 
 	return fd;
 }
+
+int socket_set_sndbuf(int fd, int len)
+{
+	if (!setsockopt(fd, SOL_SOCKET, SO_SNDBUFFORCE, &len, sizeof(len)))
+		return 0;
+
+	if (!setsockopt(fd, SOL_SOCKET, SO_SNDBUF, &len, sizeof(len)))
+		return 0;
+
+	return -1;
+}
