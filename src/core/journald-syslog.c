@@ -419,6 +419,13 @@ int server_open_syslog_socket(Server *s) {
         if (s->syslog_fd < 0)
         	return -errno;
 
+        /* Increase both the send and receive buffer, so that things don't
+         * block early. Note that journald internally uses the this socket both
+         * for receiving syslog messages, and for forwarding them to any other
+         * syslog, hence we bump both values. */
+        if (socket_set_sndbuf(s->syslog_fd, 8<<20) < 0)
+        	log_warning("SO_SNDBUF(%s) failed: %m", "/dev/log");
+
         r = epollfd_add(s->epoll, s->syslog_fd, EPOLLIN, (event_cb)process_datagram, s);
         if (r < 0)
         {
