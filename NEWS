@@ -117,6 +117,8 @@
     - report invalid quoted strings;
     - fix error in cunescape_length_with_prefix function;
     - fix a couple of more lazy "return -1";
+    - allow strappenda to take any number of args;
+    - const'ify MIN/MAX/... macros;
  * remove journal_capability_obj library;
  * remove prefix field from sd_journal struct;
  * don't add machine_id to root log path directory;
