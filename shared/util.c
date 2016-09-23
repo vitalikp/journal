@@ -1868,30 +1868,6 @@ fail:
         return r;
 }
 
-int release_terminal(void) {
-        int r = 0;
-        struct sigaction sa_old, sa_new = {
-                .sa_handler = SIG_IGN,
-                .sa_flags = SA_RESTART,
-        };
-        _cleanup_close_ int fd = -1;
-
-        fd = open("/dev/tty", O_RDWR|O_NOCTTY|O_NDELAY|O_CLOEXEC);
-        if (fd < 0)
-                return -errno;
-
-        /* Temporarily ignore SIGHUP, so that we don't get SIGHUP'ed
-         * by our own TIOCNOTTY */
-        assert_se(sigaction(SIGHUP, &sa_new, &sa_old) == 0);
-
-        if (ioctl(fd, TIOCNOTTY) < 0)
-                r = -errno;
-
-        assert_se(sigaction(SIGHUP, &sa_old, NULL) == 0);
-
-        return r;
-}
-
 int sigaction_many(const struct sigaction *sa, ...) {
         va_list ap;
         int r = 0, sig;
