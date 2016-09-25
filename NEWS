@@ -120,6 +120,7 @@
     - allow strappenda to take any number of args;
     - const'ify MIN/MAX/... macros;
     - don't parse kernel cmdline to set log level;
+    - remove unused FOREACH_WORD_SEPARATOR_QUOTED;
  * remove journal_capability_obj library;
  * remove prefix field from sd_journal struct;
  * don't add machine_id to root log path directory;
@@ -175,6 +176,7 @@
    - fix argument in example;
    - fix variable naming in example;
    - add note about sd_journal_get_cutoff_monotonic_usec return value;
+   - mention that "units" are commonly system services;
  * tests:
    - don't check existence of machine-id file;
    - fix run test-journal-init test;
