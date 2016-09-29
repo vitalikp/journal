@@ -590,8 +590,6 @@ int is_kernel_thread(pid_t pid);
 int fd_inc_sndbuf(int fd, size_t n);
 int fd_inc_rcvbuf(int fd, size_t n);
 
-int fork_agent(pid_t *pid, const int except[], unsigned n_except, const char *path, ...);
-
 int setrlimit_closest(int resource, const struct rlimit *rlim);
 
 int getenv_for_pid(pid_t pid, const char *field, char **_value);
