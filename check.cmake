@@ -36,14 +36,6 @@ else()
 	message("-- Found awk ${AWK_VERSION}")
 endif()
 
-# check setcap
-find_program(SETCAP setcap)
-if (NOT SETCAP)
-	message(FATAL_ERROR "*** setcap not found! ***")
-else()
-	message("-- Found setcap")
-endif()
-
 # check gperf
 find_program(GPERF gperf)
 if (NOT GPERF)
