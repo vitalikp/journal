@@ -46,8 +46,6 @@ add_library(journal_shared_obj STATIC
 	fileio.h
 	mkdir.c
 	mkdir.h
-	smack-util.c
-	smack-util.h
 	audit.c
 	audit.h
 )
