@@ -73,7 +73,6 @@
 #include "missing.h"
 #include "log.h"
 #include "strv.h"
-#include "label.h"
 #include "mkdir.h"
 #include "path-util.h"
 #include "set.h"

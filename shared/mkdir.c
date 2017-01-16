@@ -26,7 +26,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "label.h"
 #include "util.h"
 #include "path-util.h"
 #include "mkdir.h"
