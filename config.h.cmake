@@ -28,9 +28,6 @@
 /* Define if SELinux is available */
 #cmakedefine HAVE_SELINUX @HAVE_SELINUX@
 
-/* Define if SMACK is available */
-#cmakedefine HAVE_SMACK @HAVE_SMACK@
-
 /* Define if XZ is available */
 #cmakedefine HAVE_XZ @HAVE_XZ@
 
