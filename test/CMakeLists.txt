@@ -54,12 +54,6 @@ add_executable(test-journal-verify
 )
 target_link_libraries(test-journal-verify journal_core_obj)
 
-# test-mmap-cache
-add_executable(test-mmap-cache
-	test-mmap-cache.c
-)
-target_link_libraries(test-mmap-cache journal_core_obj)
-
 # test-compress
 add_executable(test-compress
 	test-compress.c
@@ -80,6 +74,5 @@ add_test(NAME journal-interleaving COMMAND ./test-journal-interleaving)
 add_test(NAME journal-match COMMAND ./test-journal-match)
 add_test(NAME journal-stream COMMAND ./test-journal-stream)
 add_test(NAME journal-verify COMMAND ./test-journal-verify)
-add_test(NAME mmap-cache COMMAND ./test-mmap-cache)
 add_test(NAME journal-compress COMMAND ./test-compress)
 add_test(NAME journal-compress-benchmark COMMAND ./test-compress-benchmark)

@@ -23,6 +23,7 @@
     - allow files with no data whatsoever;
     - flush progress bar, print offset in more places for verify module;
     - remove sd-event module;
+    - add mmap module;
  * hash:
     - add original lookup3 hash functions;
     - add unit tests;

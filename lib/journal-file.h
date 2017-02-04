@@ -27,7 +27,7 @@
 #include "sparse-endian.h"
 #include "journal-def.h"
 #include "util.h"
-#include "mmap-cache.h"
+#include "mmap/mmap-cache.h"
 #include "hashmap.h"
 
 typedef struct JournalMetrics {
