@@ -970,18 +970,23 @@ int process_datagram(int fd, uint32_t events, void *userdata)
                         if (cmsg->cmsg_level != SOL_SOCKET)
                                 continue;
 
-                        if (cmsg->cmsg_type == SCM_CREDENTIALS &&
-                            cmsg->cmsg_len == CMSG_LEN(sizeof(struct ucred)))
-                                ucred = (struct ucred*) CMSG_DATA(cmsg);
-                        else if (cmsg->cmsg_type == SCM_SECURITY) {
-                                label = (char*) CMSG_DATA(cmsg);
-                                label_len = cmsg->cmsg_len - CMSG_LEN(0);
-                        } else if (cmsg->cmsg_type == SO_TIMESTAMP &&
-                                   cmsg->cmsg_len == CMSG_LEN(sizeof(struct timeval)))
-                                tv = (struct timeval*) CMSG_DATA(cmsg);
-                        else if (cmsg->cmsg_type == SCM_RIGHTS) {
-                                fds = (int*) CMSG_DATA(cmsg);
-                                n_fds = (cmsg->cmsg_len - CMSG_LEN(0)) / sizeof(int);
+                        switch (cmsg->cmsg_type) {
+                                case SCM_CREDENTIALS:
+                                        if (cmsg->cmsg_len == CMSG_LEN(sizeof(struct ucred)))
+                                                ucred = (struct ucred*) CMSG_DATA(cmsg);
+                                        break;
+                                case SCM_SECURITY:
+                                        label = (char*) CMSG_DATA(cmsg);
+                                        label_len = cmsg->cmsg_len - CMSG_LEN(0);
+                                        break;
+                                case SO_TIMESTAMP:
+                                        if (cmsg->cmsg_len == CMSG_LEN(sizeof(struct timeval)))
+                                                tv = (struct timeval*) CMSG_DATA(cmsg);
+                                        break;
+                                case SCM_RIGHTS:
+                                        fds = (int*) CMSG_DATA(cmsg);
+                                        n_fds = (cmsg->cmsg_len - CMSG_LEN(0)) / sizeof(int);
+                                        break;
                         }
                 }
 
