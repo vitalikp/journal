@@ -36,14 +36,14 @@ static void forward_syslog_iovec(Server *s, const struct iovec *iovec, unsigned 
 
         union sockaddr_union sa = {
                 .un.sun_family = AF_UNIX,
-                .un.sun_path = "/run/journal/syslog",
+                .un.sun_path = JOURNAL_RUNDIR "/syslog",
         };
         struct msghdr msghdr = {
                 .msg_iov = (struct iovec *) iovec,
                 .msg_iovlen = n_iovec,
                 .msg_name = &sa,
                 .msg_namelen = offsetof(union sockaddr_union, un.sun_path)
-                               + strlen("/run/journal/syslog"),
+                               + strlen(JOURNAL_RUNDIR "/syslog"),
         };
         struct cmsghdr *cmsg;
         union {

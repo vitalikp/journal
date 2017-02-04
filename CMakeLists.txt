@@ -40,6 +40,7 @@ set(bindir ${CMAKE_INSTALL_PREFIX}/bin)
 set(sbindir ${CMAKE_INSTALL_PREFIX}/sbin)
 set(includedir ${CMAKE_INSTALL_PREFIX}/include)
 set(libdir ${CMAKE_INSTALL_PREFIX}/lib64)
+set(JOURNAL_RUNDIR /run/journal)
 set(datadir ${CMAKE_INSTALL_PREFIX}/share)
 set(logdir /var/log)
 

@@ -301,9 +301,9 @@ int server_open_kernel_seqnum(Server *s) {
          * way we can just use it like a variable, but it is
          * persistent and automatically flushed at reboot. */
 
-        fd = open("/run/systemd/journal/kernel-seqnum", O_RDWR|O_CREAT|O_CLOEXEC|O_NOCTTY|O_NOFOLLOW, 0644);
+        fd = open(JOURNAL_RUNDIR "/kernel-seqnum", O_RDWR|O_CREAT|O_CLOEXEC|O_NOCTTY|O_NOFOLLOW, 0644);
         if (fd < 0) {
-                log_error("Failed to open /run/systemd/journal/kernel-seqnum, ignoring: %m");
+                log_error("Failed to open %s/kernel-seqnum, ignoring: %m", JOURNAL_RUNDIR);
                 return 0;
         }
 

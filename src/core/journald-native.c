@@ -383,7 +383,7 @@ int server_open_native_socket(Server*s) {
 
         assert(s);
 
-        s->native_fd = socket_open("/run/systemd/journal/socket", SOCK_DGRAM);
+        s->native_fd = socket_open(JOURNAL_RUNDIR "/socket", SOCK_DGRAM);
         if (s->native_fd < 0)
         	return -errno;
 

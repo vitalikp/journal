@@ -52,6 +52,8 @@
 /* Maximum System UID */
 #cmakedefine SYSTEM_UID_MAX @SYSTEM_UID_MAX@
 
+/* journal runtime directory */
+#cmakedefine JOURNAL_RUNDIR "@JOURNAL_RUNDIR@"
 
 /* Version number of package */
 #cmakedefine VERSION "@VERSION@"

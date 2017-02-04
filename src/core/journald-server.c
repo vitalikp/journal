@@ -734,7 +734,7 @@ static int system_journal_open(Server *s) {
 
         if (!s->system_journal &&
             (s->storage == STORAGE_PERSISTENT || s->storage == STORAGE_AUTO) &&
-            access("/run/systemd/journal/flushed", F_OK) >= 0) {
+            access(JOURNAL_RUNDIR "/flushed", F_OK) >= 0) {
 
                 /* If in auto mode: first try to create the machine
                  * path, but not the prefix.
@@ -1020,7 +1020,7 @@ static int dispatch_sigusr1(const struct signalfd_siginfo *si, void *userdata) {
 
         log_info("Received request to flush runtime journal from PID %"PRIu32, si->ssi_pid);
 
-        touch("/run/systemd/journal/flushed");
+        touch(JOURNAL_RUNDIR "/flushed");
         server_flush_to_var(s);
         server_sync(s);
 
@@ -1219,7 +1219,7 @@ int server_init(Server *s) {
                 s->rate_limit_interval = s->rate_limit_burst = 0;
         }
 
-        mkdir_p("/run/systemd/journal", 0755);
+        mkdir_p(JOURNAL_RUNDIR, 0755);
 
         s->user_journals = hashmap_new(trivial_hash_func, trivial_compare_func);
         if (!s->user_journals)
