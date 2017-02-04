@@ -40,8 +40,6 @@ add_library(journal_shared_obj STATIC
 	conf-files.h
 	utmp-wtmp.c
 	utmp-wtmp.h
-	replace-var.c
-	replace-var.h
 	fileio.c
 	fileio.h
 	mkdir.c

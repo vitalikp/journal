@@ -40,7 +40,6 @@
 #include "compress.h"
 #include "journal-internal.h"
 #include "missing.h"
-#include "replace-var.h"
 #include "fileio.h"
 
 #define JOURNAL_FILES_MAX 1024
