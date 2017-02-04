@@ -20,8 +20,6 @@ add_library(journal_shared_obj STATIC
 	prioq.h
 	strv.c
 	strv.h
-	env-util.c
-	env-util.h
 	strbuf.c
 	strbuf.h
 	strxcpyx.c
