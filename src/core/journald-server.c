@@ -965,12 +965,14 @@ int process_datagram(int fd, uint32_t events, void *userdata)
                         return -errno;
                 }
 
-                for (cmsg = CMSG_FIRSTHDR(&msghdr); cmsg; cmsg = CMSG_NXTHDR(&msghdr, cmsg)) {
-
+                cmsg = CMSG_FIRSTHDR(&msghdr);
+                do
+                {
                         if (cmsg->cmsg_level != SOL_SOCKET)
                                 continue;
 
-                        switch (cmsg->cmsg_type) {
+                        switch (cmsg->cmsg_type)
+                        {
                                 case SCM_CREDENTIALS:
                                         if (cmsg->cmsg_len == CMSG_LEN(sizeof(struct ucred)))
                                                 ucred = (struct ucred*) CMSG_DATA(cmsg);
@@ -988,7 +990,8 @@ int process_datagram(int fd, uint32_t events, void *userdata)
                                         n_fds = (cmsg->cmsg_len - CMSG_LEN(0)) / sizeof(int);
                                         break;
                         }
-                }
+
+                } while ((cmsg = CMSG_NXTHDR(&msghdr, cmsg)));
 
                 if (fd == s->syslog_fd) {
                         if (n > 0 && n_fds == 0) {
