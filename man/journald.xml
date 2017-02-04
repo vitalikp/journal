@@ -176,7 +176,7 @@
 
                 <variablelist>
                         <varlistentry>
-                                <term><filename>/etc/systemd/journald.conf</filename></term>
+                                <term><filename>/etc/journal/journald.conf</filename></term>
 
                                 <listitem><para>Configure
                                 <command>journald</command>

@@ -48,7 +48,7 @@
         </refnamediv>
 
         <refsynopsisdiv>
-                <para><filename>/etc/systemd/journald.conf</filename></para>
+                <para><filename>/etc/journal/journald.conf</filename></para>
         </refsynopsisdiv>
 
         <refsect1>

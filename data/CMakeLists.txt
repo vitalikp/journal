@@ -1,7 +1,7 @@
 # journal data cmake file
 
 # etc
-install(FILES journald.conf DESTINATION /etc)
+install(FILES journald.conf DESTINATION ${JOURNAL_SYSCONFDIR})
 
 # completions
 # bash

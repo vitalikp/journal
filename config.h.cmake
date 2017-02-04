@@ -52,6 +52,9 @@
 /* Maximum System UID */
 #cmakedefine SYSTEM_UID_MAX @SYSTEM_UID_MAX@
 
+/* journal sysconfig directory */
+#cmakedefine JOURNAL_SYSCONFDIR "@JOURNAL_SYSCONFDIR@"
+
 /* journal runtime directory */
 #cmakedefine JOURNAL_RUNDIR "@JOURNAL_RUNDIR@"
 

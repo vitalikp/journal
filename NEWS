@@ -192,6 +192,7 @@
  * build:
  	- don't use optimizations for debug build type;
  	- add JOURNAL_RUNDIR path variable;
+ 	- add JOURNAL_SYSCONFDIR path variable;
  * bugfix:
  	- fix misuse of uint64_t as size_t;
  * remove using libudev library;

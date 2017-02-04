@@ -36,6 +36,10 @@ include(check.cmake)
 
 # directories
 set(_GNU_SOURCE 1)
+if (NOT SYSCONF_INSTALL_DIR)
+	set(SYSCONF_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/etc")
+endif()
+set(JOURNAL_SYSCONFDIR ${SYSCONF_INSTALL_DIR}/journal)
 set(bindir ${CMAKE_INSTALL_PREFIX}/bin)
 set(sbindir ${CMAKE_INSTALL_PREFIX}/sbin)
 set(includedir ${CMAKE_INSTALL_PREFIX}/include)
@@ -144,6 +148,7 @@ endif()
 # show current config
 message("   ${CMAKE_PROJECT_NAME} ${VERSION}(${CMAKE_BUILD_TYPE})")
 message("      prefix:      ${CMAKE_INSTALL_PREFIX}")
+message("     sysconf:      ${SYSCONF_INSTALL_DIR}")
 message("       tests:      ${TESTS_ENABLE}")
 message("       AUDIT:      ${AUDIT_ENABLE}")
 message("     SELinux:      ${SELINUX_ENABLE}")
