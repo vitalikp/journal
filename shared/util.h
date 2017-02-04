@@ -240,28 +240,17 @@ const char* split(const char **state, size_t *l, const char *separator, bool quo
 #define _FOREACH_WORD(word, length, s, separator, quoted, state)        \
         for ((state) = (s), (word) = split(&(state), &(length), (separator), (quoted)); (word); (word) = split(&(state), &(length), (separator), (quoted)))
 
-pid_t get_parent_of_pid(pid_t pid, pid_t *ppid);
-int get_starttime_of_pid(pid_t pid, unsigned long long *st);
-
 char *strappend(const char *s, const char *suffix);
 char *strnappend(const char *s, const char *suffix, size_t length);
 
 int readlinkat_malloc(int fd, const char *p, char **ret);
 int readlink_malloc(const char *p, char **r);
-int readlink_and_make_absolute(const char *p, char **r);
-int readlink_and_canonicalize(const char *p, char **r);
-
-int reset_all_signal_handlers(void);
 
 char *strstrip(char *s);
-char *delete_chars(char *s, const char *bad);
 char *truncate_nl(char *s);
 
 char *file_in_same_dir(const char *path, const char *filename);
 
-int rmdir_parents(const char *path, const char *stop);
-
-int get_process_state(pid_t pid);
 int get_process_comm(pid_t pid, char **name);
 int get_process_cmdline(pid_t pid, size_t max_length, bool comm_fallback, char **line);
 int get_process_exe(pid_t pid, char **name);
@@ -283,18 +272,10 @@ char *cunescape_length_with_prefix(const char *s, size_t length, const char *pre
 
 char *xescape(const char *s, const char *bad);
 
-char *ascii_strlower(char *path);
-
 bool dirent_is_file(const struct dirent *de) _pure_;
 bool dirent_is_file_with_suffix(const struct dirent *de, const char *suffix) _pure_;
 
 bool ignore_file(const char *filename) _pure_;
-
-bool chars_intersect(const char *a, const char *b) _pure_;
-
-int make_stdio(int fd);
-int make_null_stdio(void);
-int make_console_stdio(void);
 
 int dev_urandom(void *p, size_t n);
 void random_bytes(void *p, size_t n);
@@ -366,45 +347,17 @@ static inline uint32_t random_u32(void) {
         }                                                               \
         struct __useless_struct_to_allow_trailing_semicolon__
 
-int fd_nonblock(int fd, bool nonblock);
-int fd_cloexec(int fd, bool cloexec);
-
-int close_all_fds(const int except[], unsigned n_except);
-
-bool fstype_is_network(const char *fstype);
-
-int chvt(int vt);
-
-int reset_terminal_fd(int fd, bool switch_to_text);
-int reset_terminal(const char *name);
-
 int open_terminal(const char *name, int mode);
-int acquire_terminal(const char *name, bool fail, bool force, bool ignore_tiocstty_eperm, usec_t timeout);
-
-int flush_fd(int fd);
-
-int ignore_signals(int sig, ...);
-int default_signals(int sig, ...);
-int sigaction_many(const struct sigaction *sa, ...);
 
 int fopen_temporary(const char *path, FILE **_f, char **_temp_path);
 
 ssize_t loop_read(int fd, void *buf, size_t nbytes, bool do_poll);
 ssize_t loop_write(int fd, const void *buf, size_t nbytes, bool do_poll);
 
-bool is_device_path(const char *path);
-
-int dir_is_empty(const char *path);
 char* dirname_malloc(const char *path);
-
-void rename_process(const char name[8]);
-
-void sigset_add_many(sigset_t *ss, ...);
-int sigprocmask_many(int how, ...);
 
 char* gethostname_malloc(void);
 char* getlogname_malloc(void);
-char* getusername_malloc(void);
 
 int getttyname_malloc(int fd, char **r);
 int getttyname_harder(int fd, char **r);
@@ -413,17 +366,11 @@ int get_ctty_devnr(pid_t pid, dev_t *d);
 int get_ctty(pid_t, dev_t *_devnr, char **r);
 
 int chmod_and_chown(const char *path, mode_t mode, uid_t uid, gid_t gid);
-int fchmod_and_fchown(int fd, mode_t mode, uid_t uid, gid_t gid);
 
 int rm_rf_children(int fd, bool only_dirs, bool honour_sticky, struct stat *root_dev);
 int rm_rf_children_dangerous(int fd, bool only_dirs, bool honour_sticky, struct stat *root_dev);
 int rm_rf(const char *path, bool only_dirs, bool delete_root, bool honour_sticky);
 int rm_rf_dangerous(const char *path, bool only_dirs, bool delete_root, bool honour_sticky);
-
-int pipe_eof(int fd);
-
-int status_vprintf(const char *status, bool ellipse, bool ephemeral, const char *format, va_list ap) _printf_(4,0);
-int status_printf(const char *status, bool ellipse, bool ephemeral, const char *format, ...) _printf_(4,5);
 
 int fd_columns(int fd);
 unsigned columns(void);
@@ -437,22 +384,6 @@ static inline const char *ansi_highlight(void) {
         return on_tty() ? ANSI_HIGHLIGHT_ON : "";
 }
 
-static inline const char *ansi_lightred(void) {
-	return on_tty() ? ANSI_LIGHTRED_ON: "";
-}
-
-static inline const char *ansi_lightgreen(void) {
-        return on_tty() ? ANSI_LIGHTGREEN_ON : "";
-}
-
-static inline const char *ansi_lightyellow(void) {
-        return on_tty() ? ANSI_LIGHTYELLOW_ON : "";
-}
-
-static inline const char *ansi_lightblue(void) {
-        return on_tty() ? ANSI_LIGHTBLUE_ON : "";
-}
-
 static inline const char *ansi_highlight_off(void) {
         return on_tty() ? ANSI_HIGHLIGHT_OFF : "";
 }
@@ -461,81 +392,38 @@ int files_same(const char *filea, const char *fileb);
 
 int running_in_chroot(void);
 
-char *ellipsize(const char *s, size_t length, unsigned percent);
-                                   /* bytes                 columns */
 char *ellipsize_mem(const char *s, size_t old_length, size_t new_length, unsigned percent);
 
 int touch_file(const char *path, bool parents, usec_t stamp, uid_t uid, gid_t gid, mode_t mode);
 int touch(const char *path);
 
 char *unquote(const char *s, const char *quotes);
-char *normalize_env_assignment(const char *s);
 
 int wait_for_terminate(pid_t pid, siginfo_t *status);
-int wait_for_terminate_and_warn(const char *name, pid_t pid);
 
 bool null_or_empty(struct stat *st) _pure_;
-int null_or_empty_path(const char *fn);
 
-DIR *xopendirat(int dirfd, const char *name, int flags);
-
-char *resolve_dev_console(char **active);
 bool tty_is_vc(const char *tty);
-bool tty_is_vc_resolve(const char *tty);
-bool tty_is_console(const char *tty) _pure_;
 int vtnr_from_tty(const char *tty);
 
 bool nulstr_contains(const char*nulstr, const char *needle);
 
-bool hostname_is_valid(const char *s) _pure_;
-char* hostname_cleanup(char *s, bool lowercase);
-
-char* strshorten(char *s, size_t l);
-
-int terminal_vhangup_fd(int fd);
-int terminal_vhangup(const char *name);
-
-int vt_disallocate(const char *name);
-
-int symlink_atomic(const char *from, const char *to);
-
 int fchmod_umask(int fd, mode_t mode);
 
-bool display_is_local(const char *display) _pure_;
-int socket_from_display(const char *display, char **path);
-
-int get_user_creds(const char **username, uid_t *uid, gid_t *gid, const char **home, const char **shell);
 int get_group_creds(const char **groupname, gid_t *gid);
 
 int in_gid(gid_t gid);
 int in_group(const char *name);
 
-char* uid_to_name(uid_t uid);
-char* gid_to_name(gid_t gid);
-
-int glob_exists(const char *path);
 int glob_extend(char ***strv, const char *path);
 
 int dirent_ensure_type(DIR *d, struct dirent *de);
-
-int in_search_path(const char *path, char **search);
-int get_files_in_directory(const char *path, char ***list);
 
 char *strjoin(const char *x, ...) _sentinel_;
 
 bool is_main_thread(void);
 
-static inline bool _pure_ in_charset(const char *s, const char* charset) {
-        assert(s);
-        assert(charset);
-        return s[strspn(s, charset)] == '\0';
-}
-
-int block_get_whole_disk(dev_t d, dev_t *ret);
-
 int file_is_priv_sticky(const char *p);
-
-int strdup_or_null(const char *a, char **b);
 
 #define NULSTR_FOREACH(i, l)                                    \
         for ((i) = (l); (i) && *(i); (i) = strchr((i), 0)+1)
@@ -764,24 +652,6 @@ static inline unsigned u64log2(uint64_t n) {
 #endif
 }
 
-static inline unsigned u32ctz(uint32_t n) {
-#if __SIZEOF_INT__ == 4
-        return __builtin_ctz(n);
-#else
-#error "Wut?"
-#endif
-}
-
-static inline int log2i(int x) {
-        assert(x > 0);
-
-        return __SIZEOF_INT__ * 8 - __builtin_clz(x) - 1;
-}
-
-static inline bool logind_running(void) {
-        return access("/run/systemd/seats/", F_OK) >= 0;
-}
-
 #define DECIMAL_STR_WIDTH(x)                            \
         ({                                              \
                 typeof(x) _x_ = (x);                    \
@@ -790,8 +660,6 @@ static inline bool logind_running(void) {
                         ans++;                          \
                 ans;                                    \
         })
-
-int unlink_noerrno(const char *path);
 
 #define alloca0(n)                                      \
         ({                                              \
