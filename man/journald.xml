@@ -186,16 +186,16 @@
                         </varlistentry>
 
                         <varlistentry>
-                                <term><filename>/run/journal/log/<replaceable>machine-id</replaceable>/*.journal</filename></term>
-                                <term><filename>/run/journal/log/<replaceable>machine-id</replaceable>/*.journal~</filename></term>
-                                <term><filename>/var/log/journal/<replaceable>machine-id</replaceable>/*.journal</filename></term>
-                                <term><filename>/var/log/journal/<replaceable>machine-id</replaceable>/*.journal~</filename></term>
+                                <term><filename>/run/journal/log/*.journal</filename></term>
+                                <term><filename>/run/journal/log/*.journal~</filename></term>
+                                <term><filename>/var/log/journal/*.journal</filename></term>
+                                <term><filename>/var/log/journal/*.journal~</filename></term>
 
                                 <listitem><para><command>journald</command>
                                 writes entries to files in
-                                <filename>/run/journal/log/<replaceable>machine-id</replaceable>/</filename>
+                                <filename>/run/journal/log/</filename>
                                 or
-                                <filename>/var/log/journal/<replaceable>machine-id</replaceable>/</filename>
+                                <filename>/var/log/journal/</filename>
                                 with the <literal>.journal</literal>
                                 suffix. If the daemon is stopped
                                 uncleanly, or if the files are found
