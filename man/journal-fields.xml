@@ -245,16 +245,6 @@
                         </varlistentry>
 
                         <varlistentry>
-                                <term><varname>_MACHINE_ID=</varname></term>
-                                <listitem>
-                                        <para>The machine ID of the
-                                        originating host, as available
-                                        in
-                                        <citerefentry><refentrytitle>machine-id</refentrytitle><manvolnum>5</manvolnum></citerefentry>.</para>
-                                </listitem>
-                        </varlistentry>
-
-                        <varlistentry>
                                 <term><varname>_HOSTNAME=</varname></term>
                                 <listitem>
                                         <para>The name of the
