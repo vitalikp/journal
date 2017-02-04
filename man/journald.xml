@@ -75,7 +75,7 @@
                 to 2^64-1 bytes in size.</para>
 
                 <para>By default, the journal stores log data in
-                <filename>/run/log/journal/</filename>. Since
+                <filename>/run/journal/log/</filename>. Since
                 <filename>/run/</filename> is volatile, log data is
                 lost at reboot. To make the data persistent, it
                 is sufficient to create
@@ -186,14 +186,14 @@
                         </varlistentry>
 
                         <varlistentry>
-                                <term><filename>/run/log/journal/<replaceable>machine-id</replaceable>/*.journal</filename></term>
-                                <term><filename>/run/log/journal/<replaceable>machine-id</replaceable>/*.journal~</filename></term>
+                                <term><filename>/run/journal/log/<replaceable>machine-id</replaceable>/*.journal</filename></term>
+                                <term><filename>/run/journal/log/<replaceable>machine-id</replaceable>/*.journal~</filename></term>
                                 <term><filename>/var/log/journal/<replaceable>machine-id</replaceable>/*.journal</filename></term>
                                 <term><filename>/var/log/journal/<replaceable>machine-id</replaceable>/*.journal~</filename></term>
 
                                 <listitem><para><command>journald</command>
                                 writes entries to files in
-                                <filename>/run/log/journal/<replaceable>machine-id</replaceable>/</filename>
+                                <filename>/run/journal/log/<replaceable>machine-id</replaceable>/</filename>
                                 or
                                 <filename>/var/log/journal/<replaceable>machine-id</replaceable>/</filename>
                                 with the <literal>.journal</literal>

@@ -93,7 +93,7 @@ static uint64_t available_space(Server *s, bool verbose) {
                 f = "/var/log/journal/";
                 m = &s->system_metrics;
         } else {
-                f = "/run/log/journal/";
+                f = JOURNAL_RUNDIR "/log/";
                 m = &s->runtime_metrics;
         }
 
@@ -308,7 +308,7 @@ void server_vacuum(Server *s) {
         s->oldest_file_usec = 0;
 
         do_vacuum(s, s->system_journal, "/var/log/journal/", &s->system_metrics);
-        do_vacuum(s, s->runtime_journal, "/run/log/journal/", &s->runtime_metrics);
+        do_vacuum(s, s->runtime_journal, JOURNAL_RUNDIR "/log/", &s->runtime_metrics);
 
         s->cached_available_space_timestamp = 0;
 }
@@ -761,7 +761,7 @@ static int system_journal_open(Server *s) {
         if (!s->runtime_journal &&
             (s->storage != STORAGE_NONE)) {
 
-                fn = strjoin("/run/log/journal/", "system.journal", NULL);
+                fn = strjoin(JOURNAL_RUNDIR "/log/", "system.journal", NULL);
                 if (!fn)
                         return -ENOMEM;
 
@@ -786,8 +786,7 @@ static int system_journal_open(Server *s) {
                         /* OK, we really need the runtime journal, so create
                          * it if necessary. */
 
-                        (void) mkdir("/run/log", 0755);
-                        (void) mkdir("/run/log/journal", 0755);
+                        (void) mkdir(JOURNAL_RUNDIR "/log", 0755);
                         (void) mkdir_parents(fn, 0750);
 
                         r = journal_file_open_reliably(fn, O_RDWR|O_CREAT, 0640, s->compress, &s->runtime_metrics, s->mmap, NULL, &s->runtime_journal);
@@ -889,7 +888,7 @@ finish:
         s->runtime_journal = NULL;
 
         if (r >= 0)
-                rm_rf("/run/log/journal", false, true, false);
+                rm_rf(JOURNAL_RUNDIR "/log", false, true, false);
 
         sd_journal_close(j);
 

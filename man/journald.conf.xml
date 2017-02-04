@@ -80,7 +80,7 @@
                                 <literal>volatile</literal>, journal
                                 log data will be stored only in
                                 memory, i.e. below the
-                                <filename>/run/log/journal</filename>
+                                <filename>/run/journal/log</filename>
                                 hierarchy (which is created if
                                 needed). If
                                 <literal>persistent</literal>, data will
@@ -89,7 +89,7 @@
                                 <filename>/var/log/journal</filename>
                                 hierarchy (which is created if
                                 needed), with a fallback to
-                                <filename>/run/log/journal</filename>
+                                <filename>/run/journal/log</filename>
                                 (which is created if needed), during
                                 early boot and if the disk is not
                                 writable. <literal>auto</literal> is
@@ -200,7 +200,7 @@
                                 the journal files when stored on a
                                 volatile in-memory file system, more
                                 specifically
-                                <filename>/run/log/journal</filename>. The
+                                <filename>/run/journal/log</filename>. The
                                 former is used only when
                                 <filename>/var</filename> is mounted,
                                 writable, and the directory

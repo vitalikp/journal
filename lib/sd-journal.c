@@ -1591,7 +1591,7 @@ static int remove_directory(sd_journal *j, Directory *d) {
 static int add_search_paths(sd_journal *j) {
         int r;
         const char search_paths[] =
-                "/run/log/journal\0"
+                JOURNAL_RUNDIR "/log\0"
                 "/var/log/journal\0";
         const char *p;
 
