@@ -353,21 +353,6 @@ static inline int name_to_handle_at(int fd, const char *name, struct file_handle
 
 #endif
 
-#ifndef __NR_setns
-#  if defined(__x86_64__)
-#    define __NR_setns 308
-#  elif defined(__i386__)
-#    define __NR_setns 346
-#  else
-#    error "__NR_setns is not defined"
-#  endif
-#endif
-
-#if !HAVE_DECL_SETNS
-static inline int setns(int fd, int nstype) {
-        return syscall(__NR_setns, fd, nstype);
-}
-#endif
 
 #if !HAVE_DECL_LO_FLAGS_PARTSCAN
 #define LO_FLAGS_PARTSCAN 8

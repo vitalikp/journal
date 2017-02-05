@@ -63,7 +63,6 @@ CHECK_FUNCTION_EXISTS(secure_getenv HAVE_SECURE_GETENV)
 set(CMAKE_EXTRA_INCLUDE_FILES fcntl.h)
 CHECK_FUNCTION_EXISTS(name_to_handle_at HAVE_DECL_NAME_TO_HANDLE_AT)
 set(CMAKE_EXTRA_INCLUDE_FILES sched.h)
-check_function_exists(setns HAVE_DECL_SETNS)
 
 # dependencies
 find_package(PkgConfig REQUIRED)
