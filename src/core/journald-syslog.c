@@ -68,7 +68,7 @@ static void forward_syslog_iovec(Server *s, const struct iovec *iovec, unsigned 
                 msghdr.msg_controllen = cmsg->cmsg_len;
         }
 
-        /* Forward the syslog message we received via /dev/log to
+        /* Forward the syslog message we received via /run/journal/devlog to
          * /run/journal/syslog. Unfortunately we currently can't set
          * the SO_TIMESTAMP auxiliary data, and hence we don't. */
 
@@ -415,7 +415,7 @@ int server_open_syslog_socket(Server *s) {
 
         assert(s);
 
-        s->syslog_fd = socket_open("/dev/log", SOCK_DGRAM);
+        s->syslog_fd = socket_open(JOURNAL_RUNDIR "/devlog", SOCK_DGRAM);
         if (s->syslog_fd < 0)
         	return -errno;
 
@@ -424,7 +424,7 @@ int server_open_syslog_socket(Server *s) {
          * for receiving syslog messages, and for forwarding them to any other
          * syslog, hence we bump both values. */
         if (socket_set_sndbuf(s->syslog_fd, 8<<20) < 0)
-        	log_warning("SO_SNDBUF(%s) failed: %m", "/dev/log");
+        	log_warning("SO_SNDBUF(%s) failed: %m", JOURNAL_RUNDIR "/devlog");
 
         r = epollfd_add(s->epoll, s->syslog_fd, EPOLLIN, (event_cb)process_datagram, s);
         if (r < 0)

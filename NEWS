@@ -168,6 +168,7 @@
    - fix off-by-one error in "Missed X kernel messages" warning;
    - increase the SendBuffer of /dev/log to 8M;
    - move /run/log directory to /run/journal/log;
+   - move /dev/log syslog socket to /run/journal/devlog;
  * vacuum:
    - use time of last modification journal files in realtime field;
    - don't check corrupt journal files;
