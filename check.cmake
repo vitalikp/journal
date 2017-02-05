@@ -77,13 +77,6 @@ if (${TESTS_ENABLE})
 	enable_testing()
 endif()
 
-# check AUDIT option
-option(AUDIT_ENABLE "Disable optional AUDIT support" ON)
-if (${AUDIT_ENABLE})
-	pkg_check_modules(AUDIT REQUIRED audit)
-	set(HAVE_AUDIT 1)
-endif()
-
 # check SELinux library
 option(SELINUX_ENABLE "Disable optional SELINUX support" ON)
 if (${SELINUX_ENABLE})

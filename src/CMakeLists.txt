@@ -32,7 +32,6 @@ add_library(journal_core_obj STATIC
 	${PROJECT_BINARY_DIR}/${JOURNALD_GPERF_C}
 )
 target_link_libraries(journal_core_obj journald_core_obj journal_int_obj journal_label_obj journal_shared_obj)
-target_link_libraries(journal_core_obj ${AUDIT_LIBRARIES})
 target_link_libraries(journal_core_obj -pthread rt)
 
 # journalctl

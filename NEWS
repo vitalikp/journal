@@ -203,3 +203,4 @@
  * remove using libudev library;
  * remove using cap library;
  * remove using systemd library;
+ * remove audit support;

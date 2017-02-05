@@ -415,13 +415,6 @@ static void dispatch_message_object(Server *s, struct iovec *iovec, unsigned n, 
         char *x;
         int r;
         char *t;
-#ifdef HAVE_AUDIT
-        char o_audit_session[sizeof("OBJECT_AUDIT_SESSION=") + DECIMAL_STR_MAX(uint32_t)],
-             o_audit_loginuid[sizeof("OBJECT_AUDIT_LOGINUID=") + DECIMAL_STR_MAX(uid_t)];
-
-        uint32_t audit;
-        uid_t loginuid;
-#endif
 
         r = get_process_uid(object_pid, &object_uid);
         if (r >= 0) {
@@ -456,19 +449,6 @@ static void dispatch_message_object(Server *s, struct iovec *iovec, unsigned n, 
                 IOVEC_SET_STRING(iovec[n++], x);
         }
 
-#ifdef HAVE_AUDIT
-        r = audit_session_from_pid(object_pid, &audit);
-        if (r >= 0) {
-                sprintf(o_audit_session, "OBJECT_AUDIT_SESSION=%"PRIu32, audit);
-                IOVEC_SET_STRING(iovec[n++], o_audit_session);
-        }
-
-        r = audit_loginuid_from_pid(object_pid, &loginuid);
-        if (r >= 0) {
-                sprintf(o_audit_loginuid, "OBJECT_AUDIT_LOGINUID="UID_FMT, loginuid);
-                IOVEC_SET_STRING(iovec[n++], o_audit_loginuid);
-        }
-#endif
         assert(n <= m);
 }
 
@@ -554,13 +534,6 @@ static void dispatch_message_real(
         int r;
         char *t;
         bool owner_valid = false;
-#ifdef HAVE_AUDIT
-        char    audit_session[sizeof("_AUDIT_SESSION=") + DECIMAL_STR_MAX(uint32_t)],
-                audit_loginuid[sizeof("_AUDIT_LOGINUID=") + DECIMAL_STR_MAX(uid_t)];
-
-        uint32_t audit;
-        uid_t loginuid;
-#endif
 
         assert(s);
         assert(iovec);
@@ -604,20 +577,6 @@ static void dispatch_message_real(
                         free(t);
                         IOVEC_SET_STRING(iovec[n++], x);
                 }
-
-#ifdef HAVE_AUDIT
-                r = audit_session_from_pid(ucred->pid, &audit);
-                if (r >= 0) {
-                        sprintf(audit_session, "_AUDIT_SESSION=%"PRIu32, audit);
-                        IOVEC_SET_STRING(iovec[n++], audit_session);
-                }
-
-                r = audit_loginuid_from_pid(ucred->pid, &loginuid);
-                if (r >= 0) {
-                        sprintf(audit_loginuid, "_AUDIT_LOGINUID="UID_FMT, loginuid);
-                        IOVEC_SET_STRING(iovec[n++], audit_loginuid);
-                }
-#endif
 
                 if (unit_id) {
                         x = strappenda("_SYSTEMD_UNIT=", unit_id);

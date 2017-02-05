@@ -9,7 +9,6 @@ add_library(journald_core_obj STATIC
 	core/socket.h
 )
 target_link_libraries(journald_core_obj journal_int_obj journal_label_obj journal_shared_obj)
-target_link_libraries(journald_core_obj ${AUDIT_LIBRARIES})
 target_link_libraries(journald_core_obj -pthread rt)
 
 

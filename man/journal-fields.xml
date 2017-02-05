@@ -187,18 +187,6 @@
                         </varlistentry>
 
                         <varlistentry>
-                                <term><varname>_AUDIT_SESSION=</varname></term>
-                                <term><varname>_AUDIT_LOGINUID=</varname></term>
-                                <listitem>
-                                        <para>The session and login
-                                        UID of the process the journal
-                                        entry originates from, as
-                                        maintained by the kernel audit
-                                        subsystem.</para>
-                                </listitem>
-                        </varlistentry>
-
-                        <varlistentry>
                                 <term><varname>_SYSTEMD_UNIT=</varname></term>
 
                                 <listitem>
@@ -397,8 +385,6 @@
                                 <term><varname>OBJECT_COMM=</varname></term>
                                 <term><varname>OBJECT_EXE=</varname></term>
                                 <term><varname>OBJECT_CMDLINE=</varname></term>
-                                <term><varname>OBJECT_AUDIT_SESSION=</varname></term>
-                                <term><varname>OBJECT_AUDIT_LOGINUID=</varname></term>
                                 <listitem>
                                         <para>These are additional fields added automatically
                                         by <command>journald</command>.
@@ -406,10 +392,8 @@
                                         <varname>_UID=</varname>,
                                         <varname>_GID=</varname>,
                                         <varname>_COMM=</varname>,
-                                        <varname>_EXE=</varname>,
-                                        <varname>_CMDLINE=</varname>,
-                                        <varname>_AUDIT_SESSION=</varname>, and
-                                        <varname>_AUDIT_LOGINUID=</varname>
+                                        <varname>_EXE=</varname>, and
+                                        <varname>_CMDLINE=</varname>
                                         as described above, except that the
                                         process identified by <replaceable>PID</replaceable>
                                         is described, instead of the process

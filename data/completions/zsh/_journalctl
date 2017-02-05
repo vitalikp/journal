@@ -5,7 +5,6 @@ _list_fields() {
     journal_fields=(MESSAGE{,_ID} PRIORITY CODE_{FILE,LINE,FUNC}
                     ERRNO SYSLOG_{FACILITY,IDENTIFIER,PID}
                     _{P,U,G}ID _COMM _EXE _CMDLINE
-                    _AUDIT_{SESSION,LOGINUID}
                     _SYSTEMD_UNIT
                     USER_UNIT
                     _SELINUX_CONTEXT _SOURCE_REALTIME_TIMESTAMP

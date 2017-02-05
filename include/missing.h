@@ -35,9 +35,6 @@
 #include <linux/loop.h>
 #include <linux/if_link.h>
 
-#ifdef HAVE_AUDIT
-#include <libaudit.h>
-#endif
 
 #include "macro.h"
 

@@ -4,9 +4,6 @@
 #cmakedefine _GNU_SOURCE @_GNU_SOURCE@ 
 #endif
 
-/* AUDIT available */
-#cmakedefine HAVE_AUDIT @HAVE_AUDIT@
-
 /* Define if kmod is available */
 #cmakedefine HAVE_KMOD @HAVE_KMOD@
 
