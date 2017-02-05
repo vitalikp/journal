@@ -16,8 +16,6 @@ add_library(journal_shared_obj STATIC
 	siphash24.h
 	set.c
 	set.h
-	prioq.c
-	prioq.h
 	strv.c
 	strv.h
 	strbuf.c
