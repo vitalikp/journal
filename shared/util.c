@@ -2841,43 +2841,6 @@ int proc_cmdline(char **ret) {
         return 1;
 }
 
-int parse_proc_cmdline(int (*parse_item)(const char *key, const char *value)) {
-        _cleanup_free_ char *line = NULL;
-        const char *w, *state;
-        size_t l;
-        int r;
-
-        assert(parse_item);
-
-        r = proc_cmdline(&line);
-        if (r < 0)
-                log_warning("Failed to read /proc/cmdline, ignoring: %s", strerror(-r));
-        if (r <= 0)
-                return 0;
-
-        FOREACH_WORD_QUOTED(w, l, line, state) {
-                char word[l+1], *value;
-
-                memcpy(word, w, l);
-                word[l] = 0;
-
-                /* Filter out arguments that are intended only for the
-                 * initrd */
-                if (!in_initrd() && startswith(word, "rd."))
-                        continue;
-
-                value = strchr(word, '=');
-                if (value)
-                        *(value++) = 0;
-
-                r = parse_item(word, value);
-                if (r < 0)
-                        return r;
-        }
-
-        return 0;
-}
-
 /* This is much like like mkostemp() but is subject to umask(). */
 int mkostemp_safe(char *pattern, int flags) {
         _cleanup_umask_ mode_t u = 077;

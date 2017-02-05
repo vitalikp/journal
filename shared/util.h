@@ -278,18 +278,6 @@ bool ignore_file(const char *filename) _pure_;
 int dev_urandom(void *p, size_t n);
 void random_bytes(void *p, size_t n);
 
-static inline uint64_t random_u64(void) {
-        uint64_t u;
-        random_bytes(&u, sizeof(u));
-        return u;
-}
-
-static inline uint32_t random_u32(void) {
-        uint32_t u;
-        random_bytes(&u, sizeof(u));
-        return u;
-}
-
 /* For basic lookup tables with strictly enumerated entries */
 #define __DEFINE_STRING_TABLE_LOOKUP(name,type,scope)                   \
         scope const char *name##_to_string(type i) {                    \
@@ -615,7 +603,6 @@ static inline void qsort_safe(void *base, size_t nmemb, size_t size,
 }
 
 int proc_cmdline(char **ret);
-int parse_proc_cmdline(int (*parse_word)(const char *key, const char *value));
 
 int mkostemp_safe(char *pattern, int flags);
 int open_tmpfile(const char *path, int flags);
