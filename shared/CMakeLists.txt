@@ -42,8 +42,6 @@ add_library(journal_shared_obj STATIC
 	fileio.h
 	mkdir.c
 	mkdir.h
-	audit.c
-	audit.h
 )
 
 add_library(journal_label_obj STATIC
