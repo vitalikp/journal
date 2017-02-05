@@ -83,9 +83,6 @@
 #include "virt.h"
 
 
-int saved_argc = 0;
-char **saved_argv = NULL;
-
 static volatile unsigned cached_columns = 0;
 static volatile unsigned cached_lines = 0;
 
@@ -524,35 +521,6 @@ int get_process_cmdline(pid_t pid, size_t max_length, bool comm_fallback, char *
         return 0;
 }
 
-int is_kernel_thread(pid_t pid) {
-        const char *p;
-        size_t count;
-        char c;
-        bool eof;
-        FILE *f;
-
-        if (pid == 0)
-                return 0;
-
-        assert(pid > 0);
-
-        p = procfs_file_alloca(pid, "cmdline");
-        f = fopen(p, "re");
-        if (!f)
-                return -errno;
-
-        count = fread(&c, 1, 1, f);
-        eof = feof(f);
-        fclose(f);
-
-        /* Kernel threads have an empty cmdline */
-
-        if (count <= 0)
-                return eof ? 1 : -errno;
-
-        return 0;
-}
-
 int get_process_capeff(pid_t pid, char **capeff) {
         const char *p;
 
@@ -762,49 +730,6 @@ int unhexchar(char c) {
                 return c - 'A' + 10;
 
         return -EINVAL;
-}
-
-char *hexmem(const void *p, size_t l) {
-        char *r, *z;
-        const uint8_t *x;
-
-        z = r = malloc(l * 2 + 1);
-        if (!r)
-                return NULL;
-
-        for (x = p; x < (const uint8_t*) p + l; x++) {
-                *(z++) = hexchar(*x >> 4);
-                *(z++) = hexchar(*x & 15);
-        }
-
-        *z = 0;
-        return r;
-}
-
-void *unhexmem(const char *p, size_t l) {
-        uint8_t *r, *z;
-        const char *x;
-
-        assert(p);
-
-        z = r = malloc((l + 1) / 2 + 1);
-        if (!r)
-                return NULL;
-
-        for (x = p; x < p + l; x += 2) {
-                int a, b;
-
-                a = unhexchar(x[0]);
-                if (x+1 < p + l)
-                        b = unhexchar(x[1]);
-                else
-                        b = 0;
-
-                *(z++) = (uint8_t) a << 4 | (uint8_t) b;
-        }
-
-        *z = 0;
-        return r;
 }
 
 char octchar(int x) {
@@ -1098,18 +1023,6 @@ bool ignore_file(const char *filename) {
                 return true;
 
         return ignore_file_allow_backup(filename);
-}
-
-_pure_ static bool fd_in_set(int fd, const int fdset[], unsigned n_fdset) {
-        unsigned i;
-
-        assert(n_fdset == 0 || fdset);
-
-        for (i = 0; i < n_fdset; i++)
-                if (fdset[i] == fd)
-                        return true;
-
-        return false;
 }
 
 int open_terminal(const char *name, int mode) {
@@ -2148,18 +2061,6 @@ bool null_or_empty(struct stat *st) {
         return false;
 }
 
-int signal_from_string_try_harder(const char *s) {
-        int signo;
-        assert(s);
-
-        signo = signal_from_string(s);
-        if (signo <= 0)
-                if (startswith(s, "SIG"))
-                        return signal_from_string(s+3);
-
-        return signo;
-}
-
 bool tty_is_vc(const char *tty) {
         assert(tty);
 
@@ -2393,31 +2294,6 @@ int glob_extend(char ***strv, const char *path) {
         return k;
 }
 
-int dirent_ensure_type(DIR *d, struct dirent *de) {
-        struct stat st;
-
-        assert(d);
-        assert(de);
-
-        if (de->d_type != DT_UNKNOWN)
-                return 0;
-
-        if (fstatat(dirfd(d), de->d_name, &st, AT_SYMLINK_NOFOLLOW) < 0)
-                return -errno;
-
-        de->d_type =
-                S_ISREG(st.st_mode)  ? DT_REG  :
-                S_ISDIR(st.st_mode)  ? DT_DIR  :
-                S_ISLNK(st.st_mode)  ? DT_LNK  :
-                S_ISFIFO(st.st_mode) ? DT_FIFO :
-                S_ISSOCK(st.st_mode) ? DT_SOCK :
-                S_ISCHR(st.st_mode)  ? DT_CHR  :
-                S_ISBLK(st.st_mode)  ? DT_BLK  :
-                                       DT_UNKNOWN;
-
-        return 0;
-}
-
 char *strjoin(const char *x, ...) {
         va_list ap;
         size_t l;
@@ -2497,26 +2373,6 @@ int file_is_priv_sticky(const char *p) {
                 (st.st_mode & S_ISVTX);
 }
 
-static const char *const ioprio_class_table[] = {
-        [IOPRIO_CLASS_NONE] = "none",
-        [IOPRIO_CLASS_RT] = "realtime",
-        [IOPRIO_CLASS_BE] = "best-effort",
-        [IOPRIO_CLASS_IDLE] = "idle"
-};
-
-DEFINE_STRING_TABLE_LOOKUP_WITH_FALLBACK(ioprio_class, int, INT_MAX);
-
-static const char *const sigchld_code_table[] = {
-        [CLD_EXITED] = "exited",
-        [CLD_KILLED] = "killed",
-        [CLD_DUMPED] = "dumped",
-        [CLD_TRAPPED] = "trapped",
-        [CLD_STOPPED] = "stopped",
-        [CLD_CONTINUED] = "continued",
-};
-
-DEFINE_STRING_TABLE_LOOKUP(sigchld_code, int);
-
 static const char *const log_facility_unshifted_table[LOG_NFACILITIES] = {
         [LOG_FAC(LOG_KERN)] = "kern",
         [LOG_FAC(LOG_USER)] = "user",
@@ -2554,46 +2410,6 @@ static const char *const log_level_table[] = {
 };
 
 DEFINE_STRING_TABLE_LOOKUP_WITH_FALLBACK(log_level, int, LOG_DEBUG);
-
-static const char* const sched_policy_table[] = {
-        [SCHED_OTHER] = "other",
-        [SCHED_BATCH] = "batch",
-        [SCHED_IDLE] = "idle",
-        [SCHED_FIFO] = "fifo",
-        [SCHED_RR] = "rr"
-};
-
-DEFINE_STRING_TABLE_LOOKUP_WITH_FALLBACK(sched_policy, int, INT_MAX);
-
-static const char* const rlimit_table[_RLIMIT_MAX] = {
-        [RLIMIT_CPU] = "LimitCPU",
-        [RLIMIT_FSIZE] = "LimitFSIZE",
-        [RLIMIT_DATA] = "LimitDATA",
-        [RLIMIT_STACK] = "LimitSTACK",
-        [RLIMIT_CORE] = "LimitCORE",
-        [RLIMIT_RSS] = "LimitRSS",
-        [RLIMIT_NOFILE] = "LimitNOFILE",
-        [RLIMIT_AS] = "LimitAS",
-        [RLIMIT_NPROC] = "LimitNPROC",
-        [RLIMIT_MEMLOCK] = "LimitMEMLOCK",
-        [RLIMIT_LOCKS] = "LimitLOCKS",
-        [RLIMIT_SIGPENDING] = "LimitSIGPENDING",
-        [RLIMIT_MSGQUEUE] = "LimitMSGQUEUE",
-        [RLIMIT_NICE] = "LimitNICE",
-        [RLIMIT_RTPRIO] = "LimitRTPRIO",
-        [RLIMIT_RTTIME] = "LimitRTTIME"
-};
-
-DEFINE_STRING_TABLE_LOOKUP(rlimit, int);
-
-static const char* const ip_tos_table[] = {
-        [IPTOS_LOWDELAY] = "low-delay",
-        [IPTOS_THROUGHPUT] = "throughput",
-        [IPTOS_RELIABILITY] = "reliability",
-        [IPTOS_LOWCOST] = "low-cost",
-};
-
-DEFINE_STRING_TABLE_LOOKUP_WITH_FALLBACK(ip_tos, int, 0xff);
 
 static const char *const __signal_table[] = {
         [SIGHUP] = "HUP",
@@ -2668,18 +2484,6 @@ int signal_from_string(const char *s) {
                         return signo;
         }
         return -EINVAL;
-}
-
-bool kexec_loaded(void) {
-       bool loaded = false;
-       char *s;
-
-       if (read_one_line_file("/sys/kernel/kexec_loaded", &s) >= 0) {
-               if (s[0] == '1')
-                       loaded = true;
-               free(s);
-       }
-       return loaded;
 }
 
 int prot_from_flags(int flags) {
@@ -2767,47 +2571,6 @@ int fd_inc_sndbuf(int fd, size_t n) {
         return 1;
 }
 
-int fd_inc_rcvbuf(int fd, size_t n) {
-        int r, value;
-        socklen_t l = sizeof(value);
-
-        r = getsockopt(fd, SOL_SOCKET, SO_RCVBUF, &value, &l);
-        if (r >= 0 && l == sizeof(value) && (size_t) value >= n*2)
-                return 0;
-
-        /* If we have the privileges we will ignore the kernel limit. */
-
-        value = (int) n;
-        if (setsockopt(fd, SOL_SOCKET, SO_RCVBUFFORCE, &value, sizeof(value)) < 0)
-                if (setsockopt(fd, SOL_SOCKET, SO_RCVBUF, &value, sizeof(value)) < 0)
-                        return -errno;
-        return 1;
-}
-
-int setrlimit_closest(int resource, const struct rlimit *rlim) {
-        struct rlimit highest, fixed;
-
-        assert(rlim);
-
-        if (setrlimit(resource, rlim) >= 0)
-                return 0;
-
-        if (errno != EPERM)
-                return -errno;
-
-        /* So we failed to set the desired setrlimit, then let's try
-         * to get as close as we can */
-        assert_se(getrlimit(resource, &highest) == 0);
-
-        fixed.rlim_cur = MIN(rlim->rlim_cur, highest.rlim_max);
-        fixed.rlim_max = MIN(rlim->rlim_max, highest.rlim_max);
-
-        if (setrlimit(resource, &fixed) < 0)
-                return -errno;
-
-        return 0;
-}
-
 int getenv_for_pid(pid_t pid, const char *field, char **_value) {
         _cleanup_fclose_ FILE *f = NULL;
         char *value = NULL;
@@ -2862,27 +2625,6 @@ int getenv_for_pid(pid_t pid, const char *field, char **_value) {
         return r;
 }
 
-bool is_valid_documentation_url(const char *url) {
-        assert(url);
-
-        if (startswith(url, "http://") && url[7])
-                return true;
-
-        if (startswith(url, "https://") && url[8])
-                return true;
-
-        if (startswith(url, "file:") && url[5])
-                return true;
-
-        if (startswith(url, "info:") && url[5])
-                return true;
-
-        if (startswith(url, "man:") && url[4])
-                return true;
-
-        return false;
-}
-
 bool in_initrd(void) {
         static int saved = -1;
         struct statfs s;
@@ -2905,100 +2647,6 @@ bool in_initrd(void) {
                 is_temporary_fs(&s);
 
         return saved;
-}
-
-int get_home_dir(char **_h) {
-        struct passwd *p;
-        const char *e;
-        char *h;
-        uid_t u;
-
-        assert(_h);
-
-        /* Take the user specified one */
-        e = getenv("HOME");
-        if (e) {
-                h = strdup(e);
-                if (!h)
-                        return -ENOMEM;
-
-                *_h = h;
-                return 0;
-        }
-
-        /* Hardcode home directory for root to avoid NSS */
-        u = getuid();
-        if (u == 0) {
-                h = strdup("/root");
-                if (!h)
-                        return -ENOMEM;
-
-                *_h = h;
-                return 0;
-        }
-
-        /* Check the database... */
-        errno = 0;
-        p = getpwuid(u);
-        if (!p)
-                return errno > 0 ? -errno : -ESRCH;
-
-        if (!path_is_absolute(p->pw_dir))
-                return -EINVAL;
-
-        h = strdup(p->pw_dir);
-        if (!h)
-                return -ENOMEM;
-
-        *_h = h;
-        return 0;
-}
-
-int get_shell(char **_s) {
-        struct passwd *p;
-        const char *e;
-        char *s;
-        uid_t u;
-
-        assert(_s);
-
-        /* Take the user specified one */
-        e = getenv("SHELL");
-        if (e) {
-                s = strdup(e);
-                if (!s)
-                        return -ENOMEM;
-
-                *_s = s;
-                return 0;
-        }
-
-        /* Hardcode home directory for root to avoid NSS */
-        u = getuid();
-        if (u == 0) {
-                s = strdup("/bin/sh");
-                if (!s)
-                        return -ENOMEM;
-
-                *_s = s;
-                return 0;
-        }
-
-        /* Check the database... */
-        errno = 0;
-        p = getpwuid(u);
-        if (!p)
-                return errno > 0 ? -errno : -ESRCH;
-
-        if (!path_is_absolute(p->pw_shell))
-                return -EINVAL;
-
-        s = strdup(p->pw_shell);
-        if (!s)
-                return -ENOMEM;
-
-        *_s = s;
-        return 0;
 }
 
 bool filename_is_safe(const char *p) {
@@ -3036,172 +2684,6 @@ bool string_is_safe(const char *p) {
         }
 
         return true;
-}
-
-bool path_is_safe(const char *p) {
-
-        if (isempty(p))
-                return false;
-
-        if (streq(p, "..") || startswith(p, "../") || endswith(p, "/..") || strstr(p, "/../"))
-                return false;
-
-        if (strlen(p) > PATH_MAX)
-                return false;
-
-        /* The following two checks are not really dangerous, but hey, they still are confusing */
-        if (streq(p, ".") || startswith(p, "./") || endswith(p, "/.") || strstr(p, "/./"))
-                return false;
-
-        if (strstr(p, "//"))
-                return false;
-
-        return true;
-}
-
-/* hey glibc, APIs with callbacks without a user pointer are so useless */
-void *xbsearch_r(const void *key, const void *base, size_t nmemb, size_t size,
-                 int (*compar) (const void *, const void *, void *), void *arg) {
-        size_t l, u, idx;
-        const void *p;
-        int comparison;
-
-        l = 0;
-        u = nmemb;
-        while (l < u) {
-                idx = (l + u) / 2;
-                p = (void *)(((const char *) base) + (idx * size));
-                comparison = compar(key, p, arg);
-                if (comparison < 0)
-                        u = idx;
-                else if (comparison > 0)
-                        l = idx + 1;
-                else
-                        return (void *)p;
-        }
-        return NULL;
-}
-
-bool is_locale_utf8(void) {
-        const char *set;
-        static int cached_answer = -1;
-
-        if (cached_answer >= 0)
-                goto out;
-
-        if (!setlocale(LC_ALL, "")) {
-                cached_answer = true;
-                goto out;
-        }
-
-        set = nl_langinfo(CODESET);
-        if (!set) {
-                cached_answer = true;
-                goto out;
-        }
-
-        if (streq(set, "UTF-8")) {
-                cached_answer = true;
-                goto out;
-        }
-
-        /* For LC_CTYPE=="C" return true, because CTYPE is effectly
-         * unset and everything can do to UTF-8 nowadays. */
-        set = setlocale(LC_CTYPE, NULL);
-        if (!set) {
-                cached_answer = true;
-                goto out;
-        }
-
-        /* Check result, but ignore the result if C was set
-         * explicitly. */
-        cached_answer =
-                streq(set, "C") &&
-                !getenv("LC_ALL") &&
-                !getenv("LC_CTYPE") &&
-                !getenv("LANG");
-
-out:
-        return (bool) cached_answer;
-}
-
-const char *draw_special_char(DrawSpecialChar ch) {
-        static const char *draw_table[2][_DRAW_SPECIAL_CHAR_MAX] = {
-
-                /* UTF-8 */ {
-                        [DRAW_TREE_VERTICAL]      = "\342\224\202 ",            /* │  */
-                        [DRAW_TREE_BRANCH]        = "\342\224\234\342\224\200", /* ├─ */
-                        [DRAW_TREE_RIGHT]         = "\342\224\224\342\224\200", /* └─ */
-                        [DRAW_TREE_SPACE]         = "  ",                       /*    */
-                        [DRAW_TRIANGULAR_BULLET]  = "\342\200\243",             /* ‣ */
-                        [DRAW_BLACK_CIRCLE]       = "\342\227\217",             /* ● */
-                        [DRAW_ARROW]              = "\342\206\222",             /* → */
-                        [DRAW_DASH]               = "\342\200\223",             /* – */
-                },
-
-                /* ASCII fallback */ {
-                        [DRAW_TREE_VERTICAL]      = "| ",
-                        [DRAW_TREE_BRANCH]        = "|-",
-                        [DRAW_TREE_RIGHT]         = "`-",
-                        [DRAW_TREE_SPACE]         = "  ",
-                        [DRAW_TRIANGULAR_BULLET]  = ">",
-                        [DRAW_BLACK_CIRCLE]       = "*",
-                        [DRAW_ARROW]              = "->",
-                        [DRAW_DASH]               = "-",
-                }
-        };
-
-        return draw_table[!is_locale_utf8()][ch];
-}
-
-char *strreplace(const char *text, const char *old_string, const char *new_string) {
-        const char *f;
-        char *t, *r;
-        size_t l, old_len, new_len;
-
-        assert(text);
-        assert(old_string);
-        assert(new_string);
-
-        old_len = strlen(old_string);
-        new_len = strlen(new_string);
-
-        l = strlen(text);
-        r = new(char, l+1);
-        if (!r)
-                return NULL;
-
-        f = text;
-        t = r;
-        while (*f) {
-                char *a;
-                size_t d, nl;
-
-                if (!startswith(f, old_string)) {
-                        *(t++) = *(f++);
-                        continue;
-                }
-
-                d = t - r;
-                nl = l - old_len + new_len;
-                a = realloc(r, nl + 1);
-                if (!a)
-                        goto oom;
-
-                l = nl;
-                r = a;
-                t = r + d;
-
-                t = stpcpy(t, new_string);
-                f += old_len;
-        }
-
-        *t = 0;
-        return r;
-
-oom:
-        free(r);
-        return NULL;
 }
 
 char *strip_tab_ansi(char **ibuf, size_t *_isz) {
@@ -3285,232 +2767,6 @@ char *strip_tab_ansi(char **ibuf, size_t *_isz) {
                 *_isz = osz;
 
         return obuf;
-}
-
-int on_ac_power(void) {
-        bool found_offline = false, found_online = false;
-        _cleanup_closedir_ DIR *d = NULL;
-
-        d = opendir("/sys/class/power_supply");
-        if (!d)
-                return -errno;
-
-        for (;;) {
-                struct dirent *de;
-                _cleanup_close_ int fd = -1, device = -1;
-                char contents[6];
-                ssize_t n;
-
-                errno = 0;
-                de = readdir(d);
-                if (!de && errno != 0)
-                        return -errno;
-
-                if (!de)
-                        break;
-
-                if (ignore_file(de->d_name))
-                        continue;
-
-                device = openat(dirfd(d), de->d_name, O_DIRECTORY|O_RDONLY|O_CLOEXEC|O_NOCTTY);
-                if (device < 0) {
-                        if (errno == ENOENT || errno == ENOTDIR)
-                                continue;
-
-                        return -errno;
-                }
-
-                fd = openat(device, "type", O_RDONLY|O_CLOEXEC|O_NOCTTY);
-                if (fd < 0) {
-                        if (errno == ENOENT)
-                                continue;
-
-                        return -errno;
-                }
-
-                n = read(fd, contents, sizeof(contents));
-                if (n < 0)
-                        return -errno;
-
-                if (n != 6 || memcmp(contents, "Mains\n", 6))
-                        continue;
-
-                safe_close(fd);
-                fd = openat(device, "online", O_RDONLY|O_CLOEXEC|O_NOCTTY);
-                if (fd < 0) {
-                        if (errno == ENOENT)
-                                continue;
-
-                        return -errno;
-                }
-
-                n = read(fd, contents, sizeof(contents));
-                if (n < 0)
-                        return -errno;
-
-                if (n != 2 || contents[1] != '\n')
-                        return -EIO;
-
-                if (contents[0] == '1') {
-                        found_online = true;
-                        break;
-                } else if (contents[0] == '0')
-                        found_offline = true;
-                else
-                        return -EIO;
-        }
-
-        return found_online || !found_offline;
-}
-
-static int search_and_fopen_internal(const char *path, const char *mode, const char *root, char **search, FILE **_f) {
-        char **i;
-
-        assert(path);
-        assert(mode);
-        assert(_f);
-
-        if (!path_strv_canonicalize_absolute_uniq(search, root))
-                return -ENOMEM;
-
-        STRV_FOREACH(i, search) {
-                _cleanup_free_ char *p = NULL;
-                FILE *f;
-
-                p = strjoin(*i, "/", path, NULL);
-                if (!p)
-                        return -ENOMEM;
-
-                f = fopen(p, mode);
-                if (f) {
-                        *_f = f;
-                        return 0;
-                }
-
-                if (errno != ENOENT)
-                        return -errno;
-        }
-
-        return -ENOENT;
-}
-
-int search_and_fopen(const char *path, const char *mode, const char *root, const char **search, FILE **_f) {
-        _cleanup_strv_free_ char **copy = NULL;
-
-        assert(path);
-        assert(mode);
-        assert(_f);
-
-        if (path_is_absolute(path)) {
-                FILE *f;
-
-                f = fopen(path, mode);
-                if (f) {
-                        *_f = f;
-                        return 0;
-                }
-
-                return -errno;
-        }
-
-        copy = strv_copy((char**) search);
-        if (!copy)
-                return -ENOMEM;
-
-        return search_and_fopen_internal(path, mode, root, copy, _f);
-}
-
-int search_and_fopen_nulstr(const char *path, const char *mode, const char *root, const char *search, FILE **_f) {
-        _cleanup_strv_free_ char **s = NULL;
-
-        if (path_is_absolute(path)) {
-                FILE *f;
-
-                f = fopen(path, mode);
-                if (f) {
-                        *_f = f;
-                        return 0;
-                }
-
-                return -errno;
-        }
-
-        s = strv_split_nulstr(search);
-        if (!s)
-                return -ENOMEM;
-
-        return search_and_fopen_internal(path, mode, root, s, _f);
-}
-
-char *strextend(char **x, ...) {
-        va_list ap;
-        size_t f, l;
-        char *r, *p;
-
-        assert(x);
-
-        l = f = *x ? strlen(*x) : 0;
-
-        va_start(ap, x);
-        for (;;) {
-                const char *t;
-                size_t n;
-
-                t = va_arg(ap, const char *);
-                if (!t)
-                        break;
-
-                n = strlen(t);
-                if (n > ((size_t) -1) - l) {
-                        va_end(ap);
-                        return NULL;
-                }
-
-                l += n;
-        }
-        va_end(ap);
-
-        r = realloc(*x, l+1);
-        if (!r)
-                return NULL;
-
-        p = r + f;
-
-        va_start(ap, x);
-        for (;;) {
-                const char *t;
-
-                t = va_arg(ap, const char *);
-                if (!t)
-                        break;
-
-                p = stpcpy(p, t);
-        }
-        va_end(ap);
-
-        *p = 0;
-        *x = r;
-
-        return r + l;
-}
-
-char *strrep(const char *s, unsigned n) {
-        size_t l;
-        char *r, *p;
-        unsigned i;
-
-        assert(s);
-
-        l = strlen(s);
-        p = r = malloc(l * n + 1);
-        if (!r)
-                return NULL;
-
-        for (i = 0; i < n; i++)
-                p = stpcpy(p, s);
-
-        *p = 0;
-        return r;
 }
 
 void* greedy_realloc(void **p, size_t *allocated, size_t need, size_t size) {

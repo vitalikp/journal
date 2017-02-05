@@ -123,8 +123,6 @@ bool streq_ptr(const char *a, const char *b) _pure_;
 
 #define newa(t, n) ((t*) alloca(sizeof(t)*(n)))
 
-#define newdup(t, p, n) ((t*) memdup_multiply(p, sizeof(t), (n)))
-
 #define malloc0(n) (calloc((n), 1))
 
 static inline const char* yes_no(bool b) {
@@ -417,8 +415,6 @@ int in_group(const char *name);
 
 int glob_extend(char ***strv, const char *path);
 
-int dirent_ensure_type(DIR *d, struct dirent *de);
-
 char *strjoin(const char *x, ...) _sentinel_;
 
 bool is_main_thread(void);
@@ -431,36 +427,14 @@ int file_is_priv_sticky(const char *p);
 #define NULSTR_FOREACH_PAIR(i, j, l)                             \
         for ((i) = (l), (j) = strchr((i), 0)+1; (i) && *(i); (i) = strchr((j), 0)+1, (j) = *(i) ? strchr((i), 0)+1 : (i))
 
-int ioprio_class_to_string_alloc(int i, char **s);
-int ioprio_class_from_string(const char *s);
-
-const char *sigchld_code_to_string(int i) _const_;
-int sigchld_code_from_string(const char *s) _pure_;
-
 int log_facility_unshifted_to_string_alloc(int i, char **s);
 int log_facility_unshifted_from_string(const char *s);
 
 int log_level_to_string_alloc(int i, char **s);
 int log_level_from_string(const char *s);
 
-int sched_policy_to_string_alloc(int i, char **s);
-int sched_policy_from_string(const char *s);
-
-const char *rlimit_to_string(int i) _const_;
-int rlimit_from_string(const char *s) _pure_;
-
-int ip_tos_to_string_alloc(int i, char **s);
-int ip_tos_from_string(const char *s);
-
 const char *signal_to_string(int i) _const_;
 int signal_from_string(const char *s) _pure_;
-
-int signal_from_string_try_harder(const char *s);
-
-extern int saved_argc;
-extern char **saved_argv;
-
-bool kexec_loaded(void);
 
 int prot_from_flags(int flags) _const_;
 
@@ -470,21 +444,11 @@ int fd_wait_for_event(int fd, int event, usec_t timeout);
 
 void* memdup(const void *p, size_t l) _alloc_(2);
 
-int is_kernel_thread(pid_t pid);
-
 int fd_inc_sndbuf(int fd, size_t n);
-int fd_inc_rcvbuf(int fd, size_t n);
-
-int setrlimit_closest(int resource, const struct rlimit *rlim);
 
 int getenv_for_pid(pid_t pid, const char *field, char **_value);
 
-bool is_valid_documentation_url(const char *url) _pure_;
-
 bool in_initrd(void);
-
-int get_home_dir(char **ret);
-int get_shell(char **_ret);
 
 static inline void freep(void *p) {
         free(*(void**) p);
@@ -505,14 +469,9 @@ static inline void umaskp(mode_t *u) {
         umask(*u);
 }
 
-static inline void close_pairp(int (*p)[2]) {
-        safe_close_pair(*p);
-}
-
 DEFINE_TRIVIAL_CLEANUP_FUNC(FILE*, fclose);
 DEFINE_TRIVIAL_CLEANUP_FUNC(FILE*, pclose);
 DEFINE_TRIVIAL_CLEANUP_FUNC(DIR*, closedir);
-DEFINE_TRIVIAL_CLEANUP_FUNC(FILE*, endmntent);
 
 #define _cleanup_free_ _cleanup_(freep)
 #define _cleanup_close_ _cleanup_(closep)
@@ -521,8 +480,6 @@ DEFINE_TRIVIAL_CLEANUP_FUNC(FILE*, endmntent);
 #define _cleanup_fclose_ _cleanup_(fclosep)
 #define _cleanup_pclose_ _cleanup_(pclosep)
 #define _cleanup_closedir_ _cleanup_(closedirp)
-#define _cleanup_endmntent_ _cleanup_(endmntentp)
-#define _cleanup_close_pair_ _cleanup_(close_pairp)
 
 _malloc_  _alloc_(1, 2) static inline void *malloc_multiply(size_t a, size_t b) {
         if (_unlikely_(b != 0 && a > ((size_t) -1) / b))
@@ -531,22 +488,7 @@ _malloc_  _alloc_(1, 2) static inline void *malloc_multiply(size_t a, size_t b) 
         return malloc(a * b);
 }
 
-_alloc_(2, 3) static inline void *realloc_multiply(void *p, size_t a, size_t b) {
-        if (_unlikely_(b != 0 && a > ((size_t) -1) / b))
-                return NULL;
-
-        return realloc(p, a * b);
-}
-
-_alloc_(2, 3) static inline void *memdup_multiply(const void *p, size_t a, size_t b) {
-        if (_unlikely_(b != 0 && a > ((size_t) -1) / b))
-                return NULL;
-
-        return memdup(p, a * b);
-}
-
 bool filename_is_safe(const char *p) _pure_;
-bool path_is_safe(const char *p) _pure_;
 bool string_is_safe(const char *p) _pure_;
 
 /**
@@ -556,34 +498,7 @@ _pure_ static inline bool string_is_glob(const char *p) {
         return !!strpbrk(p, GLOB_CHARS);
 }
 
-void *xbsearch_r(const void *key, const void *base, size_t nmemb, size_t size,
-                 int (*compar) (const void *, const void *, void *),
-                 void *arg);
-
-bool is_locale_utf8(void);
-
-typedef enum DrawSpecialChar {
-        DRAW_TREE_VERTICAL,
-        DRAW_TREE_BRANCH,
-        DRAW_TREE_RIGHT,
-        DRAW_TREE_SPACE,
-        DRAW_TRIANGULAR_BULLET,
-        DRAW_BLACK_CIRCLE,
-        DRAW_ARROW,
-        DRAW_DASH,
-        _DRAW_SPECIAL_CHAR_MAX
-} DrawSpecialChar;
-
-const char *draw_special_char(DrawSpecialChar ch);
-
-char *strreplace(const char *text, const char *old_string, const char *new_string);
-
 char *strip_tab_ansi(char **p, size_t *l);
-
-int on_ac_power(void);
-
-int search_and_fopen(const char *path, const char *mode, const char *root, const char **search, FILE **_f);
-int search_and_fopen_nulstr(const char *path, const char *mode, const char *root, const char *search, FILE **_f);
 
 #define FOREACH_LINE(line, f, on_error)                         \
         for (;;)                                                \
@@ -593,28 +508,6 @@ int search_and_fopen_nulstr(const char *path, const char *mode, const char *root
                         }                                       \
                         break;                                  \
                 } else
-
-#define FOREACH_DIRENT(de, d, on_error)                                 \
-        for (errno = 0, de = readdir(d);; errno = 0, de = readdir(d))   \
-                if (!de) {                                              \
-                        if (errno > 0) {                                \
-                                on_error;                               \
-                        }                                               \
-                        break;                                          \
-                } else if (ignore_file((de)->d_name))                   \
-                        continue;                                       \
-                else
-
-static inline void *mempset(void *s, int c, size_t n) {
-        memset(s, c, n);
-        return (uint8_t*)s + n;
-}
-
-char *hexmem(const void *p, size_t l);
-void *unhexmem(const char *p, size_t l);
-
-char *strextend(char **x, ...) _sentinel_;
-char *strrep(const char *s, unsigned n);
 
 void* greedy_realloc(void **p, size_t *allocated, size_t need, size_t size);
 void* greedy_realloc0(void **p, size_t *allocated, size_t need, size_t size);
@@ -629,20 +522,6 @@ static inline void _reset_errno_(int *saved_errno) {
 }
 
 #define PROTECT_ERRNO _cleanup_(_reset_errno_) __attribute__((unused)) int _saved_errno_ = errno
-
-struct _umask_struct_ {
-        mode_t mask;
-        bool quit;
-};
-
-static inline void _reset_umask_(struct _umask_struct_ *s) {
-        umask(s->mask);
-};
-
-#define RUN_WITH_UMASK(mask)                                            \
-        for (_cleanup_(_reset_umask_) struct _umask_struct_ _saved_umask_ = { umask(mask), false }; \
-             !_saved_umask_.quit ;                                      \
-             _saved_umask_.quit = true)
 
 static inline unsigned u64log2(uint64_t n) {
 #if __SIZEOF_LONG_LONG__ == 8
