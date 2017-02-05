@@ -170,6 +170,7 @@
    - move /run/log directory to /run/journal/log;
    - move /dev/log syslog socket to /run/journal/devlog;
    - don't start if /run/journal directory not exist;
+   - open /dev/kmsg for read only;
  * vacuum:
    - use time of last modification journal files in realtime field;
    - don't check corrupt journal files;
