@@ -1183,6 +1183,35 @@ static int server_open_hostname(Server *s) {
         return 0;
 }
 
+static int mkrundir(void)
+{
+	struct stat st;
+
+	if (!stat(JOURNAL_RUNDIR, &st))
+	{
+		if (!S_ISDIR(st.st_mode))
+		{
+			log_error("Failed to start: '%s' is not directory", JOURNAL_RUNDIR);
+			return -1;
+		}
+
+		return 0;
+	}
+
+	if (errno != ENOENT)
+	{
+		log_error("Failed to start: cannot stat '%s' directory (%m)", JOURNAL_RUNDIR);
+		return -1;
+	}
+
+	if (!mkdir(JOURNAL_RUNDIR, 0755))
+		return 0;
+
+	log_error("Failed to create '%s' directory: %m", JOURNAL_RUNDIR);
+
+	return -1;
+}
+
 int server_init(Server *s) {
         int r, fd;
 
@@ -1218,7 +1247,8 @@ int server_init(Server *s) {
                 s->rate_limit_interval = s->rate_limit_burst = 0;
         }
 
-        mkdir(JOURNAL_RUNDIR, 0755);
+        if (mkrundir() < 0)
+        	return -1;
 
         s->user_journals = hashmap_new(trivial_hash_func, trivial_compare_func);
         if (!s->user_journals)
