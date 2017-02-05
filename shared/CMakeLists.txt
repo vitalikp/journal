@@ -18,8 +18,6 @@ add_library(journal_shared_obj STATIC
 	set.h
 	strv.c
 	strv.h
-	strbuf.c
-	strbuf.h
 	strxcpyx.c
 	strxcpyx.h
 	conf-parser.c
