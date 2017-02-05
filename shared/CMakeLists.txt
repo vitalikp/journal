@@ -34,8 +34,6 @@ add_library(journal_shared_obj STATIC
 	gunicode.h
 	pager.c
 	pager.h
-	conf-files.c
-	conf-files.h
 	utmp-wtmp.c
 	utmp-wtmp.h
 	fileio.c

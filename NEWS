@@ -126,6 +126,7 @@
     - remove replace-var module;
     - remove env-util module;
     - remove audit module;
+    - remove conf-files module;
  * remove journal_capability_obj library;
  * remove prefix field from sd_journal struct;
  * don't add machine_id to root log path directory;
