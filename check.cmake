@@ -61,7 +61,6 @@ check_include_file(sys/auxv.h HAVE_SYS_AUXV_H)
 CHECK_FUNCTION_EXISTS(__secure_getenv HAVE___SECURE_GETENV)
 CHECK_FUNCTION_EXISTS(secure_getenv HAVE_SECURE_GETENV)
 set(CMAKE_EXTRA_INCLUDE_FILES fcntl.h)
-CHECK_FUNCTION_EXISTS(name_to_handle_at HAVE_DECL_NAME_TO_HANDLE_AT)
 set(CMAKE_EXTRA_INCLUDE_FILES sched.h)
 
 # dependencies

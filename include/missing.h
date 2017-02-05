@@ -279,32 +279,6 @@ static inline pid_t gettid(void) {
 #define MAX_HANDLE_SZ 128
 #endif
 
-#ifndef __NR_name_to_handle_at
-#  if defined(__x86_64__)
-#    define __NR_name_to_handle_at 303
-#  elif defined(__i386__)
-#    define __NR_name_to_handle_at 341
-#  elif defined(__arm__)
-#    define __NR_name_to_handle_at 370
-#  elif defined(__powerpc__)
-#    define __NR_name_to_handle_at 345
-#  else
-#    error "__NR_name_to_handle_at is not defined"
-#  endif
-#endif
-
-#if !HAVE_DECL_NAME_TO_HANDLE_AT
-struct file_handle {
-        unsigned int handle_bytes;
-        int handle_type;
-        unsigned char f_handle[0];
-};
-
-static inline int name_to_handle_at(int fd, const char *name, struct file_handle *handle, int *mnt_id, int flags) {
-        return syscall(__NR_name_to_handle_at, fd, name, handle, mnt_id, flags);
-}
-#endif
-
 #ifndef HAVE_SECURE_GETENV
 #  ifdef HAVE___SECURE_GETENV
 #    define secure_getenv __secure_getenv
