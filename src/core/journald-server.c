@@ -1218,7 +1218,7 @@ int server_init(Server *s) {
                 s->rate_limit_interval = s->rate_limit_burst = 0;
         }
 
-        mkdir_p(JOURNAL_RUNDIR, 0755);
+        mkdir(JOURNAL_RUNDIR, 0755);
 
         s->user_journals = hashmap_new(trivial_hash_func, trivial_compare_func);
         if (!s->user_journals)
