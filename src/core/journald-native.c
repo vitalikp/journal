@@ -387,7 +387,7 @@ int server_open_native_socket(Server*s) {
         if (s->native_fd < 0)
         	return -errno;
 
-        r = epollfd_add(s->epoll, s->syslog_fd, EPOLLIN, (event_cb)process_datagram, s);
+        r = epollfd_add(s->epoll, s->native_fd, EPOLLIN, (event_cb)process_datagram, s);
         if (r < 0)
         {
         	log_error("Failed to add native server fd to event loop: %m");
