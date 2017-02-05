@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
         server_flush_dev_kmsg(&server);
 
         log_debug("journald running as pid "PID_FMT, getpid());
-        server_driver_message(&server, "Journal started");
+        server_driver_message(&server, "Journal started (version %s)", VERSION);
 
         while (server.state != SERVER_FINISHED) {
                 usec_t t = USEC_INFINITY, n;

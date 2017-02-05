@@ -171,6 +171,7 @@
    - move /dev/log syslog socket to /run/journal/devlog;
    - don't start if /run/journal directory not exist;
    - open /dev/kmsg for read only;
+   - print version at start;
  * vacuum:
    - use time of last modification journal files in realtime field;
    - don't check corrupt journal files;
