@@ -28,7 +28,6 @@
 
 #include "journal.h"
 #include "fileio.h"
-#include "mkdir.h"
 #include "hashmap.h"
 #include "journal-file.h"
 #include "socket-util.h"
@@ -746,7 +745,6 @@ static int system_journal_open(Server *s) {
                          * it if necessary. */
 
                         (void) mkdir(JOURNAL_RUNDIR "/log", 0755);
-                        (void) mkdir_parents(fn, 0750);
 
                         r = journal_file_open_reliably(fn, O_RDWR|O_CREAT, 0640, s->compress, &s->runtime_metrics, s->mmap, NULL, &s->runtime_journal);
                         free(fn);
