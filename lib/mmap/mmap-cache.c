@@ -25,7 +25,6 @@
 #include <string.h>
 
 #include "hashmap.h"
-#include "list.h"
 #include "log.h"
 #include "util.h"
 #include "macro.h"
@@ -48,10 +47,10 @@ struct Window {
 
         FileDescriptor *fd;
 
-        LIST_FIELDS(Window, by_fd);
-        LIST_FIELDS(Window, unused);
+        Window *by_fd_next, *by_fd_prev;
+        Window *unused_next, *unused_prev;
 
-        LIST_HEAD(Context, contexts);
+        Context *contexts;
 };
 
 struct Context {
@@ -59,13 +58,13 @@ struct Context {
         unsigned id;
         Window *window;
 
-        LIST_FIELDS(Context, by_window);
+        Context *by_window_next, *by_window_prev;
 };
 
 struct FileDescriptor {
         MMapCache *cache;
         int fd;
-        LIST_HEAD(Window, windows);
+        Window *windows;
 };
 
 struct MMapCache {
@@ -78,7 +77,7 @@ struct MMapCache {
         Hashmap *fds;
         Hashmap *contexts;
 
-        LIST_HEAD(Window, unused);
+        Window *unused;
         Window *last_unused;
 };
 
@@ -113,18 +112,38 @@ static void window_unlink(Window *w) {
                 munmap(w->ptr, w->size);
 
         if (w->fd)
-                LIST_REMOVE(by_fd, w->fd->windows, w);
+        {
+                if (w->by_fd_next)
+                	w->by_fd_next->by_fd_prev = w->by_fd_prev;
+                if (w->by_fd_prev)
+                	w->by_fd_prev->by_fd_next = w->by_fd_next;
+                else
+                	w->fd->windows = w->by_fd_next;
+
+                w->by_fd_next = w->by_fd_prev = NULL;
+        }
 
         if (w->in_unused) {
                 if (w->cache->last_unused == w)
                         w->cache->last_unused = w->unused_prev;
 
-                LIST_REMOVE(unused, w->cache->unused, w);
+                if (w->unused_next)
+                	w->unused_next->unused_prev = w->unused_prev;
+                if (w->unused_prev)
+                	w->unused_prev->unused_next = w->unused_next;
+                else
+                	w->cache->unused = w->unused_next;
+
+                w->unused_next = w->unused_prev = NULL;
         }
 
-        LIST_FOREACH(by_window, c, w->contexts) {
+        c = w->contexts;
+        while (c)
+        {
                 assert(c->window == w);
                 c->window = NULL;
+
+                c = c->by_window_next;
         }
 }
 
@@ -183,11 +202,23 @@ static void context_detach_window(Context *c) {
 
         w = c->window;
         c->window = NULL;
-        LIST_REMOVE(by_window, w->contexts, c);
+
+        if (c->by_window_next)
+        	c->by_window_next->by_window_prev = c->by_window_prev;
+        if (c->by_window_prev)
+        	c->by_window_prev->by_window_next = c->by_window_next;
+        else
+        	w->contexts = c->by_window_next;
+
+        c->by_window_next = c->by_window_prev = NULL;
 
         if (!w->contexts && !w->keep_always) {
                 /* Not used anymore? */
-                LIST_PREPEND(unused, c->cache->unused, w);
+                if ((w->unused_next = c->cache->unused))
+                	w->unused_next->unused_prev = w;
+                w->unused_prev = NULL;
+                c->cache->unused = w;
+
                 if (!c->cache->last_unused)
                         c->cache->last_unused = w;
 
@@ -206,7 +237,15 @@ static void context_attach_window(Context *c, Window *w) {
 
         if (w->in_unused) {
                 /* Used again? */
-                LIST_REMOVE(unused, c->cache->unused, w);
+                if (w->unused_next)
+                	w->unused_next->unused_prev = w->unused_prev;
+                if (w->unused_prev)
+                	w->unused_prev->unused_next = w->unused_next;
+                else
+                	c->cache->unused = w->unused_next;
+
+                w->unused_next = w->unused_prev = NULL;
+
                 if (c->cache->last_unused == w)
                         c->cache->last_unused = w->unused_prev;
 
@@ -214,7 +253,11 @@ static void context_attach_window(Context *c, Window *w) {
         }
 
         c->window = w;
-        LIST_PREPEND(by_window, w->contexts, c);
+
+        if ((c->by_window_next = w->contexts))
+        	c->by_window_next->by_window_prev = c;
+        c->by_window_prev = NULL;
+        w->contexts = c;
 }
 
 static Context *context_add(MMapCache *m, unsigned id) {
@@ -409,9 +452,14 @@ static int find_mmap(
 
         assert(f->fd == fd);
 
-        LIST_FOREACH(by_fd, w, f->windows)
+        w = f->windows;
+        while (w)
+        {
                 if (window_matches(w, fd, prot, offset, size))
                         break;
+
+                w = w->by_fd_next;
+        }
 
         if (!w)
                 return 0;
@@ -513,11 +561,18 @@ static int add_mmap(
         w->size = wsize;
         w->fd = f;
 
-        LIST_PREPEND(by_fd, f->windows, w);
+        if ((w->by_fd_next = f->windows))
+        	w->by_fd_next->by_fd_prev = w;
+        w->by_fd_prev = NULL;
+        f->windows = w;
 
         context_detach_window(c);
         c->window = w;
-        LIST_PREPEND(by_window, w->contexts, c);
+
+        if ((c->by_window_next = w->contexts))
+        	c->by_window_next->by_window_prev = c;
+        c->by_window_prev = NULL;
+        w->contexts = c;
 
         if (ret)
                 *ret = (uint8_t*) w->ptr + (offset - w->offset);

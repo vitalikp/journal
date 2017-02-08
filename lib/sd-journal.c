@@ -34,7 +34,6 @@
 #include "journal-def.h"
 #include "journal-file.h"
 #include "hashmap.h"
-#include "list.h"
 #include "strv.h"
 #include "path-util.h"
 #include "compress.h"
@@ -188,7 +187,11 @@ static Match *match_new(Match *p, MatchType t) {
 
         if (p) {
                 m->parent = p;
-                LIST_PREPEND(matches, p->matches, m);
+
+                if ((m->matches_next = p->matches))
+                	m->matches_next->matches_prev = m;
+                m->matches_prev = NULL;
+                p->matches = m;
         }
 
         return m;
@@ -201,7 +204,16 @@ static void match_free(Match *m) {
                 match_free(m->matches);
 
         if (m->parent)
-                LIST_REMOVE(matches, m->parent->matches, m);
+        {
+                if (m->matches_next)
+                	m->matches_next->matches_prev = m->matches_prev;
+                if (m->matches_prev)
+                	m->matches_prev->matches_next = m->matches_next;
+                else
+                	m->parent->matches = m->matches_next;
+
+                m->matches_next = m->matches_prev = NULL;
+        }
 
         free(m->data);
         free(m);
@@ -259,12 +271,12 @@ _public_ int sd_journal_add_match(sd_journal *j, const void *data, size_t size) 
         hash64(data, size, &hash);
         le_hash = htole64(hash);
 
-        LIST_FOREACH(matches, l3, j->level2->matches) {
-                assert(l3->type == MATCH_OR_TERM);
-
-                LIST_FOREACH(matches, l4, l3->matches) {
-                        assert(l4->type == MATCH_DISCRETE);
-
+        l3 = j->level2->matches;
+        while (l3)
+        {
+                l4 = l3->matches;
+                while (l4)
+                {
                         /* Exactly the same match already? Then ignore
                          * this addition */
                         if (l4->le_hash == le_hash &&
@@ -277,10 +289,14 @@ _public_ int sd_journal_add_match(sd_journal *j, const void *data, size_t size) 
                                 add_here = l3;
                                 break;
                         }
+
+                        l4 = l4->matches_next;
                 }
 
                 if (add_here)
                         break;
+
+                l3 = l3->matches_next;
         }
 
         if (!add_here) {
@@ -363,7 +379,10 @@ static char *match_make_string(Match *m) {
                 return strndup(m->data, m->size);
 
         p = NULL;
-        LIST_FOREACH(matches, i, m->matches) {
+
+        i = m->matches;
+        while (i)
+        {
                 char *t, *k;
 
                 t = match_make_string(i);
@@ -385,6 +404,8 @@ static char *match_make_string(Match *m) {
                         enclose = true;
                 } else
                         p = t;
+
+                i = i->matches_next;
         }
 
         if (enclose) {
@@ -589,7 +610,9 @@ static int next_for_match(
 
                 /* Find the earliest match beyond after_offset */
 
-                LIST_FOREACH(matches, i, m->matches) {
+                i = m->matches;
+                while (i)
+                {
                         uint64_t cp;
 
                         r = next_for_match(j, i, f, after_offset, direction, NULL, &cp);
@@ -599,6 +622,8 @@ static int next_for_match(
                                 if (np == 0 || (direction == DIRECTION_DOWN ? cp < np : cp > np))
                                         np = cp;
                         }
+
+                        i = i->matches_next;
                 }
 
                 if (np == 0)
@@ -621,7 +646,9 @@ static int next_for_match(
                 assert(direction == DIRECTION_DOWN ? np >= after_offset : np <= after_offset);
                 last_moved = m->matches;
 
-                LIST_LOOP_BUT_ONE(matches, i, m->matches, last_moved) {
+                i = last_moved->matches_next ? last_moved->matches_next : m->matches;
+                while (i != last_moved)
+                {
                         uint64_t cp;
 
                         r = next_for_match(j, i, f, np, direction, NULL, &cp);
@@ -633,6 +660,8 @@ static int next_for_match(
                                 np = cp;
                                 last_moved = i;
                         }
+
+                        i = i->matches_next ? i->matches_next: m->matches;
                 }
         }
 
@@ -696,7 +725,9 @@ static int find_location_for_match(
 
                 /* Find the earliest match */
 
-                LIST_FOREACH(matches, i, m->matches) {
+                i = m->matches;
+                while (i)
+                {
                         uint64_t cp;
 
                         r = find_location_for_match(j, i, f, direction, NULL, &cp);
@@ -706,6 +737,8 @@ static int find_location_for_match(
                                 if (np == 0 || (direction == DIRECTION_DOWN ? np > cp : np < cp))
                                         np = cp;
                         }
+
+                        i = i->matches_next;
                 }
 
                 if (np == 0)
@@ -734,7 +767,9 @@ static int find_location_for_match(
                 if (!m->matches)
                         return 0;
 
-                LIST_FOREACH(matches, i, m->matches) {
+                i = m->matches;
+                while (i)
+                {
                         uint64_t cp;
 
                         r = find_location_for_match(j, i, f, direction, NULL, &cp);
@@ -743,6 +778,8 @@ static int find_location_for_match(
 
                         if (np == 0 || (direction == DIRECTION_DOWN ? cp > np : cp < np))
                                 np = cp;
+
+                        i = i->matches_next;
                 }
 
                 return next_for_match(j, m, f, np, direction, ret, offset);

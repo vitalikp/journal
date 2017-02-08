@@ -27,7 +27,6 @@
 
 #include "uuid.h"
 #include "journal-def.h"
-#include "list.h"
 #include "hashmap.h"
 #include "set.h"
 #include "journal-file.h"
@@ -45,7 +44,7 @@ typedef enum MatchType {
 struct Match {
         MatchType type;
         Match *parent;
-        LIST_FIELDS(Match, matches);
+        Match *matches_next, *matches_prev;
 
         /* For concrete matches */
         char *data;
@@ -53,7 +52,7 @@ struct Match {
         le64_t le_hash;
 
         /* For terms */
-        LIST_HEAD(Match, matches);
+        Match *matches;
 };
 
 typedef enum LocationType {

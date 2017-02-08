@@ -90,7 +90,7 @@ typedef struct boot_id_t {
         uuid_t id;
         uint64_t first;
         uint64_t last;
-        LIST_FIELDS(struct boot_id_t, boot_list);
+        struct boot_id_t *boot_list_next, *boot_list_prev;
 } boot_id_t;
 
 static void pager_open_if_enabled(void) {
@@ -768,8 +768,15 @@ static int get_boots(sd_journal *j,
                 r = discover_next_boot(j, &current, advance_older, !query_ref_boot);
                 if (r < 0) {
                         boot_id_t *id, *id_next;
-                        LIST_FOREACH_SAFE(boot_list, id, id_next, head)
+
+                        id = head;
+                        while (id)
+                        {
+                                id_next = id->boot_list_next;
                                 free(id);
+
+                                id = id_next;
+                        }
                         return r;
                 }
 
@@ -787,7 +794,21 @@ static int get_boots(sd_journal *j,
                                 break;
                         }
                 } else {
-                        LIST_INSERT_AFTER(boot_list, head, tail, current);
+                        if (!tail)
+                        {
+                        	if ((current->boot_list_next = head))
+                        		current->boot_list_next->boot_list_prev = current;
+                        	current->boot_list_prev = NULL;
+                        	head = current;
+                        }
+                        else
+                        {
+                        	if ((current->boot_list_next = tail->boot_list_next))
+                        		current->boot_list_next->boot_list_prev = current;
+                        	current->boot_list_prev = tail;
+                        	tail->boot_list_next = current;
+                        }
+
                         tail = current;
                         current = NULL;
                         count++;
@@ -820,7 +841,11 @@ static int list_boots(sd_journal *j) {
         w = DECIMAL_STR_WIDTH(count - 1) + 1;
 
         i = 0;
-        LIST_FOREACH_SAFE(boot_list, id, id_next, all_ids) {
+
+        id = all_ids;
+        while (id)
+        {
+                id_next = id->boot_list_next;
                 char a[FORMAT_TIMESTAMP_MAX], b[FORMAT_TIMESTAMP_MAX];
 
                 printf("% *i %s %s—%s\n",
@@ -830,6 +855,8 @@ static int list_boots(sd_journal *j) {
                        format_timestamp(b, sizeof(b), id->last));
                 i++;
                 free(id);
+
+                id = id_next;
         }
 
         return 0;
