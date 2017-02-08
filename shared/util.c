@@ -72,7 +72,6 @@
 #include "missing.h"
 #include "log.h"
 #include "strv.h"
-#include "mkdir.h"
 #include "path-util.h"
 #include "set.h"
 #include "hashmap.h"
@@ -1963,14 +1962,11 @@ char *ellipsize_mem(const char *s, size_t old_length, size_t new_length, unsigne
         return e;
 }
 
-int touch_file(const char *path, bool parents, usec_t stamp, uid_t uid, gid_t gid, mode_t mode) {
+int touch_file(const char *path, usec_t stamp, uid_t uid, gid_t gid, mode_t mode) {
         _cleanup_close_ int fd = -1;
         int r;
 
         assert(path);
-
-        if (parents)
-                mkdir_parents(path, 0755);
 
         fd = open(path, O_WRONLY|O_CREAT|O_CLOEXEC|O_NOCTTY, mode > 0 ? mode : 0644);
         if (fd < 0)
@@ -2003,7 +1999,7 @@ int touch_file(const char *path, bool parents, usec_t stamp, uid_t uid, gid_t gi
 }
 
 int touch(const char *path) {
-        return touch_file(path, false, USEC_INFINITY, (uid_t) -1, (gid_t) -1, 0);
+        return touch_file(path, USEC_INFINITY, (uid_t) -1, (gid_t) -1, 0);
 }
 
 char *unquote(const char *s, const char* quotes) {
