@@ -32,8 +32,6 @@ add_library(journal_shared_obj STATIC
 	utmp-wtmp.h
 	fileio.c
 	fileio.h
-	mkdir.c
-	mkdir.h
 )
 
 add_library(journal_label_obj STATIC
