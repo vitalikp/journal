@@ -31,7 +31,6 @@
 #include "hashmap.h"
 #include "journal-file.h"
 #include "socket-util.h"
-#include "list.h"
 #include "missing.h"
 #include "conf-parser.h"
 #include "selinux-util.h"

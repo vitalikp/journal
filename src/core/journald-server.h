@@ -32,7 +32,6 @@
 #include "hashmap.h"
 #include "util.h"
 #include "journald-rate-limit.h"
-#include "list.h"
 
 
 typedef enum ServerState
