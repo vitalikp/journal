@@ -962,10 +962,6 @@ static int get_possible_units(sd_journal *j,
         "_SYSTEMD_UNIT\0"            \
         "UNIT\0"
 
-/* ... and add_matches_for_user_unit */
-#define USER_UNITS                   \
-        "USER_UNIT\0"
-
 static int add_units(sd_journal *j) {
         _cleanup_strv_free_ char **patterns = NULL;
         int r, count = 0;
@@ -1015,26 +1011,6 @@ static int add_units(sd_journal *j) {
 
         strv_free(patterns);
         patterns = NULL;
-
-        if (!strv_isempty(patterns)) {
-                _cleanup_set_free_free_ Set *units = NULL;
-                Iterator it;
-                char *u;
-
-                r = get_possible_units(j, USER_UNITS, patterns, &units);
-                if (r < 0)
-                        return r;
-
-                SET_FOREACH(u, units, it) {
-                        r = add_matches_for_user_unit(j, u, getuid());
-                        if (r < 0)
-                                return r;
-                        r = sd_journal_add_disjunction(j);
-                        if (r < 0)
-                                return r;
-                        count ++;
-                }
-        }
 
         /* Complain if the user request matches but nothing whatsoever was
          * found, since otherwise everything would be matched. */
