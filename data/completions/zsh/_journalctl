@@ -7,7 +7,7 @@ _list_fields() {
                     _{P,U,G}ID _COMM _EXE _CMDLINE
                     _SYSTEMD_UNIT
                     USER_UNIT
-                    _SELINUX_CONTEXT _SOURCE_REALTIME_TIMESTAMP
+                    _SOURCE_REALTIME_TIMESTAMP
                     _{BOOT,MACHINE}_ID _HOSTNAME _TRANSPORT
                     _KERNEL_{DEVICE,SUBSYSTEM}
                     __CURSOR __{REALTIME,MONOTONIC}_TIMESTAMP)

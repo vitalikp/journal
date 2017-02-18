@@ -24,7 +24,6 @@
 #include <sys/epoll.h>
 
 #include "socket-util.h"
-#include "selinux-util.h"
 #include "journald-server.h"
 #include "journald-syslog.h"
 #include "journald-kmsg.h"

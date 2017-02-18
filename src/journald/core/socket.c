@@ -15,7 +15,6 @@
 
 #include "socket.h"
 #include "log.h"
-#include "selinux-util.h"
 
 
 int socket_open(const char* path, int type)
@@ -64,15 +63,6 @@ int socket_open(const char* path, int type)
 		log_error("SO_PASSCRED failed: %m");
 		return -1;
 	}
-
-#ifdef HAVE_SELINUX
-	if (use_selinux())
-	{
-		optval = 1;
-		if (setsockopt(fd, SOL_SOCKET, SO_PASSSEC, &optval, sizeof(optval)) < 0)
-				log_warning("SO_PASSSEC(%s) failed: %m", sa.sun_path);
-	}
-#endif
 
 	optval = 8<<20;
 	if (setsockopt(fd, SOL_SOCKET, SO_RCVBUFFORCE, &optval, sizeof(optval)) < 0)

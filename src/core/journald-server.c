@@ -33,7 +33,6 @@
 #include "socket-util.h"
 #include "missing.h"
 #include "conf-parser.h"
-#include "selinux-util.h"
 #include "journal-internal.h"
 #include "journal-vacuum.h"
 #include "journald-rate-limit.h"
@@ -42,10 +41,6 @@
 #include "journald-console.h"
 #include "journald-native.h"
 #include "journald-server.h"
-
-#ifdef HAVE_SELINUX
-#include <selinux/selinux.h>
-#endif
 
 #define USER_JOURNALS_MAX 1024
 
@@ -573,26 +568,6 @@ static void dispatch_message_real(
                         x = strappenda("_SYSTEMD_UNIT=", unit_id);
                         IOVEC_SET_STRING(iovec[n++], x);
                 }
-
-#ifdef HAVE_SELINUX
-                if (use_selinux()) {
-                        if (label) {
-                                x = alloca(strlen("_SELINUX_CONTEXT=") + label_len + 1);
-
-                                *((char*) mempcpy(stpcpy(x, "_SELINUX_CONTEXT="), label, label_len)) = 0;
-                                IOVEC_SET_STRING(iovec[n++], x);
-                        } else {
-                                security_context_t con;
-
-                                if (getpidcon(ucred->pid, &con) >= 0) {
-                                        x = strappenda("_SELINUX_CONTEXT=", con);
-
-                                        freecon(con);
-                                        IOVEC_SET_STRING(iovec[n++], x);
-                                }
-                        }
-                }
-#endif
         }
         assert(n <= m);
 }
@@ -879,7 +854,7 @@ int process_datagram(int fd, uint32_t events, void *userdata)
                         uint8_t buf[CMSG_SPACE(sizeof(struct ucred)) +
                                     CMSG_SPACE(sizeof(struct timeval)) +
                                     CMSG_SPACE(sizeof(int)) + /* fd */
-                                    CMSG_SPACE(NAME_MAX)]; /* selinux label */
+                                    CMSG_SPACE(NAME_MAX)];
                 } control = {};
                 struct msghdr msghdr = {
                         .msg_iov = &iovec,

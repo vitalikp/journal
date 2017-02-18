@@ -198,16 +198,6 @@
                         </varlistentry>
 
                         <varlistentry>
-                                <term><varname>_SELINUX_CONTEXT=</varname></term>
-                                <listitem>
-                                        <para>The SELinux security
-                                        context (label) of the process
-                                        the journal entry originates
-                                        from.</para>
-                                </listitem>
-                        </varlistentry>
-
-                        <varlistentry>
                                 <term><varname>_SOURCE_REALTIME_TIMESTAMP=</varname></term>
                                 <listitem>
                                         <para>The earliest trusted

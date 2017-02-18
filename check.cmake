@@ -75,13 +75,6 @@ if (${TESTS_ENABLE})
 	enable_testing()
 endif()
 
-# check SELinux library
-option(SELINUX_ENABLE "Disable optional SELINUX support" ON)
-if (${SELINUX_ENABLE})
-	pkg_check_modules(SELINUX REQUIRED libselinux)
-	set(HAVE_SELINUX 1)
-endif()
-
 # check xz library
 option(XZ_ENABLE "Disable optional XZ support" ON)
 if (${XZ_ENABLE})

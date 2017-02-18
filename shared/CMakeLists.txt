@@ -31,11 +31,3 @@ add_library(journal_shared_obj STATIC
 	fileio.c
 	fileio.h
 )
-
-add_library(journal_label_obj STATIC
-	selinux-util.c
-	selinux-util.h
-#	dev-setup.c
-#	dev-setup.h
-)
-target_link_libraries(journal_label_obj ${SELINUX_LIBRARIES})

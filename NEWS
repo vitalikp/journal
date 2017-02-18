@@ -216,3 +216,4 @@
  * remove using cap library;
  * remove using systemd library;
  * remove audit support;
+ * remove selinux support;

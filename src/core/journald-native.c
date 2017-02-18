@@ -25,7 +25,6 @@
 
 #include "socket-util.h"
 #include "path-util.h"
-#include "selinux-util.h"
 #include "journald-server.h"
 #include "journald-native.h"
 #include "journald-kmsg.h"
