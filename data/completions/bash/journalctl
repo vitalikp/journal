@@ -41,9 +41,9 @@ _journalctl() {
                 [STANDALONE]='-a --all --full --system --user
                               --disk-usage -f --follow --header
                               -h --help -l --local --no-pager
-                              --no-tail -q --quiet --setup-keys --this-boot --verify
+                              --no-tail -q --quiet --setup-keys -b --boot --verify
                               --version --list-boots'
-                       [ARG]='-b --boot --this-boot -D --directory --file -F --field
+                       [ARG]='-b --boot -D --directory --file -F --field
                               -o --output -u --unit -p --priority'
                 [ARGUNKNOWN]='-c --cursor --interval -n --lines --since --until
                               --verify-key'
@@ -51,7 +51,7 @@ _journalctl() {
 
         if __contains_word "$prev" ${OPTS[ARG]} ${OPTS[ARGUNKNOWN]}; then
                 case $prev in
-                        --boot|--this-boot|-b)
+                        --boot|-b)
                                 comps=$(journalctl -F '_BOOT_ID' 2>/dev/null)
                         ;;
                         --directory|-D)

@@ -214,7 +214,6 @@ static int parse_argv(int argc, char *argv[]) {
                 { "quiet",          no_argument,       NULL, 'q'                },
                 { "boot",           optional_argument, NULL, 'b'                },
                 { "list-boots",     no_argument,       NULL, ARG_LIST_BOOTS     },
-                { "this-boot",      optional_argument, NULL, 'b'                }, /* deprecated */
                 { "dmesg",          no_argument,       NULL, 'k'                },
                 { "system",         no_argument,       NULL, ARG_SYSTEM         },
                 { "user",           no_argument,       NULL, ARG_USER           },
