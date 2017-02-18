@@ -562,24 +562,6 @@ static int add_matches(sd_journal *j, char **args) {
                         }
 
                         if (S_ISREG(st.st_mode) && (0111 & st.st_mode)) {
-                                if (executable_is_script(path, &interpreter) > 0) {
-                                        _cleanup_free_ char *comm = NULL;
-
-                                        comm = strndup(basename(path), 15);
-                                        if (!comm)
-                                                return log_oom();
-
-                                        t = strappend("_COMM=", comm);
-
-                                        /* Append _EXE only if the interpreter is not a link.
-                                           Otherwise, it might be outdated often. */
-                                        if (lstat(interpreter, &st) == 0 &&
-                                            !S_ISLNK(st.st_mode)) {
-                                                t2 = strappend("_EXE=", interpreter);
-                                                if (!t2)
-                                                        return log_oom();
-                                        }
-                                } else
                                         t = strappend("_EXE=", path);
                         } else if (S_ISCHR(st.st_mode)) {
                                 if (asprintf(&t, "_KERNEL_DEVICE=c%u:%u",

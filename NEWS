@@ -58,6 +58,7 @@
     - use lightblue color for debug messages;
     - use lightyellow color for warning messages;
     - change return type to void in help function;
+    - don't check script as argument option;
  * journal-fields:
     - remove MESSAGE_ID field;
     - remove coredump fields;
