@@ -50,7 +50,6 @@
 #include <dlfcn.h>
 #include <sys/wait.h>
 #include <sys/time.h>
-#include <glob.h>
 #include <grp.h>
 #include <sys/mman.h>
 #include <sys/vfs.h>
@@ -71,7 +70,6 @@
 #include "util.h"
 #include "missing.h"
 #include "log.h"
-#include "strv.h"
 #include "path-util.h"
 #include "set.h"
 #include "hashmap.h"
@@ -517,17 +515,6 @@ int get_process_cmdline(pid_t pid, size_t max_length, bool comm_fallback, char *
 
         *line = r;
         return 0;
-}
-
-int get_process_capeff(pid_t pid, char **capeff) {
-        const char *p;
-
-        assert(capeff);
-        assert(pid >= 0);
-
-        p = procfs_file_alloca(pid, "status");
-
-        return get_status_field(p, "\nCapEff:", capeff);
 }
 
 int get_process_exe(pid_t pid, char **name) {
@@ -2263,30 +2250,6 @@ int in_group(const char *name) {
                 return r;
 
         return in_gid(gid);
-}
-
-int glob_extend(char ***strv, const char *path) {
-        _cleanup_globfree_ glob_t g = {};
-        int k;
-        char **p;
-
-        errno = 0;
-        k = glob(path, GLOB_NOSORT|GLOB_BRACE, NULL, &g);
-
-        if (k == GLOB_NOMATCH)
-                return -ENOENT;
-        else if (k == GLOB_NOSPACE)
-                return -ENOMEM;
-        else if (k != 0 || strv_isempty(g.gl_pathv))
-                return errno ? -errno : -EIO;
-
-        STRV_FOREACH(p, g.gl_pathv) {
-                k = strv_extend(strv, *p);
-                if (k < 0)
-                        break;
-        }
-
-        return k;
 }
 
 char *strjoin(const char *x, ...) {

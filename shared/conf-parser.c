@@ -29,7 +29,6 @@
 #include "conf-parser.h"
 #include "util.h"
 #include "macro.h"
-#include "strv.h"
 #include "log.h"
 #include "utf8.h"
 #include "path-util.h"
@@ -69,40 +68,6 @@ int log_syntax_internal(const char *unit, int level,
                                         NULL);
 
         return r;
-}
-
-int config_item_table_lookup(
-                const void *table,
-                const char *section,
-                const char *lvalue,
-                ConfigParserCallback *func,
-                int *ltype,
-                void **data,
-                void *userdata) {
-
-        const ConfigTableItem *t;
-
-        assert(table);
-        assert(lvalue);
-        assert(func);
-        assert(ltype);
-        assert(data);
-
-        for (t = table; t->lvalue; t++) {
-
-                if (!streq(lvalue, t->lvalue))
-                        continue;
-
-                if (!streq_ptr(section, t->section))
-                        continue;
-
-                *func = t->parse;
-                *ltype = t->ltype;
-                *data = t->data;
-                return 1;
-        }
-
-        return 0;
 }
 
 int config_item_perf_lookup(
@@ -455,73 +420,8 @@ int config_parse(const char *unit,
                 return 0;                                               \
         }
 
-DEFINE_PARSER(int, int, safe_atoi)
-DEFINE_PARSER(long, long, safe_atoli)
-DEFINE_PARSER(uint64, uint64_t, safe_atou64)
 DEFINE_PARSER(unsigned, unsigned, safe_atou)
-DEFINE_PARSER(double, double, safe_atod)
-DEFINE_PARSER(nsec, nsec_t, parse_nsec)
 DEFINE_PARSER(sec, usec_t, parse_sec)
-
-int config_parse_iec_size(const char* unit,
-                            const char *filename,
-                            unsigned line,
-                            const char *section,
-                            unsigned section_line,
-                            const char *lvalue,
-                            int ltype,
-                            const char *rvalue,
-                            void *data,
-                            void *userdata) {
-
-        size_t *sz = data;
-        off_t o;
-        int r;
-
-        assert(filename);
-        assert(lvalue);
-        assert(rvalue);
-        assert(data);
-
-        r = parse_size(rvalue, 1024, &o);
-        if (r < 0 || (off_t) (size_t) o != o) {
-                log_syntax(unit, LOG_ERR, filename, line, r < 0 ? -r : ERANGE, "Failed to parse size value, ignoring: %s", rvalue);
-                return 0;
-        }
-
-        *sz = (size_t) o;
-        return 0;
-}
-
-int config_parse_si_size(const char* unit,
-                            const char *filename,
-                            unsigned line,
-                            const char *section,
-                            unsigned section_line,
-                            const char *lvalue,
-                            int ltype,
-                            const char *rvalue,
-                            void *data,
-                            void *userdata) {
-
-        size_t *sz = data;
-        off_t o;
-        int r;
-
-        assert(filename);
-        assert(lvalue);
-        assert(rvalue);
-        assert(data);
-
-        r = parse_size(rvalue, 1000, &o);
-        if (r < 0 || (off_t) (size_t) o != o) {
-                log_syntax(unit, LOG_ERR, filename, line, r < 0 ? -r : ERANGE, "Failed to parse size value, ignoring: %s", rvalue);
-                return 0;
-        }
-
-        *sz = (size_t) o;
-        return 0;
-}
 
 int config_parse_iec_off(const char* unit,
                            const char *filename,
@@ -581,44 +481,6 @@ int config_parse_bool(const char* unit,
         return 0;
 }
 
-int config_parse_string(
-                const char *unit,
-                const char *filename,
-                unsigned line,
-                const char *section,
-                unsigned section_line,
-                const char *lvalue,
-                int ltype,
-                const char *rvalue,
-                void *data,
-                void *userdata) {
-
-        char **s = data, *n;
-
-        assert(filename);
-        assert(lvalue);
-        assert(rvalue);
-        assert(data);
-
-        if (!utf8_is_valid(rvalue)) {
-                log_invalid_utf8(unit, LOG_ERR, filename, line, EINVAL, rvalue);
-                return 0;
-        }
-
-        if (isempty(rvalue))
-                n = NULL;
-        else {
-                n = strdup(rvalue);
-                if (!n)
-                        return log_oom();
-        }
-
-        free(*s);
-        *s = n;
-
-        return 0;
-}
-
 int config_parse_path(
                 const char *unit,
                 const char *filename,
@@ -656,136 +518,6 @@ int config_parse_path(
 
         free(*s);
         *s = n;
-
-        return 0;
-}
-
-int config_parse_strv(const char *unit,
-                      const char *filename,
-                      unsigned line,
-                      const char *section,
-                      unsigned section_line,
-                      const char *lvalue,
-                      int ltype,
-                      const char *rvalue,
-                      void *data,
-                      void *userdata) {
-
-        char ***sv = data;
-        const char *word, *state;
-        size_t l;
-        int r;
-
-        assert(filename);
-        assert(lvalue);
-        assert(rvalue);
-        assert(data);
-
-        if (isempty(rvalue)) {
-                char **empty;
-
-                /* Empty assignment resets the list. As a special rule
-                 * we actually fill in a real empty array here rather
-                 * than NULL, since some code wants to know if
-                 * something was set at all... */
-                empty = strv_new(NULL, NULL);
-                if (!empty)
-                        return log_oom();
-
-                strv_free(*sv);
-                *sv = empty;
-                return 0;
-        }
-
-        FOREACH_WORD_QUOTED(word, l, rvalue, state) {
-                char *n;
-
-                n = strndup(word, l);
-                if (!n)
-                        return log_oom();
-
-                if (!utf8_is_valid(n)) {
-                        log_invalid_utf8(unit, LOG_ERR, filename, line, EINVAL, rvalue);
-                        continue;
-                }
-
-                r = strv_consume(sv, n);
-                if (r < 0)
-                        return log_oom();
-        }
-        if (!isempty(state))
-                log_syntax(unit, LOG_ERR, filename, line, EINVAL,
-                           "Trailing garbage, ignoring.");
-
-        return 0;
-}
-
-int config_parse_mode(const char *unit,
-                      const char *filename,
-                      unsigned line,
-                      const char *section,
-                      unsigned section_line,
-                      const char *lvalue,
-                      int ltype,
-                      const char *rvalue,
-                      void *data,
-                      void *userdata) {
-
-        mode_t *m = data;
-        long l;
-        char *x = NULL;
-
-        assert(filename);
-        assert(lvalue);
-        assert(rvalue);
-        assert(data);
-
-        errno = 0;
-        l = strtol(rvalue, &x, 8);
-        if (!x || x == rvalue || *x || errno) {
-                log_syntax(unit, LOG_ERR, filename, line, errno,
-                           "Failed to parse mode value, ignoring: %s", rvalue);
-                return 0;
-        }
-
-        if (l < 0000 || l > 07777) {
-                log_syntax(unit, LOG_ERR, filename, line, ERANGE,
-                           "Mode value out of range, ignoring: %s", rvalue);
-                return 0;
-        }
-
-        *m = (mode_t) l;
-        return 0;
-}
-
-int config_parse_log_facility(
-                const char *unit,
-                const char *filename,
-                unsigned line,
-                const char *section,
-                unsigned section_line,
-                const char *lvalue,
-                int ltype,
-                const char *rvalue,
-                void *data,
-                void *userdata) {
-
-
-        int *o = data, x;
-
-        assert(filename);
-        assert(lvalue);
-        assert(rvalue);
-        assert(data);
-
-        x = log_facility_unshifted_from_string(rvalue);
-        if (x < 0) {
-                log_syntax(unit, LOG_ERR, filename, line, EINVAL,
-                           "Failed to parse log facility, ignoring: %s", rvalue);
-                return 0;
-        }
-
-        *o = (x << 3) | LOG_PRI(*o);
 
         return 0;
 }

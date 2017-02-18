@@ -25,17 +25,6 @@
 
 #include "macro.h"
 
-int write_string_to_file(FILE *f, const char *line);
-int write_string_file(const char *fn, const char *line);
-int write_string_file_atomic(const char *fn, const char *line);
 
 int read_one_line_file(const char *fn, char **line);
 int read_full_file(const char *fn, char **contents, size_t *size);
-ssize_t sendfile_full(int out_fd, const char *fn);
-
-int parse_env_file(const char *fname, const char *separator, ...) _sentinel_;
-int load_env_file(const char *fname, const char *separator, char ***l);
-
-int executable_is_script(const char *path, char **interpreter);
-
-int get_status_field(const char *filename, const char *pattern, char **field);
