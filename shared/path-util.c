@@ -33,7 +33,6 @@
 #include "macro.h"
 #include "util.h"
 #include "log.h"
-#include "strv.h"
 #include "path-util.h"
 #include "missing.h"
 
