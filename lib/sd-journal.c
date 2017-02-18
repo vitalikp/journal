@@ -34,7 +34,6 @@
 #include "journal-def.h"
 #include "journal-file.h"
 #include "hashmap.h"
-#include "strv.h"
 #include "path-util.h"
 #include "compress.h"
 #include "journal-internal.h"
@@ -1784,6 +1783,9 @@ _public_ int sd_journal_open_files(sd_journal **ret, const char **paths, int fla
         const char **path;
         int r;
 
+        if (!paths)
+        	return 0;
+
         assert_return(ret, -EINVAL);
         assert_return(flags == 0, -EINVAL);
 
@@ -1791,12 +1793,16 @@ _public_ int sd_journal_open_files(sd_journal **ret, const char **paths, int fla
         if (!j)
                 return -ENOMEM;
 
-        STRV_FOREACH(path, paths) {
+        path = paths;
+        while (*path)
+        {
                 r = add_any_file(j, *path);
                 if (r < 0) {
                         log_error("Failed to open %s: %s", *path, strerror(-r));
                         goto fail;
                 }
+
+                path++;
         }
 
         j->no_new_files = true;
