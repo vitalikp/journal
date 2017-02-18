@@ -69,7 +69,7 @@ static const char *arg_cursor = NULL;
 static const char *arg_after_cursor = NULL;
 static bool arg_show_cursor = false;
 static const char *arg_directory = NULL;
-static char **arg_file = NULL;
+static char *arg_file = NULL;
 static int arg_priorities = 0xFF;
 static usec_t arg_since, arg_until;
 static bool arg_since_set = false, arg_until_set = false;
@@ -375,11 +375,7 @@ static int parse_argv(int argc, char *argv[]) {
                         break;
 
                 case ARG_FILE:
-                        r = glob_extend(&arg_file, optarg);
-                        if (r < 0) {
-                                log_error("Failed to add paths: %s", strerror(-r));
-                                return r;
-                        };
+                        arg_file = optarg;
                         break;
 
                 case 'c':
@@ -1149,7 +1145,7 @@ int main(int argc, char *argv[]) {
         if (arg_directory)
                 r = sd_journal_open_directory(&j, arg_directory, arg_journal_type);
         else if (arg_file)
-                r = sd_journal_open_files(&j, (const char**) arg_file, 0);
+                r = sd_journal_open_files(&j, (const char**) &arg_file, 0);
         else
                 r = sd_journal_open(&j, arg_journal_type);
         if (r < 0) {
@@ -1451,8 +1447,6 @@ int main(int argc, char *argv[]) {
 
 finish:
         pager_close();
-
-        strv_free(arg_file);
 
         return r < 0 ? EXIT_FAILURE : EXIT_SUCCESS;
 }
