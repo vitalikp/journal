@@ -43,7 +43,6 @@
 #include "path-util.h"
 #include "fileio.h"
 #include "pager.h"
-#include "strv.h"
 #include "set.h"
 #include "journal-internal.h"
 #include "journal-def.h"
@@ -73,7 +72,8 @@ static char *arg_file = NULL;
 static int arg_priorities = 0xFF;
 static usec_t arg_since, arg_until;
 static bool arg_since_set = false, arg_until_set = false;
-static char **arg_system_units = NULL;
+static int system_units_count = 0;
+static char* arg_system_units[256] = {};
 static const char *arg_field = NULL;
 static bool arg_reverse = false;
 static int arg_journal_type = 0;
@@ -469,9 +469,10 @@ static int parse_argv(int argc, char *argv[]) {
                         break;
 
                 case 'u':
-                        r = strv_extend(&arg_system_units, optarg);
-                        if (r < 0)
-                                return log_oom();
+                        if (system_units_count >= 256)
+                        	return -EINVAL;
+
+                        arg_system_units[system_units_count++] = optarg;
                         break;
 
                 case 'F':
@@ -530,9 +531,14 @@ static int add_matches(sd_journal *j, char **args) {
         char **i;
         bool have_term = false;
 
+        if (!args)
+        	return 0;
+
         assert(j);
 
-        STRV_FOREACH(i, args) {
+        i = args;
+        while (*i)
+        {
                 int r;
 
                 if (streq(*i, "+")) {
@@ -589,9 +595,11 @@ static int add_matches(sd_journal *j, char **args) {
                         log_error("Failed to add match '%s': %s", *i, strerror(-r));
                         return r;
                 }
+
+                i++;
         }
 
-        if (!strv_isempty(args) && !have_term) {
+        if (*args && !have_term) {
                 log_error("\"+\" can only be used between terms");
                 return -EINVAL;
         }
@@ -908,10 +916,11 @@ static int add_dmesg(sd_journal *j) {
 static int get_possible_units(sd_journal *j,
                               const char *fields,
                               char **patterns,
+                              int plen,
                               Set **units) {
         _cleanup_set_free_free_ Set *found = NULL;
         const char *field;
-        int r;
+        int i, r;
 
         found = set_new(string_hash_func, string_compare_func);
         if (!found)
@@ -926,7 +935,7 @@ static int get_possible_units(sd_journal *j,
                         return r;
 
                 SD_JOURNAL_FOREACH_UNIQUE(j, data, size) {
-                        char **pattern, *eq;
+                        char *eq;
                         size_t prefix;
                         _cleanup_free_ char *u = NULL;
 
@@ -940,9 +949,12 @@ static int get_possible_units(sd_journal *j,
                         if (!u)
                                 return log_oom();
 
-                        STRV_FOREACH(pattern, patterns)
-                                if (fnmatch(*pattern, u, FNM_NOESCAPE) == 0) {
-                                        log_debug("Matched %s with pattern %s=%s", u, field, *pattern);
+                        i = 0;
+                        while (i < plen)
+                        {
+                                if (fnmatch(patterns[i], u, FNM_NOESCAPE) == 0)
+                                {
+                                        log_debug("Matched %s with pattern %s=%s", u, field, patterns[i]);
 
                                         r = set_consume(found, u);
                                         u = NULL;
@@ -951,6 +963,9 @@ static int get_possible_units(sd_journal *j,
 
                                         break;
                                 }
+
+                                i++;
+                        }
                 }
         }
 
@@ -966,20 +981,22 @@ static int get_possible_units(sd_journal *j,
         "UNIT\0"
 
 static int add_units(sd_journal *j) {
-        _cleanup_strv_free_ char **patterns = NULL;
-        int r, count = 0;
-        char **i;
+        char *patterns[256] = {};
+        int r, i = 0, p = 0, count = 0;
 
         assert(j);
 
         char* u = NULL;
-        STRV_FOREACH(i, arg_system_units) {
-                u = *i;
+        while (i < system_units_count)
+        {
+                u = arg_system_units[i++];
 
-                if (string_is_glob(u)) {
-                        r = strv_push(&patterns, u);
-                        if (r < 0)
-                                return r;
+                if (string_is_glob(u))
+                {
+                        if (p >= 256)
+                        	return -EINVAL;
+
+                        patterns[p++] = u;
                         u = NULL;
                 } else {
                         r = add_matches_for_unit(j, u);
@@ -988,16 +1005,17 @@ static int add_units(sd_journal *j) {
                         r = sd_journal_add_disjunction(j);
                         if (r < 0)
                                 return r;
-                        count ++;
+                        count++;
                 }
         }
 
-        if (!strv_isempty(patterns)) {
+        if (p > 0)
+        {
                 _cleanup_set_free_free_ Set *units = NULL;
                 Iterator it;
                 char *u;
 
-                r = get_possible_units(j, SYSTEM_UNITS, patterns, &units);
+                r = get_possible_units(j, SYSTEM_UNITS, patterns, p, &units);
                 if (r < 0)
                         return r;
 
@@ -1008,16 +1026,13 @@ static int add_units(sd_journal *j) {
                         r = sd_journal_add_disjunction(j);
                         if (r < 0)
                                 return r;
-                        count ++;
+                        count++;
                 }
         }
 
-        strv_free(patterns);
-        patterns = NULL;
-
         /* Complain if the user request matches but nothing whatsoever was
          * found, since otherwise everything would be matched. */
-        if (!strv_isempty(arg_system_units) && count == 0)
+        if (system_units_count > 0 && !count)
                 return -ENODATA;
 
         r = sd_journal_add_conjunction(j);
@@ -1196,7 +1211,6 @@ int main(int argc, char *argv[]) {
                 return EXIT_FAILURE;
 
         r = add_units(j);
-        strv_free(arg_system_units);
 
         if (r < 0) {
                 log_error("Failed to add filter for units: %s", strerror(-r));
