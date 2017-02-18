@@ -137,8 +137,6 @@ static int parse_boot_descriptor(const char *x, uuid_t *boot_id, int *offset) {
 
 static void help(void) {
 
-        pager_open_if_enabled();
-
         printf("%s [OPTIONS...] [MATCHES...]\n\n"
                "Query the journal.\n\n"
                "Flags:\n"
