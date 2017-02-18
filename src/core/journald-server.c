@@ -569,13 +569,6 @@ static void dispatch_message_real(
                         IOVEC_SET_STRING(iovec[n++], x);
                 }
 
-                r = get_process_capeff(ucred->pid, &t);
-                if (r >= 0) {
-                        x = strappenda("_CAP_EFFECTIVE=", t);
-                        free(t);
-                        IOVEC_SET_STRING(iovec[n++], x);
-                }
-
                 if (unit_id) {
                         x = strappenda("_SYSTEMD_UNIT=", unit_id);
                         IOVEC_SET_STRING(iovec[n++], x);

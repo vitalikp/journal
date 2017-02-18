@@ -74,6 +74,7 @@
     - remove _UDEV_DEVNODE field;
     - remove _UDEV_SYSNAME field;
     - remove _UDEV_DEVLINK field;
+    - remove _CAP_EFFECTIVE field;
  * rate-limit:
     - add pools field to JournalRateLimit struct;
     - remove JournalRateLimitGroup struct;
