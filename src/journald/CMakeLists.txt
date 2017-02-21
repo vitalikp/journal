@@ -2,15 +2,7 @@
 
 
 # journald core
-add_library(journald_core_obj STATIC
-	core/epollfd.c
-	core/epollfd.h
-	core/socket.c
-	core/socket.h
-)
-target_link_libraries(journald_core_obj journal_int_obj journal_shared_obj)
-target_link_libraries(journald_core_obj -pthread rt)
-
+add_subdirectory(core)
 
 # journald
 add_executable(journald
