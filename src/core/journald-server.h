@@ -27,7 +27,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-#include "epollfd.h"
+#include "server.h"
 #include "journal-file.h"
 #include "hashmap.h"
 #include "util.h"
