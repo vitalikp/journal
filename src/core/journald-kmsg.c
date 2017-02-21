@@ -199,7 +199,7 @@ static int server_read_dev_kmsg(Server *s) {
                  * return EINVAL when we try. So handle this cleanly,
                  * but don' try to ever read from it again. */
                 if (errno == EINVAL) {
-                        epollfd_del(s->epoll, s->dev_kmsg_fd);
+                        epollfd_del(s->server.epoll, s->dev_kmsg_fd);
                         return 0;
                 }
 
@@ -266,7 +266,7 @@ int server_open_dev_kmsg(Server *s) {
                 return 0;
         }
 
-        r = epollfd_add(s->epoll, s->dev_kmsg_fd, EPOLLIN, (event_cb)dispatch_dev_kmsg, s);
+        r = epollfd_add(s->server.epoll, s->dev_kmsg_fd, EPOLLIN, (event_cb)dispatch_dev_kmsg, s);
         if (r < 0)
         {
         	/* This will fail with EPERM on older kernels where

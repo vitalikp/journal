@@ -65,7 +65,6 @@ typedef struct Server {
         int hostname_fd;
 
         ServerState state;
-        epollfd_t* epoll;
         server_t server;
 
         JournalFile *runtime_journal;

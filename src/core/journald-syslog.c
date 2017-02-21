@@ -425,7 +425,7 @@ int server_open_syslog_socket(Server *s) {
         if (socket_set_sndbuf(s->syslog_fd, 8<<20) < 0)
         	log_warning("SO_SNDBUF(%s) failed: %m", JOURNAL_RUNDIR "/devlog");
 
-        r = epollfd_add(s->epoll, s->syslog_fd, EPOLLIN, (event_cb)process_datagram, s);
+        r = epollfd_add(s->server.epoll, s->syslog_fd, EPOLLIN, (event_cb)process_datagram, s);
         if (r < 0)
         {
         	log_error("Failed to add syslog server fd to event loop: %m");

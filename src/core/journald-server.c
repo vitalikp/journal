@@ -982,19 +982,19 @@ static int setup_signals(Server *s) {
 
         assert(s);
 
-        if (epollfd_signal_add(s->epoll, SIGUSR1, (signal_cb)dispatch_sigusr1, s) < 0)
+        if (epollfd_signal_add(s->server.epoll, SIGUSR1, (signal_cb)dispatch_sigusr1, s) < 0)
         	return -1;
 
-        if (epollfd_signal_add(s->epoll, SIGUSR2, (signal_cb)dispatch_sigusr2, s) < 0)
+        if (epollfd_signal_add(s->server.epoll, SIGUSR2, (signal_cb)dispatch_sigusr2, s) < 0)
         	return -1;
 
-        if (epollfd_signal_add(s->epoll, SIGTERM, (signal_cb)dispatch_sigterm, s) < 0)
+        if (epollfd_signal_add(s->server.epoll, SIGTERM, (signal_cb)dispatch_sigterm, s) < 0)
         	return -1;
 
-        if (epollfd_signal_add(s->epoll, SIGINT, (signal_cb)dispatch_sigterm, s) < 0)
+        if (epollfd_signal_add(s->server.epoll, SIGINT, (signal_cb)dispatch_sigterm, s) < 0)
         	return -1;
 
-        if (epollfd_signal_setup(s->epoll) < 0)
+        if (epollfd_signal_setup(s->server.epoll) < 0)
         	return -1;
 
         return 0;
@@ -1088,7 +1088,7 @@ static int server_open_hostname(Server *s) {
                 return -errno;
         }
 
-        r = epollfd_add(s->epoll, s->hostname_fd, 0, (event_cb)dispatch_hostname_change, s);
+        r = epollfd_add(s->server.epoll, s->hostname_fd, 0, (event_cb)dispatch_hostname_change, s);
 		if (r < 0)
 		{
 			/* kernels prior to 3.2 don't support polling this file. Ignore
@@ -1183,7 +1183,7 @@ int server_init(Server *s) {
                 return log_oom();
 
         s->state = SERVER_RUNNING;
-        r = epollfd_create(&s->epoll);
+        r = epollfd_create(&s->server.epoll);
         if (r < 0)
         {
         	log_error("Failed to create event loop: %m");
@@ -1247,7 +1247,7 @@ void server_done(Server *s) {
 
         hashmap_free(s->user_journals);
 
-        epollfd_close(&s->epoll);
+        epollfd_close(&s->server.epoll);
         safe_close(s->epoll_fd);
         safe_close(s->syslog_fd);
         safe_close(s->native_fd);
