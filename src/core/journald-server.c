@@ -366,10 +366,10 @@ bool shall_try_append_again(JournalFile *f, int r) {
         return true;
 }
 
-static void dispatch_message(Server *s, struct iovec *iovec, unsigned n, unsigned m, struct timeval *tv) {
+static int dispatch_message(Server *s, struct iovec *iovec, struct timeval *tv) {
+        unsigned n = 0;
         assert(s);
         assert(iovec);
-        assert(n > 0);
 
         char source_time[sizeof("_SOURCE_REALTIME_TIMESTAMP=") + DECIMAL_STR_MAX(usec_t)];
 
@@ -387,17 +387,17 @@ static void dispatch_message(Server *s, struct iovec *iovec, unsigned n, unsigne
         if (!isempty(s->hostname_field))
                 IOVEC_SET_STRING(iovec[n++], s->hostname_field);
 
-        assert(n <= m);
+        return n;
 }
 
-static void dispatch_message_object(Server *s, struct iovec *iovec, unsigned n, unsigned m, pid_t object_pid) {
+static int dispatch_message_object(Server *s, struct iovec *iovec, pid_t object_pid) {
+        unsigned n = 0;
+
         assert(s);
         assert(iovec);
-        assert(n > 0);
-        assert(n + (object_pid ? N_IOVEC_OBJECT_FIELDS : 0) <= m);
 
         if (!object_pid)
-                return;
+                return 0;
 
         char o_uid[sizeof("OBJECT_UID=") + DECIMAL_STR_MAX(uid_t)],
              o_gid[sizeof("OBJECT_GID=") + DECIMAL_STR_MAX(gid_t)];
@@ -442,7 +442,7 @@ static void dispatch_message_object(Server *s, struct iovec *iovec, unsigned n, 
                 IOVEC_SET_STRING(iovec[n++], x);
         }
 
-        assert(n <= m);
+        return n;
 }
 
 static void write_to_journal(Server *s, uid_t realuid, struct iovec *iovec, unsigned n, int priority) {
@@ -513,9 +513,9 @@ static void write_to_journal(Server *s, uid_t realuid, struct iovec *iovec, unsi
                 server_schedule_sync(s, priority);
 }
 
-static void dispatch_message_real(
+static int dispatch_message_real(
                 Server *s,
-                struct iovec *iovec, unsigned n, unsigned m,
+                struct iovec *iovec,
                 struct ucred *ucred,
                 const char *label, size_t label_len,
                 const char *unit_id) {
@@ -523,6 +523,7 @@ static void dispatch_message_real(
         char    pid[sizeof("_PID=") + DECIMAL_STR_MAX(pid_t)],
                 uid[sizeof("_UID=") + DECIMAL_STR_MAX(uid_t)],
                 gid[sizeof("_GID=") + DECIMAL_STR_MAX(gid_t)];
+        unsigned n = 0;
         char *x;
         int r;
         char *t;
@@ -530,8 +531,6 @@ static void dispatch_message_real(
 
         assert(s);
         assert(iovec);
-        assert(n > 0);
-        assert(n + N_IOVEC_META_FIELDS <= m);
 
         if (ucred) {
                 sprintf(pid, "_PID="PID_FMT, ucred->pid);
@@ -569,7 +568,8 @@ static void dispatch_message_real(
                         IOVEC_SET_STRING(iovec[n++], x);
                 }
         }
-        assert(n <= m);
+
+        return n;
 }
 
 void server_driver_message(Server *s, const char *format, ...) {
@@ -596,8 +596,8 @@ void server_driver_message(Server *s, const char *format, ...) {
         ucred.uid = getuid();
         ucred.gid = getgid();
 
-        dispatch_message_real(s, iovec, n, ELEMENTSOF(iovec), &ucred, NULL, 0, NULL);
-        dispatch_message(s, iovec, n, ELEMENTSOF(iovec), NULL);
+        n += dispatch_message_real(s, &iovec[n], &ucred, NULL, 0, NULL);
+        n += dispatch_message(s, &iovec[n], NULL);
         write_to_journal(s, ucred.uid, iovec, n, LOG_INFO);
 }
 
@@ -646,9 +646,9 @@ void server_dispatch_message(
                 server_driver_message(s, "Suppressed %u messages from uid %u", rl - 1, realuid);
 
 finish:
-        dispatch_message_real(s, iovec, n, m, ucred, label, label_len, unit_id);
-        dispatch_message_object(s, iovec, n, m, object_pid);
-        dispatch_message(s, iovec, n, m, tv);
+        n += dispatch_message_real(s, &iovec[n], ucred, label, label_len, unit_id);
+        n += dispatch_message_object(s, &iovec[n], object_pid);
+        n += dispatch_message(s, &iovec[n], tv);
         write_to_journal(s, realuid, iovec, n, priority);
 }
 
