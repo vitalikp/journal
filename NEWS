@@ -184,6 +184,7 @@
    - don't start if /run/journal directory not exist;
    - open /dev/kmsg for read only;
    - print version at start;
+   - remove epoll_fd field from Server struct;
  * vacuum:
    - use time of last modification journal files in realtime field;
    - don't check corrupt journal files;

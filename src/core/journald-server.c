@@ -1142,7 +1142,7 @@ int server_init(Server *s) {
         assert(s);
 
         zero(*s);
-        s->epoll_fd = s->syslog_fd = s->native_fd = s->dev_kmsg_fd = s->hostname_fd = -1;
+        s->syslog_fd = s->native_fd = s->dev_kmsg_fd = s->hostname_fd = -1;
         s->compress = true;
 
         s->sync_interval_usec = DEFAULT_SYNC_INTERVAL_USEC;
@@ -1189,10 +1189,6 @@ int server_init(Server *s) {
         	log_error("Failed to create event loop: %m");
         	return -1;
         }
-
-        s->epoll_fd = epoll_create1(EPOLL_CLOEXEC);
-        if (s->epoll_fd < 0)
-                return -errno;
 
         r = server_open_syslog_socket(s);
         if (r < 0)
@@ -1248,7 +1244,6 @@ void server_done(Server *s) {
         hashmap_free(s->user_journals);
 
         epollfd_close(&s->server.epoll);
-        safe_close(s->epoll_fd);
         safe_close(s->syslog_fd);
         safe_close(s->native_fd);
         safe_close(s->dev_kmsg_fd);
