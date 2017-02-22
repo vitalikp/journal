@@ -1241,7 +1241,6 @@ void server_done(Server *s) {
 
         server_stop(&s->server);
         safe_close(s->syslog_fd);
-        safe_close(s->server.native_fd);
         safe_close(s->dev_kmsg_fd);
         safe_close(s->hostname_fd);
 

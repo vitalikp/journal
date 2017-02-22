@@ -8,6 +8,7 @@
  */
 
 #include "server.h"
+#include "native.h"
 #include "log.h"
 
 
@@ -25,6 +26,8 @@ int server_start(server_t *s)
 void server_stop(server_t *s)
 {
 	epollfd_close(&s->epoll);
+
+	native_close(s);
 }
 
 int server_run(server_t *s)

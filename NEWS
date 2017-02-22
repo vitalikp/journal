@@ -151,6 +151,7 @@
    - add socket module;
    - add epollfd module;
    - add server module;
+   - add native module;
    - init journal sockets without systemd daemon;
    - open journal sockets with socket module;
    - add ServerState enum type;
