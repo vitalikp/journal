@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
                 if (server.state == SERVER_EXITING)
                         server.state = SERVER_FINISHED;
                 else {
-                        r = epollfd_run(server.server.epoll);
+                        r = server_run(&server.server);
                         if (r < 0) {
                                 log_error("Failed to run event loop: %m");
                                 goto finish;

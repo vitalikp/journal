@@ -21,4 +21,9 @@ struct server
 };
 
 
+int server_start(server_t *s);
+void server_stop(server_t *s);
+
+int server_run(server_t *s);
+
 #endif	/* _JOURNALD_SERVER_H_ */

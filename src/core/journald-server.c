@@ -1183,12 +1183,8 @@ int server_init(Server *s) {
                 return log_oom();
 
         s->state = SERVER_RUNNING;
-        r = epollfd_create(&s->server.epoll);
-        if (r < 0)
-        {
-        	log_error("Failed to create event loop: %m");
+        if (server_start(&s->server) < 0)
         	return -1;
-        }
 
         r = server_open_syslog_socket(s);
         if (r < 0)
@@ -1243,7 +1239,7 @@ void server_done(Server *s) {
 
         hashmap_free(s->user_journals);
 
-        epollfd_close(&s->server.epoll);
+        server_stop(&s->server);
         safe_close(s->syslog_fd);
         safe_close(s->native_fd);
         safe_close(s->dev_kmsg_fd);
