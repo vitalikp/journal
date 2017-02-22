@@ -59,7 +59,6 @@ typedef enum SplitMode {
 
 typedef struct Server {
         int syslog_fd;
-        int native_fd;
         int dev_kmsg_fd;
         int hostname_fd;
 

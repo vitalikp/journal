@@ -826,7 +826,7 @@ int process_datagram(int fd, uint32_t events, void *userdata)
         Server *s = userdata;
 
         assert(s);
-        assert(fd == s->native_fd || fd == s->syslog_fd);
+        assert(fd == s->server.native_fd || fd == s->syslog_fd);
 
         if (events != EPOLLIN) {
                 log_error("Got invalid event from epoll for datagram fd: %"PRIx32, events);
@@ -1142,7 +1142,7 @@ int server_init(Server *s) {
         assert(s);
 
         zero(*s);
-        s->syslog_fd = s->native_fd = s->dev_kmsg_fd = s->hostname_fd = -1;
+        s->syslog_fd = s->server.native_fd = s->dev_kmsg_fd = s->hostname_fd = -1;
         s->compress = true;
 
         s->sync_interval_usec = DEFAULT_SYNC_INTERVAL_USEC;
@@ -1241,7 +1241,7 @@ void server_done(Server *s) {
 
         server_stop(&s->server);
         safe_close(s->syslog_fd);
-        safe_close(s->native_fd);
+        safe_close(s->server.native_fd);
         safe_close(s->dev_kmsg_fd);
         safe_close(s->hostname_fd);
 

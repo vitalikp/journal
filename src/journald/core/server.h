@@ -18,6 +18,8 @@ typedef struct server server_t;
 struct server
 {
 	epollfd_t	*epoll;
+
+	int 		native_fd;
 };
 
 
