@@ -1240,7 +1240,6 @@ void server_done(Server *s) {
         hashmap_free(s->user_journals);
 
         server_stop(&s->server);
-        safe_close(s->server.syslog_fd);
         safe_close(s->dev_kmsg_fd);
         safe_close(s->hostname_fd);
 

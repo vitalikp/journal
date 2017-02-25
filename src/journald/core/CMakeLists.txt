@@ -7,6 +7,8 @@ add_library(journald_core_obj STATIC
 	epollfd.h
 	socket.c
 	socket.h
+	syslog.c
+	syslog.h
 	native.c
 	native.h
 	server.c
