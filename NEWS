@@ -1,40 +1,41 @@
    journal (214.3-dev)
 ~~~~~~~
  * use sd-journal.h include instead of systemd/sd-journal.h;
- * add journal.h header file;
- * remove exit-status.h header file;
  * remove unused includes in journald;
  * journal.pc:
     - remove URL field;
     - remove 'deprecated' from Description filed;
  * libjournal:
+     - add journal.h header file;
+     • journal-file:
+        - don't set and check machine_id header field;
+        - change format filename on rotation;
+     • vacuum:
+        - use time of last modification journal file for retention limit check;
+        - use seqnum_id and seqnum data from header journal file;
+        - remove redundant code;
+     • api:
+        - remove sd_journal_stream_fd function;
+     • hash:
+        - add original lookup3 hash functions;
+        - add unit tests;
+        - add hash module;
+    • struct Window:
+        - change type keep_always field to bool;
+    - remove SD_JOURNAL_LOCAL_ONLY journal open flag;
     - add uuid module;
     - add boot module;
-    - use journal hash library instead of lookup3 module;
     - remove lookup3 module;
-    - remove journal_file_object_keep and journal_file_object_release functions;
-    - remove mmap_cache_release function;
-    - remove mmap_cache_close_context function;
-    - change type keep_always to bool in Window struct;
     - use automatic cleanup;
-    - simplify compress_blob;
-    - decode stream only with size prefix_len in uncompress_startswith function;
     - add lz4 compress optional support;
     - allow files with no data whatsoever;
     - flush progress bar, print offset in more places for verify module;
     - remove sd-event module;
     - add mmap module;
- * hash:
-    - add original lookup3 hash functions;
-    - add unit tests;
-    - fix warning no break in switch statement;
-    - add hash module;
  * use uuid_t type instead of sd_id128_t;
  * don't print systemd features;
- * install journald program to sbin directory;
  * install sd-journal.h header file to include directory;
  * remove include sd-messages.h header file;
- * remove special.h header file;
  * messages:
     - remove id's SD_MESSAGE_JOURNAL_*;
     - remove id SD_MESSAGE_FORWARD_SYSLOG_MISSED;
@@ -51,13 +52,11 @@
     - remove user-unit argument option;
     - remove merge argument option;
     - don't match coredumps of the service;
-    - parse boot argument option value in add_boot function;
     - don't parse unit name;
     - allow + only between terms;
     - check asprintf return code;
     - use lightblue color for debug messages;
     - use lightyellow color for warning messages;
-    - change return type to void in help function;
     - don't check script as argument option;
     - don't use regular pattern for file argument option;
     - don't use pager for help argument option;
@@ -79,21 +78,6 @@
     - remove _UDEV_SYSNAME field;
     - remove _UDEV_DEVLINK field;
     - remove _CAP_EFFECTIVE field;
- * rate-limit:
-    - add pools field to JournalRateLimit struct;
-    - remove JournalRateLimitGroup struct;
-    - remove parameter id in journal_rate_limit_test function;
-    - remove unused includes;
-    - set default values if less or equal zero;
- * journald.conf:
-    - add System and Runtime sections;
-    - remove ForwardToKMsg parameter;
-    - add User parameter;
-    - add Group parameter;
- * journal-file:
-    - add journal_reset_metrics function;
-    - don't set and check machine_id header field;
-    - change format filename on rotation;
  * don't add code location to log messages;
  * remove id SD_JOURNAL_SUPPRESS_LOCATION;
  * remove sd_journal_print_with_location function;
@@ -101,18 +85,16 @@
  * remove sd_journal_send_with_location function;
  * remove sd_journal_sendv_with_location function;
  * remove sd_journal_perror_with_location function;
- * remove sd_journal_stream_fd function;
  * remove login split mode;
- * move call write_to_journal function from dispatch_message_real;
- * remove cgroup_root field from Server struct;
  * shared:
-    - remove cgroup util from shared library;
-    - remove fstab_node_to_udev_node function;
-    - remove device nodes from shared library;
-    - remove id128_is_valid function;
+    - remove cgroup-util module;
+    - remove special.h header file;
+    - remove exit-status.h header file;
+    - remove device-nodes module;
     - remove unused functions;
-    - remove unit-name module from shared library;
-    - remove bus-label module from shared library;
+    - remove unit-name module;
+    - remove bus-label module;
+    - remove capability module;
     - move logs-show module to journalctl;
     - don't assert in string_is_safe function;
     - check 0x7f(DEL) control character in string_is_safe function;
@@ -120,8 +102,6 @@
     - add and use USEC/NSEC_INFINIY;
     - fix split function when slash char escaped;
     - remove 'c' parameter from split function;
-    - change return type to int in strv_split_quoted function;
-    - report invalid quoted strings;
     - fix error in cunescape_length_with_prefix function;
     - fix a couple of more lazy "return -1";
     - allow strappenda to take any number of args;
@@ -139,17 +119,34 @@
     - remove strxcpyx module;
     - remove mkdir module;
     - remove strv module;
- * remove journal_capability_obj library;
  * remove prefix field from sd_journal struct;
- * don't add machine_id to root log path directory;
- * remove SD_JOURNAL_LOCAL_ONLY journal open flag;
- * remove machine_id_field field from Server struct;
- * don't notify systemd watchdog;
- * dont't notify status to systemd;
  * data:
-   - remove output syslog socket;
    - add priority values for p journalctl argument option;
  * journald:
+    - install to sbin directory;
+    • rate-limit:
+       - don't use cgroup;
+       - use default values RateLimitInterval and RateLimitBurst;
+    • journald.conf:
+       - add System and Runtime sections;
+       - remove ForwardToKMsg parameter;
+       - add User parameter;
+       - add Group parameter;
+   • struct Server:
+       - remove cgroup_root field;
+       - remove machine_id_field field;
+       - add state field;
+       - add epoll_fd field;
+       - add sync_time field;
+       - add sync_seqnum field;
+       - remove sync_scheduled field;
+       - remove forward_to_kmsg field;
+       - remove udev field;
+       - add epoll field;
+       - remove epoll_fd field;
+   - don't add machine_id to root log path directory;
+   - don't notify systemd watchdog;
+   - dont't notify status to systemd;
    - add socket module;
    - add run module;
    - add epollfd module;
@@ -159,43 +156,28 @@
    - init journal sockets without systemd daemon;
    - open journal sockets with socket module;
    - add ServerState enum type;
-   - add state field to Server struct;
-   - add epoll_fd field to Server struct;
    - move syslog output socket to /run/journal/syslog;
    - not warn about forwarded missed syslog messages;
-   - add sync_time to Server struct;
-   - add sync_seqnum to Server struct;
-   - sync journal by sync_interval_usec;
-   - don't sync journal by timer event;
-   - remove sync_scheduled field from Server struct;
+   - sync journal by SyncIntervalSec config param without timer event;
    - remove support stream socket;
    - don't forward log messages to /dev/kmsg socket;
-   - remove forward_to_kmsg field from Server struct;
-   - remove udev field from Server struct;
    - don't check pid for kernel messages;
-   - add dispatch_message function;
-   - add dispatch_message_object function;
    - fix using 1month by default for MaxFileSec;
    - don't forward to syslog by default;
    - mark ENTRY_SIZE_MAX and DATA_SIZE_MAX as unsigned values;
    - clear up confusion wrt. ENTRY_SIZE_MAX and DATA_SIZE_MAX;
    - always add syslog facility for messages coming from kmsg;
-   - add epoll field to Server struct;
    - use epollfd module;
    - properly sum up entry size counter;
    - fix off-by-one error in "Missed X kernel messages" warning;
-   - increase the SendBuffer of /dev/log to 8M;
+   - increase the SendBuffer of /run/journal/devlog to 8M;
    - move /run/log directory to /run/journal/log;
    - move /dev/log syslog socket to /run/journal/devlog;
    - don't start if /run/journal directory not exist;
    - open /dev/kmsg for read only;
    - print version at start;
-   - remove epoll_fd field from Server struct;
- * vacuum:
-   - use time of last modification journal files in realtime field;
-   - don't check corrupt journal files;
-   - use seqnum_id and seqnum data from header journal files;
-   - remove redundant code;
+ * unit:
+   - remove output syslog socket;
  * man:
    - use journald name instead of journald.service;
    - remove unused aliases;
@@ -219,8 +201,9 @@
  	- add JOURNAL_SYSCONFDIR path variable;
  * bugfix:
  	- fix misuse of uint64_t as size_t;
- * remove using libudev library;
- * remove using cap library;
+ * remove udev support;
+ * remove capability support;
  * remove using systemd library;
  * remove audit support;
  * remove selinux support;
+ * code optimization;
