@@ -69,6 +69,14 @@
                 <variablelist>
 
                         <varlistentry>
+                                <term><varname>User=</varname></term>
+
+                                <listitem><para>Set user for journald
+                                process (by default set 'journal').
+                                </para></listitem>
+                        </varlistentry>
+
+                        <varlistentry>
                                 <term><varname>Storage=</varname></term>
 
                                 <listitem><para>Controls where to

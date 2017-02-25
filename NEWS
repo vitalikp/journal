@@ -88,6 +88,7 @@
  * journald.conf:
     - add System and Runtime sections;
     - remove ForwardToKMsg parameter;
+    - add User parameter;
  * journal-file:
     - add journal_reset_metrics function;
     - don't set and check machine_id header field;
