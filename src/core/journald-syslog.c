@@ -71,7 +71,7 @@ static void forward_syslog_iovec(Server *s, const struct iovec *iovec, unsigned 
          * /run/journal/syslog. Unfortunately we currently can't set
          * the SO_TIMESTAMP auxiliary data, and hence we don't. */
 
-        if (sendmsg(s->syslog_fd, &msghdr, MSG_NOSIGNAL) >= 0)
+        if (sendmsg(s->server.syslog_fd, &msghdr, MSG_NOSIGNAL) >= 0)
                 return;
 
         /* The socket is full? I guess the syslog implementation is
@@ -90,7 +90,7 @@ static void forward_syslog_iovec(Server *s, const struct iovec *iovec, unsigned 
                 u.pid = getpid();
                 memcpy(CMSG_DATA(cmsg), &u, sizeof(struct ucred));
 
-                if (sendmsg(s->syslog_fd, &msghdr, MSG_NOSIGNAL) >= 0)
+                if (sendmsg(s->server.syslog_fd, &msghdr, MSG_NOSIGNAL) >= 0)
                         return;
 
                 if (errno == EAGAIN)
@@ -414,18 +414,18 @@ int server_open_syslog_socket(Server *s) {
 
         assert(s);
 
-        s->syslog_fd = socket_open(JOURNAL_RUNDIR "/devlog", SOCK_DGRAM);
-        if (s->syslog_fd < 0)
+        s->server.syslog_fd = socket_open(JOURNAL_RUNDIR "/devlog", SOCK_DGRAM);
+        if (s->server.syslog_fd < 0)
         	return -errno;
 
         /* Increase both the send and receive buffer, so that things don't
          * block early. Note that journald internally uses the this socket both
          * for receiving syslog messages, and for forwarding them to any other
          * syslog, hence we bump both values. */
-        if (socket_set_sndbuf(s->syslog_fd, 8<<20) < 0)
+        if (socket_set_sndbuf(s->server.syslog_fd, 8<<20) < 0)
         	log_warning("SO_SNDBUF(%s) failed: %m", JOURNAL_RUNDIR "/devlog");
 
-        r = epollfd_add(s->server.epoll, s->syslog_fd, EPOLLIN, (event_cb)process_datagram, s);
+        r = epollfd_add(s->server.epoll, s->server.syslog_fd, EPOLLIN, (event_cb)process_datagram, s);
         if (r < 0)
         {
         	log_error("Failed to add syslog server fd to event loop: %m");

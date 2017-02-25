@@ -19,6 +19,7 @@ struct server
 {
 	epollfd_t	*epoll;
 
+	int			syslog_fd;
 	int 		native_fd;
 };
 

@@ -826,7 +826,7 @@ int process_datagram(int fd, uint32_t events, void *userdata)
         Server *s = userdata;
 
         assert(s);
-        assert(fd == s->server.native_fd || fd == s->syslog_fd);
+        assert(fd == s->server.native_fd || fd == s->server.syslog_fd);
 
         if (events != EPOLLIN) {
                 log_error("Got invalid event from epoll for datagram fd: %"PRIx32, events);
@@ -916,7 +916,7 @@ int process_datagram(int fd, uint32_t events, void *userdata)
 
                 } while ((cmsg = CMSG_NXTHDR(&msghdr, cmsg)));
 
-                if (fd == s->syslog_fd) {
+                if (fd == s->server.syslog_fd) {
                         if (n > 0 && n_fds == 0) {
                                 s->buffer[n] = 0;
                                 server_process_syslog_message(s, strstrip(s->buffer), ucred, tv, label, label_len);
@@ -1142,7 +1142,7 @@ int server_init(Server *s) {
         assert(s);
 
         zero(*s);
-        s->syslog_fd = s->server.native_fd = s->dev_kmsg_fd = s->hostname_fd = -1;
+        s->server.syslog_fd = s->server.native_fd = s->dev_kmsg_fd = s->hostname_fd = -1;
         s->compress = true;
 
         s->sync_interval_usec = DEFAULT_SYNC_INTERVAL_USEC;
@@ -1240,7 +1240,7 @@ void server_done(Server *s) {
         hashmap_free(s->user_journals);
 
         server_stop(&s->server);
-        safe_close(s->syslog_fd);
+        safe_close(s->server.syslog_fd);
         safe_close(s->dev_kmsg_fd);
         safe_close(s->hostname_fd);
 
