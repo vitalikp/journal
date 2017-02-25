@@ -481,6 +481,44 @@ int config_parse_bool(const char* unit,
         return 0;
 }
 
+int config_parse_string(
+                const char *unit,
+                const char *filename,
+                unsigned line,
+                const char *section,
+                unsigned section_line,
+                const char *lvalue,
+                int ltype,
+                const char *rvalue,
+                void *data,
+                void *userdata) {
+
+        char **s = data, *n;
+
+        assert(filename);
+        assert(lvalue);
+        assert(rvalue);
+        assert(data);
+
+        if (!utf8_is_valid(rvalue)) {
+                log_invalid_utf8(unit, LOG_ERR, filename, line, EINVAL, rvalue);
+                return 0;
+        }
+
+        if (isempty(rvalue))
+                n = NULL;
+        else {
+                n = strdup(rvalue);
+                if (!n)
+                        return log_oom();
+        }
+
+        free(*s);
+        *s = n;
+
+        return 0;
+}
+
 int config_parse_path(
                 const char *unit,
                 const char *filename,
