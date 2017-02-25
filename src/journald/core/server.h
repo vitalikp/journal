@@ -23,6 +23,7 @@ struct server
 	int			native_fd;
 
 	char		*runuser;
+	char		*rungroup;
 };
 
 

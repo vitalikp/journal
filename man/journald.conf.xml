@@ -77,6 +77,14 @@
                         </varlistentry>
 
                         <varlistentry>
+                                <term><varname>Group=</varname></term>
+
+                                <listitem><para>Set group for journald
+                                process (by default set 'journal').
+                                </para></listitem>
+                        </varlistentry>
+
+                        <varlistentry>
                                 <term><varname>Storage=</varname></term>
 
                                 <listitem><para>Controls where to
