@@ -20,6 +20,9 @@ int server_start(server_t *s)
 {
 	if (!getuid())
 	{
+		if (run_mkdir() < 0)
+			return -1;
+
 		if (run_group(s->rungroup) < 0)
 			return -1;
 

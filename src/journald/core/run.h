@@ -11,6 +11,7 @@
 #define _JOURNALD_RUN_H_
 
 
+int run_mkdir(void);
 int run_group(const char *group);
 int run_user(const char *user);
 

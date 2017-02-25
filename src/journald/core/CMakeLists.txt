@@ -3,6 +3,7 @@
 
 # journald core
 add_library(journald_core_obj STATIC
+	run/mkdir.c
 	run/group.c
 	run/user.c
 	epollfd.c
