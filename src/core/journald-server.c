@@ -30,7 +30,6 @@
 #include "fileio.h"
 #include "hashmap.h"
 #include "journal-file.h"
-#include "socket-util.h"
 #include "missing.h"
 #include "conf-parser.h"
 #include "journal-internal.h"

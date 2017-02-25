@@ -21,9 +21,9 @@
 
 #include <unistd.h>
 #include <stddef.h>
+#include <sys/un.h>
 #include <sys/epoll.h>
 
-#include "socket-util.h"
 #include "journald-server.h"
 #include "journald-syslog.h"
 #include "journald-kmsg.h"
@@ -33,15 +33,15 @@
 
 static void forward_syslog_iovec(Server *s, const struct iovec *iovec, unsigned n_iovec, struct ucred *ucred, struct timeval *tv) {
 
-        union sockaddr_union sa = {
-                .un.sun_family = AF_UNIX,
-                .un.sun_path = JOURNAL_RUNDIR "/syslog",
+        struct sockaddr_un un = {
+                .sun_family = AF_UNIX,
+                .sun_path = JOURNAL_RUNDIR "/syslog",
         };
         struct msghdr msghdr = {
                 .msg_iov = (struct iovec *) iovec,
                 .msg_iovlen = n_iovec,
-                .msg_name = &sa,
-                .msg_namelen = offsetof(union sockaddr_union, un.sun_path)
+                .msg_name = &un,
+                .msg_namelen = offsetof(struct sockaddr_un, sun_path)
                                + strlen(JOURNAL_RUNDIR "/syslog"),
         };
         struct cmsghdr *cmsg;
