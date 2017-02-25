@@ -35,13 +35,7 @@ target_link_libraries(journal_core_obj journald_core_obj journal_int_obj journal
 target_link_libraries(journal_core_obj -pthread rt)
 
 # journalctl
-add_executable(journalctl
-	journalctl/logs-show.c
-	journalctl/logs-show.h
-	journalctl/journalctl.c
-)
-target_link_libraries(journalctl journal_int_obj journal_shared_obj)
-#target_link_libraries(journalctl -pthread rt)
+add_subdirectory(journalctl)
 
 # tests
 if (${TESTS_ENABLE})
@@ -55,6 +49,3 @@ target_link_libraries(test-journal-syslog journal_core_obj)
 add_test(NAME journal-syslog COMMAND ./test-journal-syslog)
 
 endif()
-
-# install
-install(TARGETS journalctl DESTINATION ${bindir})
