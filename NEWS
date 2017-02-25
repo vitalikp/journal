@@ -151,6 +151,7 @@
    - add priority values for p journalctl argument option;
  * journald:
    - add socket module;
+   - add run module;
    - add epollfd module;
    - add server module;
    - add syslog module;

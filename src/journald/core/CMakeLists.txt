@@ -3,6 +3,8 @@
 
 # journald core
 add_library(journald_core_obj STATIC
+	run/group.c
+	run/user.c
 	epollfd.c
 	epollfd.h
 	socket.c
