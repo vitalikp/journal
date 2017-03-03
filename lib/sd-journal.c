@@ -2600,13 +2600,6 @@ _public_ void sd_journal_restart_unique(sd_journal *j) {
         j->unique_offset = 0;
 }
 
-_public_ int sd_journal_reliable_fd(sd_journal *j) {
-        assert_return(j, -EINVAL);
-        assert_return(!journal_pid_changed(j), -ECHILD);
-
-        return !j->on_network;
-}
-
 _public_ int sd_journal_set_data_threshold(sd_journal *j, size_t sz) {
         assert_return(j, -EINVAL);
         assert_return(!journal_pid_changed(j), -ECHILD);

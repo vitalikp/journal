@@ -83,7 +83,6 @@ add_man(docs 3
 	sd_journal_get_timeout
 	sd_journal_process
 	sd_journal_wait
-	sd_journal_reliable_fd
 )
 add_man(docs 3
 	sd_journal_get_realtime_usec

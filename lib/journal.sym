@@ -77,16 +77,11 @@ global:
         sd_journal_get_data_threshold;
 } JOURNAL_195;
 
-JOURNAL_198 {
-global:
-        sd_journal_reliable_fd;
-} JOURNAL_196;
-
 JOURNAL_201 {
 global:
         sd_journal_get_events;
         sd_journal_get_timeout;
-} JOURNAL_198;
+} JOURNAL_196;
 
 JOURNAL_202 {
 global:

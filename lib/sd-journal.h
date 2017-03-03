@@ -109,7 +109,6 @@ int sd_journal_get_events(sd_journal *j);
 int sd_journal_get_timeout(sd_journal *j, uint64_t *timeout_usec);
 int sd_journal_process(sd_journal *j);
 int sd_journal_wait(sd_journal *j, uint64_t timeout_usec);
-int sd_journal_reliable_fd(sd_journal *j);
 
 #define SD_JOURNAL_FOREACH(j)                                           \
         if (sd_journal_seek_head(j) >= 0)                               \
