@@ -17,6 +17,7 @@
      • api:
         - remove sd_journal_stream_fd function;
         - remove sd_journal_reliable_fd function;
+        - remove sd_journal_get_timeout function;
      • hash:
         - add original lookup3 hash functions;
         - add unit tests;

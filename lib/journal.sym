@@ -80,7 +80,6 @@ global:
 JOURNAL_201 {
 global:
         sd_journal_get_events;
-        sd_journal_get_timeout;
 } JOURNAL_196;
 
 JOURNAL_202 {

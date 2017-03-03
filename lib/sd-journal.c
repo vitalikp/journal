@@ -2137,21 +2137,6 @@ _public_ int sd_journal_get_events(sd_journal *j) {
         return POLLIN;
 }
 
-_public_ int sd_journal_get_timeout(sd_journal *j, uint64_t *timeout_usec) {
-        int fd;
-
-        assert_return(j, -EINVAL);
-        assert_return(!journal_pid_changed(j), -ECHILD);
-        assert_return(timeout_usec, -EINVAL);
-
-        fd = sd_journal_get_fd(j);
-        if (fd < 0)
-                return fd;
-
-        *timeout_usec = (uint64_t) -1;
-        return 0;
-}
-
 static void process_inotify_event(sd_journal *j, struct inotify_event *e) {
         Directory *d;
         int r;
@@ -2267,7 +2252,6 @@ _public_ int sd_journal_process(sd_journal *j) {
 
 _public_ int sd_journal_wait(sd_journal *j, uint64_t timeout_usec) {
         int r;
-        uint64_t t;
 
         assert_return(j, -EINVAL);
         assert_return(!journal_pid_changed(j), -ECHILD);
@@ -2285,20 +2269,6 @@ _public_ int sd_journal_wait(sd_journal *j, uint64_t timeout_usec) {
                  * hence don't wait for anything, and return
                  * immediately. */
                 return determine_change(j);
-        }
-
-        r = sd_journal_get_timeout(j, &t);
-        if (r < 0)
-                return r;
-
-        if (t != (uint64_t) -1) {
-                usec_t n;
-
-                n = now(CLOCK_MONOTONIC);
-                t = t > n ? t - n : 0;
-
-                if (timeout_usec == (uint64_t) -1 || timeout_usec > t)
-                        timeout_usec = t;
         }
 
         do {

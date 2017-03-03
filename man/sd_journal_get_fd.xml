@@ -45,7 +45,6 @@
         <refnamediv>
                 <refname>sd_journal_get_fd</refname>
                 <refname>sd_journal_get_events</refname>
-                <refname>sd_journal_get_timeout</refname>
                 <refname>sd_journal_process</refname>
                 <refname>sd_journal_wait</refname>
                 <refpurpose>Journal change notification
@@ -64,12 +63,6 @@
                         <funcprototype>
                                 <funcdef>int <function>sd_journal_get_events</function></funcdef>
                                 <paramdef>sd_journal *<parameter>j</parameter></paramdef>
-                        </funcprototype>
-
-                        <funcprototype>
-                                <funcdef>int <function>sd_journal_get_timeout</function></funcdef>
-                                <paramdef>sd_journal *<parameter>j</parameter></paramdef>
-                                <paramdef>uint64_t *<parameter>timeout_usec</parameter></paramdef>
                         </funcprototype>
 
                         <funcprototype>
@@ -101,11 +94,7 @@
                 the journal context object. Note that not all file
                 systems are capable of generating the necessary events
                 for wakeups from this file descriptor for changes to
-                be noticed immediately.
-                <function>sd_journal_get_timeout()</function>
-                will ensure in these cases that wake-ups happen
-                frequently enough for changes to be noticed, although
-                with a certain latency.</para>
+                be noticed immediately.</para>
 
                 <para><function>sd_journal_get_events()</function>
                 will return the <function>poll()</function> mask to
@@ -114,37 +103,6 @@
                 <constant>POLLOUT</constant> and similar to fill into
                 the <literal>.events</literal> field of
                 <varname>struct pollfd</varname>.</para>
-
-                <para><function>sd_journal_get_timeout()</function>
-                will return a timeout value for usage in
-                <function>poll()</function>. This returns a value in
-                microseconds since the epoch of
-                <constant>CLOCK_MONOTONIC</constant> for timing out
-                <function>poll()</function> in
-                <varname>timeout_usec</varname>. See
-                <citerefentry><refentrytitle>clock_gettime</refentrytitle><manvolnum>2</manvolnum></citerefentry>
-                for details about
-                <constant>CLOCK_MONOTONIC</constant>. If there is no
-                timeout to wait for, this will fill in
-                <constant>(uint64_t) -1</constant> instead. Note that
-                <function>poll()</function> takes a relative timeout
-                in milliseconds rather than an absolute timeout in
-                microseconds. To convert the absolute 'us' timeout
-                into relative 'ms', use code like the
-                following:</para>
-
-                <programlisting>uint64_t t;
-int msec;
-sd_journal_get_timeout(m, &amp;t);
-if (t == (uint64_t) -1)
-        msec = -1;
-else {
-        struct timespec ts;
-        uint64_t n;
-        clock_getttime(CLOCK_MONOTONIC, &amp;ts);
-        n = (uint64_t) ts.tv_sec * 1000000 + ts.tv_nsec / 1000;
-        msec = t > n ? (int) ((t - n + 999) / 1000) : 0;
-}</programlisting>
 
                 <para>The code above does not do any error checking
                 for brevity's sake. The calculated <varname>msec</varname>
@@ -160,8 +118,7 @@ else {
 
                 <para>A synchronous alternative for using
                 <function>sd_journal_get_fd()</function>,
-                <function>sd_journal_get_events()</function>,
-                <function>sd_journal_get_timeout()</function> and
+                <function>sd_journal_get_events()</function> and
                 <function>sd_journal_process()</function> is
                 <function>sd_journal_wait()</function>. It will
                 synchronously wait until the journal gets changed. The
@@ -171,7 +128,6 @@ else {
                 wait indefinitely. Internally this call simply
                 combines <function>sd_journal_get_fd()</function>,
                 <function>sd_journal_get_events()</function>,
-                <function>sd_journal_get_timeout()</function>,
                 <function>poll()</function> and
                 <function>sd_journal_process()</function> into
                 one.</para>
@@ -277,20 +233,9 @@ int wait_for_changes(sd_journal *j) {
         struct pollfd pollfd;
         int msec;
 
-        sd_journal_get_timeout(m, &amp;t);
-        if (t == (uint64_t) -1)
-                msec = -1;
-        else {
-                struct timespec ts;
-                uint64_t n;
-                clock_getttime(CLOCK_MONOTONIC, &amp;ts);
-                n = (uint64_t) ts.tv_sec * 1000000 + ts.tv_nsec / 1000;
-                msec = t > n ? (int) ((t - n + 999) / 1000) : 0;
-        }
-
         pollfd.fd = sd_journal_get_fd(j);
         pollfd.events = sd_journal_get_events(j);
-        poll(&amp;pollfd, 1, msec);
+        poll(&amp;pollfd, 1, -1);
         return sd_journal_process(j);
 }</programlisting>
         </refsect1>

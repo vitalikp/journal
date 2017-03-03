@@ -80,7 +80,6 @@ add_man(docs 3
 add_man(docs 3
 	sd_journal_get_fd
 	sd_journal_get_events
-	sd_journal_get_timeout
 	sd_journal_process
 	sd_journal_wait
 )
