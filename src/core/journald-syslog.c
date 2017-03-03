@@ -344,9 +344,7 @@ void server_process_syslog_message(
         Server *s,
         const char *buf,
         struct ucred *ucred,
-        struct timeval *tv,
-        const char *label,
-        size_t label_len) {
+        struct timeval *tv) {
 
         char *message = NULL, *syslog_priority = NULL, *syslog_facility = NULL, *syslog_identifier = NULL, *syslog_pid = NULL;
         struct iovec iovec[N_IOVEC_META_FIELDS + 6];
@@ -398,7 +396,7 @@ void server_process_syslog_message(
         if (message)
                 IOVEC_SET_STRING(iovec[n++], message);
 
-        server_dispatch_message(s, iovec, n, ELEMENTSOF(iovec), ucred, tv, label, label_len, NULL, priority, 0);
+        server_dispatch_message(s, iovec, n, ELEMENTSOF(iovec), ucred, tv, NULL, priority, 0);
 
         free(message);
         free(identifier);

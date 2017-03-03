@@ -30,5 +30,5 @@ size_t syslog_parse_identifier(const char **buf, char **identifier, char **pid);
 
 void server_forward_syslog(Server *s, int priority, const char *identifier, const char *message, struct ucred *ucred, struct timeval *tv);
 
-void server_process_syslog_message(Server *s, const char *buf, struct ucred *ucred, struct timeval *tv, const char *label, size_t label_len);
+void server_process_syslog_message(Server *s, const char *buf, struct ucred *ucred, struct timeval *tv);
 int server_open_syslog_socket(Server *s);

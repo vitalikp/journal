@@ -75,8 +75,7 @@ void server_process_native_message(
                 Server *s,
                 const void *buffer, size_t buffer_size,
                 struct ucred *ucred,
-                struct timeval *tv,
-                const char *label, size_t label_len) {
+                struct timeval *tv) {
 
         struct iovec *iovec = NULL;
         unsigned n = 0, j, tn = (unsigned) -1;
@@ -111,7 +110,7 @@ void server_process_native_message(
                                 continue;
                         }
 
-                        server_dispatch_message(s, iovec, n, m, ucred, tv, label, label_len, NULL, priority, object_pid);
+                        server_dispatch_message(s, iovec, n, m, ucred, tv, NULL, priority, object_pid);
                         n = 0;
                         priority = LOG_INFO;
                         entry_size = 0;
@@ -277,7 +276,7 @@ void server_process_native_message(
                         server_forward_wall(s, priority, identifier, message, ucred);
         }
 
-        server_dispatch_message(s, iovec, n, m, ucred, tv, label, label_len, NULL, priority, object_pid);
+        server_dispatch_message(s, iovec, n, m, ucred, tv, NULL, priority, object_pid);
 
 finish:
         for (j = 0; j < n; j++)  {
@@ -298,8 +297,7 @@ void server_process_native_file(
                 Server *s,
                 int fd,
                 struct ucred *ucred,
-                struct timeval *tv,
-                const char *label, size_t label_len) {
+                struct timeval *tv) {
 
         struct stat st;
         _cleanup_free_ void *p = NULL;
@@ -373,7 +371,7 @@ void server_process_native_file(
         if (n < 0)
                 log_error("Failed to read file, ignoring: %s", strerror(-n));
         else if (n > 0)
-                server_process_native_message(s, p, n, ucred, tv, label, label_len);
+                server_process_native_message(s, p, n, ucred, tv);
 }
 
 int server_open_native_socket(Server*s) {

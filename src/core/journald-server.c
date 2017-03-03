@@ -516,7 +516,6 @@ static int dispatch_message_real(
                 Server *s,
                 struct iovec *iovec,
                 struct ucred *ucred,
-                const char *label, size_t label_len,
                 const char *unit_id) {
 
         char    pid[sizeof("_PID=") + DECIMAL_STR_MAX(pid_t)],
@@ -595,7 +594,7 @@ void server_driver_message(Server *s, const char *format, ...) {
         ucred.uid = getuid();
         ucred.gid = getgid();
 
-        n += dispatch_message_real(s, &iovec[n], &ucred, NULL, 0, NULL);
+        n += dispatch_message_real(s, &iovec[n], &ucred, NULL);
         n += dispatch_message(s, &iovec[n], NULL);
         write_to_journal(s, ucred.uid, iovec, n, LOG_INFO);
 }
@@ -605,7 +604,6 @@ void server_dispatch_message(
                 struct iovec *iovec, unsigned n, unsigned m,
                 struct ucred *ucred,
                 struct timeval *tv,
-                const char *label, size_t label_len,
                 const char *unit_id,
                 int priority,
                 pid_t object_pid) {
@@ -645,7 +643,7 @@ void server_dispatch_message(
                 server_driver_message(s, "Suppressed %u messages from uid %u", rl - 1, realuid);
 
 finish:
-        n += dispatch_message_real(s, &iovec[n], ucred, label, label_len, unit_id);
+        n += dispatch_message_real(s, &iovec[n], ucred, unit_id);
         n += dispatch_message_object(s, &iovec[n], object_pid);
         n += dispatch_message(s, &iovec[n], tv);
         write_to_journal(s, realuid, iovec, n, priority);
@@ -836,8 +834,6 @@ int process_datagram(int fd, uint32_t events, void *userdata)
                 struct ucred *ucred = NULL;
                 struct timeval *tv = NULL;
                 struct cmsghdr *cmsg;
-                char *label = NULL;
-                size_t label_len = 0;
                 struct iovec iovec;
 
                 union {
@@ -899,10 +895,6 @@ int process_datagram(int fd, uint32_t events, void *userdata)
                                         if (cmsg->cmsg_len == CMSG_LEN(sizeof(struct ucred)))
                                                 ucred = (struct ucred*) CMSG_DATA(cmsg);
                                         break;
-                                case SCM_SECURITY:
-                                        label = (char*) CMSG_DATA(cmsg);
-                                        label_len = cmsg->cmsg_len - CMSG_LEN(0);
-                                        break;
                                 case SO_TIMESTAMP:
                                         if (cmsg->cmsg_len == CMSG_LEN(sizeof(struct timeval)))
                                                 tv = (struct timeval*) CMSG_DATA(cmsg);
@@ -918,15 +910,15 @@ int process_datagram(int fd, uint32_t events, void *userdata)
                 if (fd == s->server.syslog_fd) {
                         if (n > 0 && n_fds == 0) {
                                 s->buffer[n] = 0;
-                                server_process_syslog_message(s, strstrip(s->buffer), ucred, tv, label, label_len);
+                                server_process_syslog_message(s, strstrip(s->buffer), ucred, tv);
                         } else if (n_fds > 0)
                                 log_warning("Got file descriptors via syslog socket. Ignoring.");
 
                 } else {
                         if (n > 0 && n_fds == 0)
-                                server_process_native_message(s, s->buffer, n, ucred, tv, label, label_len);
+                                server_process_native_message(s, s->buffer, n, ucred, tv);
                         else if (n == 0 && n_fds == 1)
-                                server_process_native_file(s, fds[0], ucred, tv, label, label_len);
+                                server_process_native_file(s, fds[0], ucred, tv);
                         else if (n_fds > 0)
                                 log_warning("Got too many file descriptors via native socket. Ignoring.");
                 }
