@@ -119,7 +119,6 @@ struct sd_journal {
 
         int flags;
 
-        bool on_network;
         bool no_new_files;
 
         size_t data_threshold;

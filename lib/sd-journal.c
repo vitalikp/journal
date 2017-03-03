@@ -1265,25 +1265,6 @@ _public_ int sd_journal_seek_tail(sd_journal *j) {
         return 0;
 }
 
-static void check_network(sd_journal *j, int fd) {
-        struct statfs sfs;
-
-        assert(j);
-
-        if (j->on_network)
-                return;
-
-        if (fstatfs(fd, &sfs) < 0)
-                return;
-
-        j->on_network =
-                F_TYPE_EQUAL(sfs.f_type, CIFS_MAGIC_NUMBER) ||
-                F_TYPE_EQUAL(sfs.f_type, CODA_SUPER_MAGIC) ||
-                F_TYPE_EQUAL(sfs.f_type, NCP_SUPER_MAGIC) ||
-                F_TYPE_EQUAL(sfs.f_type, NFS_SUPER_MAGIC) ||
-                F_TYPE_EQUAL(sfs.f_type, SMB_SUPER_MAGIC);
-}
-
 static bool file_has_type_prefix(const char *prefix, const char *filename) {
         const char *full, *tilded, *atted;
 
@@ -1348,8 +1329,6 @@ static int add_any_file(sd_journal *j, const char *path) {
         }
 
         log_debug("File %s added.", f->path);
-
-        check_network(j, f->fd);
 
         j->current_invalidate_counter ++;
 
@@ -1504,8 +1483,6 @@ static int add_directory(sd_journal *j, const char *prefix, const char *dirname)
                 }
         }
 
-        check_network(j, dirfd(d));
-
         return 0;
 }
 
@@ -1595,8 +1572,6 @@ static int add_root_directory(sd_journal *j, const char *p) {
                                 log_debug("Failed to add directory %s/%s: %s", m->path, de->d_name, strerror(-r));
                 }
         }
-
-        check_network(j, dirfd(d));
 
         return 0;
 }
@@ -2173,16 +2148,8 @@ _public_ int sd_journal_get_timeout(sd_journal *j, uint64_t *timeout_usec) {
         if (fd < 0)
                 return fd;
 
-        if (!j->on_network) {
-                *timeout_usec = (uint64_t) -1;
-                return 0;
-        }
-
-        /* If we are on the network we need to regularly check for
-         * changes manually */
-
-        *timeout_usec = j->last_process_usec + JOURNAL_FILES_RECHECK_USEC;
-        return 1;
+        *timeout_usec = (uint64_t) -1;
+        return 0;
 }
 
 static void process_inotify_event(sd_journal *j, struct inotify_event *e) {
