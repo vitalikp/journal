@@ -7,7 +7,7 @@
  * See the file LICENSE.
  */
 
-#include "server.h"
+#include "core/server.h"
 
 
 int server_run(server_t *s)

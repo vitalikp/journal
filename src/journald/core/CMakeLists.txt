@@ -16,7 +16,7 @@ add_library(journald_core_obj STATIC
 	native.h
 	server/start.c
 	server/stop.c
-	server.c
+	server/run.c
 	server.h
 )
 target_link_libraries(journald_core_obj journal_int_obj journal_shared_obj)
