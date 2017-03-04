@@ -9,7 +9,7 @@
 
 #include <unistd.h>
 
-#include "native.h"
+#include "core/native.h"
 
 
 void native_close(server_t *s)

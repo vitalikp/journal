@@ -12,7 +12,7 @@ add_library(journald_core_obj STATIC
 	socket.h
 	syslog/close.c
 	syslog.h
-	native.c
+	native/close.c
 	native.h
 	server/start.c
 	server/stop.c
