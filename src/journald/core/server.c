@@ -8,17 +8,7 @@
  */
 
 #include "server.h"
-#include "syslog.h"
-#include "native.h"
 
-
-void server_stop(server_t *s)
-{
-	epollfd_close(&s->epoll);
-
-	syslog_close(s);
-	native_close(s);
-}
 
 int server_run(server_t *s)
 {

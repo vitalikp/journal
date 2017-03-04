@@ -15,6 +15,7 @@ add_library(journald_core_obj STATIC
 	native.c
 	native.h
 	server/start.c
+	server/stop.c
 	server.c
 	server.h
 )
