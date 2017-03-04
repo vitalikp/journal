@@ -9,7 +9,7 @@
 
 #include <unistd.h>
 
-#include "syslog.h"
+#include "core/syslog.h"
 
 
 void syslog_close(server_t *s)
