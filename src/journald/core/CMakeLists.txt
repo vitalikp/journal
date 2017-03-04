@@ -14,6 +14,7 @@ add_library(journald_core_obj STATIC
 	syslog.h
 	native.c
 	native.h
+	server/start.c
 	server.c
 	server.h
 )
