@@ -18,6 +18,7 @@
 
 int socket_open(const char* path, int type)
 {
+	mode_t mode;
 	int fd;
 
 	struct sockaddr_un sa;
@@ -27,6 +28,8 @@ int socket_open(const char* path, int type)
 	sa.sun_family = AF_UNIX;
 	memcpy(sa.sun_path, path, len);
 	len += sizeof(sa_family_t);
+
+	mode = umask(0);
 
 	fd = socket(AF_UNIX, type|SOCK_CLOEXEC|SOCK_NONBLOCK, 0);
 	if (fd < 0)
@@ -43,6 +46,8 @@ int socket_open(const char* path, int type)
 		log_error("bind(%s) failed: %m", sa.sun_path);
 		return -1;
 	}
+
+	umask(mode);
 
 	if (type == SOCK_STREAM)
 	{
