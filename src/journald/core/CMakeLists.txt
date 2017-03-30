@@ -8,6 +8,7 @@ add_library(journald_core_obj STATIC
 	run/user.c
 	epollfd.c
 	epollfd.h
+	socket/open.c
 	socket.c
 	socket.h
 	syslog/open.c
