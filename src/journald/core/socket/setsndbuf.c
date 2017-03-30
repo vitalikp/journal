@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 - Vitaliy Perevertun
+ * Copyright © 2015-2017 - Vitaliy Perevertun
  *
  * This file is part of journal
  *
@@ -7,10 +7,9 @@
  * See the file LICENSE.
  */
 
-#include <stddef.h>
 #include <sys/socket.h>
 
-#include "socket.h"
+#include "core/socket.h"
 
 
 int socket_set_sndbuf(int fd, int len)
