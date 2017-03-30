@@ -36,14 +36,13 @@ int socket_open(const char* path, int type)
 	}
 
 	unlink(sa.sun_path);
+	fchmod(fd, DEFFILEMODE);
 
 	if (bind(fd, &sa, len) < 0)
 	{
 		log_error("bind(%s) failed: %m", sa.sun_path);
 		return -1;
 	}
-
-	chmod(sa.sun_path, 0666);
 
 	if (type == SOCK_STREAM)
 	{
