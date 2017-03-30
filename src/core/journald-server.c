@@ -848,6 +848,7 @@ int process_datagram(int fd, uint32_t events, void *userdata)
 
                 ssize_t n;
                 int v;
+                size_t off;
 
                 if (ioctl(fd, SIOCINQ, &v) < 0) {
                         log_error("SIOCINQ failed: %m");
@@ -869,9 +870,10 @@ int process_datagram(int fd, uint32_t events, void *userdata)
                         return -errno;
                 }
 
-                cmsg = CMSG_FIRSTHDR(&msghdr);
-                do
+                off = 0;
+                while (off < msghdr.msg_controllen)
                 {
+                        cmsg = (struct cmsghdr*)&buf[off];
                         if (cmsg->cmsg_level != SOL_SOCKET)
                                 continue;
 
@@ -887,7 +889,8 @@ int process_datagram(int fd, uint32_t events, void *userdata)
                                         break;
                         }
 
-                } while ((cmsg = CMSG_NXTHDR(&msghdr, cmsg)));
+                        off += CMSG_ALIGN(cmsg->cmsg_len);
+                }
 
                 if (fd == s->server.syslog_fd) {
                         if (n > 0) {
