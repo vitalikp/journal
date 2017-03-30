@@ -836,17 +836,14 @@ int process_datagram(int fd, uint32_t events, void *userdata)
                 struct cmsghdr *cmsg;
                 struct iovec iovec;
 
-                union {
-                        struct cmsghdr cmsghdr;
+                uint8_t buf[CMSG_SPACE(sizeof(struct ucred)) +
+                            CMSG_SPACE(sizeof(struct timeval))];
 
-                        uint8_t buf[CMSG_SPACE(sizeof(struct ucred)) +
-                                    CMSG_SPACE(sizeof(struct timeval))];
-                } control = {};
                 struct msghdr msghdr = {
                         .msg_iov = &iovec,
                         .msg_iovlen = 1,
-                        .msg_control = &control,
-                        .msg_controllen = sizeof(control),
+                        .msg_control = &buf,
+                        .msg_controllen = sizeof(buf),
                 };
 
                 ssize_t n;
