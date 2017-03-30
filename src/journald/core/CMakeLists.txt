@@ -13,6 +13,7 @@ add_library(journald_core_obj STATIC
 	syslog/open.c
 	syslog/close.c
 	syslog.h
+	native/open.c
 	native/close.c
 	native.h
 	server/start.c
