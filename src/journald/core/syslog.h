@@ -13,6 +13,7 @@
 #include "server.h"
 
 
+int syslog_open(server_t *s, event_cb callback);
 void syslog_close(server_t *s);
 
 #endif	/* _JOURNALD_SYSLOG_H_ */
