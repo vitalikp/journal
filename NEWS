@@ -179,6 +179,7 @@
    - don't start if /run/journal directory not exist;
    - open /dev/kmsg for read only;
    - print version at start;
+   - don't receive fd's by native socket;
  * unit:
    - remove output syslog socket;
  * man:

@@ -30,6 +30,4 @@ bool valid_user_field(const char *p, size_t l, bool allow_protected);
 
 void server_process_native_message(Server *s, const void *buffer, size_t buffer_size, struct ucred *ucred, struct timeval *tv);
 
-void server_process_native_file(Server *s, int fd, struct ucred *ucred, struct timeval *tv);
-
 int server_open_native_socket(Server*s);

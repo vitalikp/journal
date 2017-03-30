@@ -840,8 +840,7 @@ int process_datagram(int fd, uint32_t events, void *userdata)
                         struct cmsghdr cmsghdr;
 
                         uint8_t buf[CMSG_SPACE(sizeof(struct ucred)) +
-                                    CMSG_SPACE(sizeof(struct timeval)) +
-                                    CMSG_SPACE(sizeof(int))]; /* fd */
+                                    CMSG_SPACE(sizeof(struct timeval))];
                 } control = {};
                 struct msghdr msghdr = {
                         .msg_iov = &iovec,
@@ -852,8 +851,6 @@ int process_datagram(int fd, uint32_t events, void *userdata)
 
                 ssize_t n;
                 int v;
-                int *fds = NULL;
-                unsigned n_fds = 0;
 
                 if (ioctl(fd, SIOCINQ, &v) < 0) {
                         log_error("SIOCINQ failed: %m");
@@ -891,31 +888,20 @@ int process_datagram(int fd, uint32_t events, void *userdata)
                                         if (cmsg->cmsg_len == CMSG_LEN(sizeof(struct timeval)))
                                                 tv = (struct timeval*) CMSG_DATA(cmsg);
                                         break;
-                                case SCM_RIGHTS:
-                                        fds = (int*) CMSG_DATA(cmsg);
-                                        n_fds = (cmsg->cmsg_len - CMSG_LEN(0)) / sizeof(int);
-                                        break;
                         }
 
                 } while ((cmsg = CMSG_NXTHDR(&msghdr, cmsg)));
 
                 if (fd == s->server.syslog_fd) {
-                        if (n > 0 && n_fds == 0) {
+                        if (n > 0) {
                                 s->buffer[n] = 0;
                                 server_process_syslog_message(s, strstrip(s->buffer), ucred, tv);
-                        } else if (n_fds > 0)
-                                log_warning("Got file descriptors via syslog socket. Ignoring.");
+                        }
 
                 } else {
-                        if (n > 0 && n_fds == 0)
+                        if (n > 0)
                                 server_process_native_message(s, s->buffer, n, ucred, tv);
-                        else if (n == 0 && n_fds == 1)
-                                server_process_native_file(s, fds[0], ucred, tv);
-                        else if (n_fds > 0)
-                                log_warning("Got too many file descriptors via native socket. Ignoring.");
                 }
-
-                close_many(fds, n_fds);
         }
 }
 
