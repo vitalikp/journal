@@ -839,17 +839,9 @@ int process_datagram(int fd, uint32_t events, void *userdata)
                 union {
                         struct cmsghdr cmsghdr;
 
-                        /* We use NAME_MAX space for the SELinux label
-                         * here. The kernel currently enforces no
-                         * limit, but according to suggestions from
-                         * the SELinux people this will change and it
-                         * will probably be identical to NAME_MAX. For
-                         * now we use that, but this should be updated
-                         * one day when the final limit is known.*/
                         uint8_t buf[CMSG_SPACE(sizeof(struct ucred)) +
                                     CMSG_SPACE(sizeof(struct timeval)) +
-                                    CMSG_SPACE(sizeof(int)) + /* fd */
-                                    CMSG_SPACE(NAME_MAX)];
+                                    CMSG_SPACE(sizeof(int))]; /* fd */
                 } control = {};
                 struct msghdr msghdr = {
                         .msg_iov = &iovec,
