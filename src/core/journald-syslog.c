@@ -29,7 +29,7 @@
 #include "journald-kmsg.h"
 #include "journald-console.h"
 #include "journald-wall.h"
-#include "socket.h"
+#include "core/socket.h"
 
 static void forward_syslog_iovec(Server *s, const struct iovec *iovec, unsigned n_iovec, struct ucred *ucred, struct timeval *tv) {
 
