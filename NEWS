@@ -180,6 +180,7 @@
    - open /dev/kmsg for read only;
    - print version at start;
    - don't receive fd's by native socket;
+   - don't set control data on forward message by syslog socket;
  * unit:
    - remove output syslog socket;
  * man:

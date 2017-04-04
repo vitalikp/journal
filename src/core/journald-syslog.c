@@ -31,7 +31,7 @@
 #include "journald-wall.h"
 #include "core/socket.h"
 
-static void forward_syslog_iovec(Server *s, const struct iovec *iovec, unsigned n_iovec, struct ucred *ucred, struct timeval *tv) {
+static void forward_syslog_iovec(Server *s, const struct iovec *iovec, unsigned n_iovec) {
 
         struct sockaddr_un un = {
                 .sun_family = AF_UNIX,
@@ -44,28 +44,10 @@ static void forward_syslog_iovec(Server *s, const struct iovec *iovec, unsigned 
                 .msg_namelen = offsetof(struct sockaddr_un, sun_path)
                                + strlen(JOURNAL_RUNDIR "/syslog"),
         };
-        struct cmsghdr *cmsg;
-        union {
-                struct cmsghdr cmsghdr;
-                uint8_t buf[CMSG_SPACE(sizeof(struct ucred))];
-        } control;
 
         assert(s);
         assert(iovec);
         assert(n_iovec > 0);
-
-        if (ucred) {
-                zero(control);
-                msghdr.msg_control = &control;
-                msghdr.msg_controllen = sizeof(control);
-
-                cmsg = CMSG_FIRSTHDR(&msghdr);
-                cmsg->cmsg_level = SOL_SOCKET;
-                cmsg->cmsg_type = SCM_CREDENTIALS;
-                cmsg->cmsg_len = CMSG_LEN(sizeof(struct ucred));
-                memcpy(CMSG_DATA(cmsg), ucred, sizeof(struct ucred));
-                msghdr.msg_controllen = cmsg->cmsg_len;
-        }
 
         /* Forward the syslog message we received via /run/journal/devlog to
          * /run/journal/syslog. Unfortunately we currently can't set
@@ -78,24 +60,6 @@ static void forward_syslog_iovec(Server *s, const struct iovec *iovec, unsigned 
          * too slow, and we shouldn't wait for that... */
         if (errno == EAGAIN)
                 return;
-
-        if (ucred && errno == ESRCH) {
-                struct ucred u;
-
-                /* Hmm, presumably the sender process vanished
-                 * by now, so let's fix it as good as we
-                 * can, and retry */
-
-                u = *ucred;
-                u.pid = getpid();
-                memcpy(CMSG_DATA(cmsg), &u, sizeof(struct ucred));
-
-                if (sendmsg(s->server.syslog_fd, &msghdr, MSG_NOSIGNAL) >= 0)
-                        return;
-
-                if (errno == EAGAIN)
-                        return;
-        }
 
         if (errno != ENOENT)
                 log_debug("Failed to forward syslog message: %m");
@@ -111,7 +75,7 @@ static void forward_syslog_raw(Server *s, int priority, const char *buffer, stru
                 return;
 
         IOVEC_SET_STRING(iovec, buffer);
-        forward_syslog_iovec(s, &iovec, 1, ucred, tv);
+        forward_syslog_iovec(s, &iovec, 1);
 }
 
 void server_forward_syslog(Server *s, int priority, const char *identifier, const char *message, struct ucred *ucred, struct timeval *tv) {
@@ -166,7 +130,7 @@ void server_forward_syslog(Server *s, int priority, const char *identifier, cons
         /* Fourth: message */
         IOVEC_SET_STRING(iovec[n++], message);
 
-        forward_syslog_iovec(s, iovec, n, ucred, tv);
+        forward_syslog_iovec(s, iovec, n);
 
         free(ident_buf);
 }
