@@ -10,6 +10,7 @@ add_library(journald_core_obj STATIC
 	epollfd.h
 	socket/open.c
 	socket/setsndbuf.c
+	socket/sendmsg.c
 	socket.h
 	syslog/open.c
 	syslog/close.c

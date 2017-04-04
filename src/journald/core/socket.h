@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 - Vitaliy Perevertun
+ * Copyright © 2015-2017 - Vitaliy Perevertun
  *
  * This file is part of journal
  *
@@ -13,5 +13,7 @@
 
 int socket_open(const char* path, int type);
 int socket_set_sndbuf(int fd, int len);
+
+ssize_t socket_sendmsg(int fd, const char *path, void *data, size_t size);
 
 #endif	/* _JOURNALD_SOCKET_H_ */
