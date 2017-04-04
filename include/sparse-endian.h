@@ -26,10 +26,14 @@
 #include <stdint.h>
 
 #ifdef __CHECKER__
+#ifndef __bitwise__
 #define __bitwise __attribute__((bitwise))
+#endif
 #define __force __attribute__((force))
 #else
+#ifndef __bitwise__
 #define __bitwise
+#endif
 #define __force
 #endif
 
