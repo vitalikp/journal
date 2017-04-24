@@ -14,6 +14,7 @@ add_library(journald_core_obj STATIC
 	msg.h
 	socket/open.c
 	socket/setsndbuf.c
+	socket/getsize.c
 	socket/sendmsg.c
 	socket.h
 	syslog/open.c

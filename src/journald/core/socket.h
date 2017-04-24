@@ -10,10 +10,13 @@
 #ifndef _JOURNALD_SOCKET_H_
 #define _JOURNALD_SOCKET_H_
 
+#include "msg.h"
+
 
 int socket_open(const char* path, int type);
 int socket_set_sndbuf(int fd, int len);
 
+int socket_get_size(int fd, msg_t **pmsg);
 ssize_t socket_sendmsg(int fd, const char *path, void *data, size_t size);
 
 #endif	/* _JOURNALD_SOCKET_H_ */
