@@ -27,6 +27,9 @@ struct server
 	char		*runuser;
 	char		*rungroup;
 
+	/** kmsg sequence number */
+	uint64_t	*kseqnum;
+
 	msg_t		*msg;
 };
 

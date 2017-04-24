@@ -1183,8 +1183,8 @@ void server_done(Server *s) {
         if (s->rate_limit)
                 journal_rate_limit_free(s->rate_limit);
 
-        if (s->kseqnum)
-                munmap(s->kseqnum, sizeof(uint64_t));
+        if (s->server.kseqnum)
+                munmap(s->server.kseqnum, sizeof(uint64_t));
 
         free(s->buffer);
         free(s->tty_path);
