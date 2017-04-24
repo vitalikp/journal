@@ -7,6 +7,8 @@
  * See the file LICENSE.
  */
 
+#include <stdlib.h>
+
 #include "core/server.h"
 #include "core/syslog.h"
 #include "core/native.h"
@@ -18,4 +20,7 @@ void server_stop(server_t *s)
 
 	syslog_close(s);
 	native_close(s);
+
+	free(s->msg);
+	s->msg = NULL;
 }

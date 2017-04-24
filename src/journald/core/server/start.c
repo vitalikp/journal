@@ -8,6 +8,7 @@
  */
 
 #include <unistd.h>
+#include <limits.h>
 
 #include "core/server.h"
 #include "core/run.h"
@@ -33,6 +34,10 @@ int server_start(server_t *s)
 		log_error("Failed to create event loop: %m");
 		return -1;
 	}
+
+	s->msg = msg_new(LINE_MAX);
+	if (!s->msg)
+		return -1;
 
 	return 0;
 }

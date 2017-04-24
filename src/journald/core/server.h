@@ -11,6 +11,7 @@
 #define _JOURNALD_SERVER_H_
 
 #include "epollfd.h"
+#include "msg.h"
 
 
 typedef struct server server_t;
@@ -24,6 +25,8 @@ struct server
 
 	char		*runuser;
 	char		*rungroup;
+
+	msg_t		*msg;
 };
 
 
