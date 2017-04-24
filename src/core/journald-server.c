@@ -1082,7 +1082,7 @@ int server_init(Server *s) {
         assert(s);
 
         zero(*s);
-        s->server.syslog_fd = s->server.native_fd = s->dev_kmsg_fd = s->hostname_fd = -1;
+        s->server.syslog_fd = s->server.native_fd = s->kmsg_fd = s->hostname_fd = -1;
         s->compress = true;
 
         s->sync_interval_usec = DEFAULT_SYNC_INTERVAL_USEC;
@@ -1177,7 +1177,7 @@ void server_done(Server *s) {
         hashmap_free(s->user_journals);
 
         server_stop(&s->server);
-        safe_close(s->dev_kmsg_fd);
+        safe_close(s->kmsg_fd);
         safe_close(s->hostname_fd);
 
         if (s->rate_limit)
