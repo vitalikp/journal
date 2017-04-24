@@ -27,6 +27,8 @@ add_library(journald_core_obj STATIC
 	seqnum/load.c
 	seqnum/save.c
 	seqnum.h
+	kmsg/close.c
+	kmsg.h
 	server/start.c
 	server/stop.c
 	server/run.c

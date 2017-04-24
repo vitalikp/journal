@@ -13,6 +13,7 @@
 #include "core/syslog.h"
 #include "core/native.h"
 #include "core/seqnum.h"
+#include "core/kmsg.h"
 
 
 void server_stop(server_t *s)
@@ -21,6 +22,7 @@ void server_stop(server_t *s)
 
 	syslog_close(s);
 	native_close(s);
+	kmsg_close(s);
 
 	seqnum_save(JOURNAL_RUNDIR "/kernel-seqnum", &s->kseqnum);
 
