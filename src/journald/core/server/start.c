@@ -12,6 +12,7 @@
 
 #include "core/server.h"
 #include "core/run.h"
+#include "core/seqnum.h"
 #include "log.h"
 
 
@@ -38,6 +39,8 @@ int server_start(server_t *s)
 	s->msg = msg_new(LINE_MAX);
 	if (!s->msg)
 		return -1;
+
+	seqnum_load(JOURNAL_RUNDIR "/kernel-seqnum", &s->kseqnum);
 
 	return 0;
 }

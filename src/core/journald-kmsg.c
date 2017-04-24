@@ -66,22 +66,20 @@ static void dev_kmsg_record(Server *s, char *p, size_t l) {
         if (r < 0)
                 return;
 
-        if (s->server.kseqnum) {
-                /* We already read this one? */
-                if (serial < *s->server.kseqnum)
-                        return;
+		/* We already read this one? */
+		if (serial < s->server.kseqnum)
+				return;
 
-                /* Did we lose any? */
-                if (serial > *s->server.kseqnum)
-                        server_driver_message(s, "Missed %"PRIu64" kernel messages",
-                                              serial - *s->server.kseqnum);
+		/* Did we lose any? */
+		if (serial > s->server.kseqnum)
+				server_driver_message(s, "Missed %"PRIu64" kernel messages",
+									  serial - s->server.kseqnum);
 
-                /* Make sure we never read this one again. Note that
-                 * we always store the next message serial we expect
-                 * here, simply because this makes handling the first
-                 * message with serial 0 easy. */
-                *s->server.kseqnum = serial + 1;
-        }
+		/* Make sure we never read this one again. Note that
+		 * we always store the next message serial we expect
+		 * here, simply because this makes handling the first
+		 * message with serial 0 easy. */
+		s->server.kseqnum = serial + 1;
 
         l -= (e - p) + 1;
         p = e + 1;
@@ -289,36 +287,4 @@ fail:
         s->server.kmsg_fd = safe_close(s->server.kmsg_fd);
 
         return r;
-}
-
-int server_open_kernel_seqnum(Server *s) {
-        _cleanup_close_ int fd = -1;
-        uint64_t *p;
-
-        assert(s);
-
-        /* We store the seqnum we last read in an mmaped file. That
-         * way we can just use it like a variable, but it is
-         * persistent and automatically flushed at reboot. */
-
-        fd = open(JOURNAL_RUNDIR "/kernel-seqnum", O_RDWR|O_CREAT|O_CLOEXEC|O_NOCTTY|O_NOFOLLOW, 0644);
-        if (fd < 0) {
-                log_error("Failed to open %s/kernel-seqnum, ignoring: %m", JOURNAL_RUNDIR);
-                return 0;
-        }
-
-        if (posix_fallocate(fd, 0, sizeof(uint64_t)) < 0) {
-                log_error("Failed to allocate sequential number file, ignoring: %m");
-                return 0;
-        }
-
-        p = mmap(NULL, sizeof(uint64_t), PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
-        if (p == MAP_FAILED) {
-                log_error("Failed to map sequential number file, ignoring: %m");
-                return 0;
-        }
-
-        s->server.kseqnum = p;
-
-        return 0;
 }

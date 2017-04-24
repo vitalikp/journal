@@ -25,5 +25,3 @@
 
 int server_open_dev_kmsg(Server *s);
 int server_flush_dev_kmsg(Server *s);
-
-int server_open_kernel_seqnum(Server *s);

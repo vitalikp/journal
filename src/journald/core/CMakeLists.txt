@@ -24,6 +24,9 @@ add_library(journald_core_obj STATIC
 	native/open.c
 	native/close.c
 	native.h
+	seqnum/load.c
+	seqnum/save.c
+	seqnum.h
 	server/start.c
 	server/stop.c
 	server/run.c

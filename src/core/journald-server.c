@@ -1131,10 +1131,6 @@ int server_init(Server *s) {
         if (r < 0)
                 return r;
 
-        r = server_open_kernel_seqnum(s);
-        if (r < 0)
-                return r;
-
         r = server_open_dev_kmsg(s);
         if (r < 0)
                 return r;
@@ -1182,9 +1178,6 @@ void server_done(Server *s) {
 
         if (s->rate_limit)
                 journal_rate_limit_free(s->rate_limit);
-
-        if (s->server.kseqnum)
-                munmap(s->server.kseqnum, sizeof(uint64_t));
 
         free(s->buffer);
         free(s->tty_path);
