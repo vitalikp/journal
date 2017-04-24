@@ -18,5 +18,6 @@ int socket_set_sndbuf(int fd, int len);
 
 int socket_get_size(int fd, msg_t **pmsg);
 ssize_t socket_sendmsg(int fd, const char *path, void *data, size_t size);
+ssize_t socket_recvmsg(int fd, msg_t *msg);
 
 #endif	/* _JOURNALD_SOCKET_H_ */
