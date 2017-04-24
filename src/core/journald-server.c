@@ -1131,11 +1131,11 @@ int server_init(Server *s) {
         if (r < 0)
                 return r;
 
-        r = server_open_dev_kmsg(s);
+        r = server_open_kernel_seqnum(s);
         if (r < 0)
                 return r;
 
-        r = server_open_kernel_seqnum(s);
+        r = server_open_dev_kmsg(s);
         if (r < 0)
                 return r;
 

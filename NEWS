@@ -182,6 +182,7 @@
    - print version at start;
    - don't receive fd's by native socket;
    - don't set control data on forward message by syslog socket;
+   - read cached kernel sequence number before open /dev/kmsg;
  * unit:
    - remove output syslog socket;
  * man:
