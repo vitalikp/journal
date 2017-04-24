@@ -8,6 +8,10 @@ add_library(journald_core_obj STATIC
 	run/user.c
 	epollfd.c
 	epollfd.h
+	msg/new.c
+	msg/resize.c
+	msg/decode.c
+	msg.h
 	socket/open.c
 	socket/setsndbuf.c
 	socket/sendmsg.c
