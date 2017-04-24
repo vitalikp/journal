@@ -110,7 +110,7 @@ typedef struct Server {
 
         bool dev_kmsg_readable;
 
-        uint64_t *kernel_seqnum;
+        uint64_t *kseqnum;
 
         uint64_t sync_seqnum;
         usec_t sync_time;

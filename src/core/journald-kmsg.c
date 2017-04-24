@@ -66,21 +66,21 @@ static void dev_kmsg_record(Server *s, char *p, size_t l) {
         if (r < 0)
                 return;
 
-        if (s->kernel_seqnum) {
+        if (s->kseqnum) {
                 /* We already read this one? */
-                if (serial < *s->kernel_seqnum)
+                if (serial < *s->kseqnum)
                         return;
 
                 /* Did we lose any? */
-                if (serial > *s->kernel_seqnum)
+                if (serial > *s->kseqnum)
                         server_driver_message(s, "Missed %"PRIu64" kernel messages",
-                                              serial - *s->kernel_seqnum);
+                                              serial - *s->kseqnum);
 
                 /* Make sure we never read this one again. Note that
                  * we always store the next message serial we expect
                  * here, simply because this makes handling the first
                  * message with serial 0 easy. */
-                *s->kernel_seqnum = serial + 1;
+                *s->kseqnum = serial + 1;
         }
 
         l -= (e - p) + 1;
@@ -318,7 +318,7 @@ int server_open_kernel_seqnum(Server *s) {
                 return 0;
         }
 
-        s->kernel_seqnum = p;
+        s->kseqnum = p;
 
         return 0;
 }
