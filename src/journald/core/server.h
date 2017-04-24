@@ -22,6 +22,7 @@ struct server
 
 	int			syslog_fd;
 	int			native_fd;
+	int			kmsg_fd;
 
 	char		*runuser;
 	char		*rungroup;

@@ -189,9 +189,9 @@ static int server_read_dev_kmsg(Server *s) {
         ssize_t l;
 
         assert(s);
-        assert(s->kmsg_fd >= 0);
+        assert(s->server.kmsg_fd >= 0);
 
-        l = read(s->kmsg_fd, buffer, sizeof(buffer) - 1);
+        l = read(s->server.kmsg_fd, buffer, sizeof(buffer) - 1);
         if (l == 0)
                 return 0;
         if (l < 0) {
@@ -199,7 +199,7 @@ static int server_read_dev_kmsg(Server *s) {
                  * return EINVAL when we try. So handle this cleanly,
                  * but don' try to ever read from it again. */
                 if (errno == EINVAL) {
-                        epollfd_del(s->server.epoll, s->kmsg_fd);
+                        epollfd_del(s->server.epoll, s->server.kmsg_fd);
                         return 0;
                 }
 
@@ -219,7 +219,7 @@ int server_flush_dev_kmsg(Server *s) {
 
         assert(s);
 
-        if (s->kmsg_fd < 0)
+        if (s->server.kmsg_fd < 0)
                 return 0;
 
         if (!s->dev_kmsg_readable)
@@ -242,7 +242,7 @@ int server_flush_dev_kmsg(Server *s) {
 static int dispatch_dev_kmsg(int fd, uint32_t revents, void *userdata) {
         Server *s = userdata;
 
-        assert(fd == s->kmsg_fd);
+        assert(fd == s->server.kmsg_fd);
         assert(s);
 
         if (revents & EPOLLERR)
@@ -259,14 +259,14 @@ int server_open_dev_kmsg(Server *s) {
 
         assert(s);
 
-        s->kmsg_fd = open("/dev/kmsg", O_RDONLY|O_CLOEXEC|O_NONBLOCK|O_NOCTTY);
-        if (s->kmsg_fd < 0) {
+        s->server.kmsg_fd = open("/dev/kmsg", O_RDONLY|O_CLOEXEC|O_NONBLOCK|O_NOCTTY);
+        if (s->server.kmsg_fd < 0) {
                 log_full(errno == ENOENT ? LOG_DEBUG : LOG_WARNING,
                          "Failed to open /dev/kmsg, ignoring: %m");
                 return 0;
         }
 
-        r = epollfd_add(s->server.epoll, s->kmsg_fd, EPOLLIN, (event_cb)dispatch_dev_kmsg, s);
+        r = epollfd_add(s->server.epoll, s->server.kmsg_fd, EPOLLIN, (event_cb)dispatch_dev_kmsg, s);
         if (r < 0)
         {
         	/* This will fail with EPERM on older kernels where
@@ -286,7 +286,7 @@ int server_open_dev_kmsg(Server *s) {
         return 0;
 
 fail:
-        s->kmsg_fd = safe_close(s->kmsg_fd);
+        s->server.kmsg_fd = safe_close(s->server.kmsg_fd);
 
         return r;
 }

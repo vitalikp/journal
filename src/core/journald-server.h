@@ -58,7 +58,6 @@ typedef enum SplitMode {
 } SplitMode;
 
 typedef struct Server {
-        int kmsg_fd;
         int hostname_fd;
 
         ServerState state;
