@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 - Vitaliy Perevertun
+ * Copyright © 2015-2017 - Vitaliy Perevertun
  *
  * This file is part of journal
  *
@@ -7,25 +7,8 @@
  * See the file LICENSE.
  */
 
-#include "uuid.h"
+#include "utils.h"
 
-
-static uint8_t chartohex(char c)
-{
-	if (c < '0' || c > 'f')
-		return -1;
-
-	if (c >= 'a')
-		return c - 'a' + 10;
-
-	if (c <= '9')
-		return c - '0';
-
-	if (c >= 'A' && c <= 'F')
-		return c - 'A' + 10;
-
-	return -1;
-}
 
 int uuid_parse(const char* in, uuid_t* id)
 {
@@ -43,11 +26,11 @@ int uuid_parse(const char* in, uuid_t* id)
 			}
 		}
 
-		a = chartohex(in[i++]);
+		a = hex_char(in[i++]);
 		if (a < 0)
 			return -1;
 
-		b = chartohex(in[i++]);
+		b = hex_char(in[i++]);
 		if (a < 0)
 			return -1;
 
