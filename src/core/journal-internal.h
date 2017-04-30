@@ -25,7 +25,7 @@
 #include <inttypes.h>
 #include <stdbool.h>
 
-#include "uuid.h"
+#include "utils.h"
 #include "journal-def.h"
 #include "hashmap.h"
 #include "set.h"

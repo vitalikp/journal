@@ -14,6 +14,7 @@
 #include <sys/types.h>
 
 #include "utils/str.h"
+#include "utils/uuid.h"
 
 
 #define DEC(val) '0' + val

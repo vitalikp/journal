@@ -10,7 +10,7 @@
 #ifndef _JOURNAL_BOOT_H_
 #define _JOURNAL_BOOT_H_
 
-#include "uuid.h"
+#include "utils.h"
 
 
 int journal_get_bootid(uuid_t* boot_id);

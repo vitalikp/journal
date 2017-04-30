@@ -23,7 +23,7 @@
 
 #include "sparse-endian.h"
 
-#include "uuid.h"
+#include "utils.h"
 
 #include "macro.h"
 

@@ -24,7 +24,7 @@
 #include <fcntl.h>
 #include <stddef.h>
 
-#include "uuid.h"
+#include "utils.h"
 #include "hash.h"
 #include "util.h"
 #include "macro.h"

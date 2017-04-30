@@ -23,7 +23,7 @@
 
 #include <inttypes.h>
 
-#include "uuid.h"
+#include "utils.h"
 #include "sparse-endian.h"
 #include "journal-def.h"
 #include "util.h"

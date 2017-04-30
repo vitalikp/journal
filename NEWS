@@ -26,7 +26,6 @@
         - change type keep_always field to bool;
     - remove SD_JOURNAL_LOCAL_ONLY journal open flag;
     - add utils module;
-    - add uuid module;
     - add boot module;
     - remove lookup3 module;
     - use automatic cleanup;

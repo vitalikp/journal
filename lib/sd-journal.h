@@ -29,7 +29,7 @@
 #include <syslog.h>
 #include <systemd/_sd-common.h>
 
-#include "uuid.h"
+#include "utils.h"
 
 /* Journal APIs. See sd-journal(3) for more information. */
 
