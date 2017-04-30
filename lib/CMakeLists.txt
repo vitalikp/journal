@@ -13,6 +13,9 @@ set(JOURNAL_VERSION ${JOURNAL_SOVERSION}.11.5)
 configure_file(journal.pc.cmake journal.pc @ONLY)
 
 
+# journal utils
+add_subdirectory(utils)
+
 # journal hash
 include_directories(hash)
 add_subdirectory(hash)
@@ -22,6 +25,7 @@ add_subdirectory(mmap)
 
 # journal internal
 set(journal_int_src
+	utils.h
 	uuid.c
 	uuid.h
 	boot.c
@@ -42,7 +46,7 @@ set(journal_int_src
 add_library(journal_int_obj STATIC
 	${journal_int_src}
 )
-target_link_libraries(journal_int_obj journal_hash_obj journal_mmap_obj)
+target_link_libraries(journal_int_obj journal_utils_obj journal_hash_obj journal_mmap_obj)
 target_link_libraries(journal_int_obj ${XZ_LIBRARIES} ${LZ4_LIBRARIES})
 target_link_libraries(journal_int_obj -pthread rt)
 
@@ -53,7 +57,7 @@ set_target_properties(journal PROPERTIES
 	VERSION ${JOURNAL_VERSION}
 	SOVERSION ${JOURNAL_SOVERSION}
 )
-target_link_libraries(journal journal_hash_obj journal_mmap_obj journal_shared_obj ${LIBJOURNAL_C_FLAGS})
+target_link_libraries(journal journal_utils_obj journal_hash_obj journal_mmap_obj journal_shared_obj ${LIBJOURNAL_C_FLAGS})
 target_link_libraries(journal ${XZ_LIBRARIES} ${LZ4_LIBRARIES})
 target_link_libraries(journal -pthread rt)
 
