@@ -7,6 +7,7 @@ add_subdirectory(str)
 add_library(journal_utils_obj STATIC
 	parse-uint.c
 	uuid/equal.c
+	uuid/isnull.c
 	uuid.c
 	uuid.h
 	boot/getid.c

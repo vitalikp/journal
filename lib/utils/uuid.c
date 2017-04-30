@@ -14,17 +14,6 @@
 #include "uuid.h"
 
 
-int uuid_is_null(const uuid_t id1)
-{
-	if (id1.qwords[0] > 0)
-		return 0;
-
-	if (id1.qwords[1] > 0)
-		return 0;
-
-	return 1;
-}
-
 static void random_get_bytes(uuid_t* id, size_t bytes)
 {
 	int fd;
