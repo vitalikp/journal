@@ -26,7 +26,7 @@
 #include <unistd.h>
 #include <sys/xattr.h>
 
-#include "boot.h"
+#include "utils.h"
 #include "journal-def.h"
 #include "journal-file.h"
 #include "journal-vacuum.h"

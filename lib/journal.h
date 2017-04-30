@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 - Vitaliy Perevertun
+ * Copyright © 2015-2017 - Vitaliy Perevertun
  *
  * This file is part of journal
  *
@@ -13,7 +13,6 @@
 #define _JOURNAL_H_INSIDE_
 
 #include <sd-journal.h>
-#include "boot.h"
 
 #undef _JOURNAL_H_INSIDE_
 

@@ -15,6 +15,7 @@
 
 #include "utils/str.h"
 #include "utils/uuid.h"
+#include "utils/boot.h"
 
 
 #define DEC(val) '0' + val

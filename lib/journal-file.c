@@ -28,7 +28,7 @@
 #include <stddef.h>
 #include <sys/xattr.h>
 
-#include "boot.h"
+#include "utils.h"
 #include "hash.h"
 #include "journal-def.h"
 #include "journal-file.h"

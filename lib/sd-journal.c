@@ -29,7 +29,7 @@
 #include <linux/magic.h>
 
 #include "journal.h"
-#include "boot.h"
+#include "utils.h"
 #include "hash.h"
 #include "journal-def.h"
 #include "journal-file.h"

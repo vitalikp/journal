@@ -26,8 +26,6 @@ add_subdirectory(mmap)
 # journal internal
 set(journal_int_src
 	utils.h
-	boot.c
-	boot.h
 	sd-journal.c
 	journal.h
 	journal-file.c

@@ -8,6 +8,8 @@ add_library(journal_utils_obj STATIC
 	parse-uint.c
 	uuid.c
 	uuid.h
+	boot.c
+	boot.h
 )
 
 
