@@ -14,17 +14,6 @@
 #include "uuid.h"
 
 
-int uuid_equal(const uuid_t id1, const uuid_t id2)
-{
-	if (id1.qwords[0] != id2.qwords[0])
-		return 0;
-
-	if (id1.qwords[1] != id2.qwords[1])
-		return 0;
-
-	return 1;
-}
-
 int uuid_is_null(const uuid_t id1)
 {
 	if (id1.qwords[0] > 0)
