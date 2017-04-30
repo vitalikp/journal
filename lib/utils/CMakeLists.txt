@@ -10,7 +10,7 @@ add_library(journal_utils_obj STATIC
 	uuid/isnull.c
 	uuid/genrand.c
 	uuid/tostr.c
-	uuid.c
+	uuid/parse.c
 	uuid.h
 	boot/getid.c
 	boot.h
