@@ -156,6 +156,7 @@
    - add syslog module;
    - add native module;
    - add msg module;
+   - add cmsg module;
    - add seqnum module;
    - add kmsg module;
    - init journal sockets without systemd daemon;

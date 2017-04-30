@@ -7,10 +7,12 @@
  * See the file LICENSE.
  */
 
+#ifndef _JOURNALD_CMSG_H_
+#define _JOURNALD_CMSG_H_
+
 #include "core/msg.h"
 
 
-void msg_decode(msg_t *msg, uint8_t *buf, size_t size)
-{
+void cmsg_decode(msg_t *msg, uint8_t *buf, size_t size);
 
-}
+#endif	/* _JOURNALD_CMSG_H_ */

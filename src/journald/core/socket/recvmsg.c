@@ -15,6 +15,7 @@
 #include <linux/sockios.h>
 
 #include "core/socket.h"
+#include "core/cmsg.h"
 
 
 ssize_t socket_recvmsg(int fd, msg_t *msg)
@@ -47,7 +48,7 @@ ssize_t socket_recvmsg(int fd, msg_t *msg)
 	if (!clock_gettime(CLOCK_REALTIME, &ts))
 		msg->ts = ts.tv_sec * CLOCKS_PER_SEC + ts.tv_nsec / 1000;
 
-	msg_decode(msg, buf, msghdr.msg_controllen);
+	cmsg_decode(msg, buf, msghdr.msg_controllen);
 
 	return res;
 }
