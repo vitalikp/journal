@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 - Vitaliy Perevertun
+ * Copyright © 2015-2017 - Vitaliy Perevertun
  *
  * This file is part of journal
  *
@@ -13,6 +13,6 @@
 #include "utils.h"
 
 
-int journal_get_bootid(uuid_t* boot_id);
+int boot_get_id(uuid_t* boot_id);
 
 #endif	/* _JOURNAL_BOOT_H_ */

@@ -178,7 +178,7 @@ static int journal_file_refresh_header(JournalFile *f) {
 
         assert(f);
 
-        r = journal_get_bootid(&boot_id);
+        r = boot_get_id(&boot_id);
         if (r < 0)
                 return r;
 

@@ -311,7 +311,7 @@ static void server_cache_boot_id(Server *s) {
 
         assert(s);
 
-        r = journal_get_bootid(&id);
+        r = boot_get_id(&id);
         if (r < 0)
                 return;
 

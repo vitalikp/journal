@@ -958,7 +958,7 @@ int add_match_this_boot(sd_journal *j) {
 
         assert(j);
 
-        r = journal_get_bootid(&boot_id);
+        r = boot_get_id(&boot_id);
         if (r < 0) {
                 log_error("Failed to get boot id: %s", strerror(-r));
                 return r;

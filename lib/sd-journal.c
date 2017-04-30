@@ -1874,7 +1874,7 @@ _public_ int sd_journal_get_monotonic_usec(sd_journal *j, uint64_t *ret, uuid_t 
         if (ret_boot_id)
                 *ret_boot_id = o->entry.boot_id;
         else {
-                if (journal_get_bootid(&id) < 0)
+                if (boot_get_id(&id) < 0)
                         return -errno;
 
                 if (!uuid_equal(id, o->entry.boot_id))

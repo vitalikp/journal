@@ -15,7 +15,7 @@
 #include "boot.h"
 
 
-int journal_get_bootid(uuid_t* boot_id)
+int boot_get_id(uuid_t* boot_id)
 {
 	int fd = -1;
 	char buf[37];
