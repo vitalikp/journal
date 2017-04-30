@@ -18,6 +18,7 @@
 typedef struct msg
 {
 	uint8_t		pri;
+	uint64_t	seqnum;
 	uint64_t	ts;
 	pid_t		pid;
 	uid_t		uid;
