@@ -511,7 +511,7 @@ static void write_to_journal(Server *s, uid_t realuid, struct iovec *iovec, unsi
                 server_schedule_sync(s, priority);
 }
 
-static int dispatch_message_real(
+int dispatch_message_real(
                 struct iovec *iovec,
                 struct ucred *ucred) {
 
