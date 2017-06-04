@@ -98,9 +98,8 @@
                 device.</para>
 
                 <para>Additional constraints may be added using options
-                <option>--boot</option>, <option>--unit=</option>,
-                etc, to further limit what entries will be shown
-                (logical AND).</para>
+                <option>--boot</option>, etc, to further limit what
+                entries will be shown (logical AND).</para>
 
                 <para>Output is interleaved from all accessible
                 journal files, whether they are rotated or currently
@@ -453,30 +452,6 @@
                                 implies <option>-b</option> and adds the match
                                 <literal>_TRANSPORT=kernel</literal>.
                                 </para></listitem>
-                        </varlistentry>
-
-                        <varlistentry>
-                                <term><option>-u</option></term>
-                                <term><option>--unit=<replaceable>UNIT</replaceable>|<replaceable>PATTERN</replaceable></option></term>
-
-                                <listitem><para>Show messages for the
-                                specified systemd unit
-                                <replaceable>UNIT</replaceable> (such
-                                as a service unit), or for any of the
-                                units matched by
-                                <replaceable>PATTERN</replaceable>.
-                                If a pattern is specified, a list of
-                                unit names found in the journal is
-                                compared with the specified pattern
-                                and all that match are used. For each
-                                unit name, a match is added for
-                                messages from the unit
-                                (<literal>_SYSTEMD_UNIT=<replaceable>UNIT</replaceable></literal>),
-                                along with additional matches for
-                                messages from systemd.</para>
-
-                                <para>This parameter can be specified
-                                multiple times.</para></listitem>
                         </varlistentry>
 
                         <varlistentry>

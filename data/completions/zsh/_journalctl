@@ -5,7 +5,6 @@ _list_fields() {
     journal_fields=(MESSAGE{,_ID} PRIORITY CODE_{FILE,LINE,FUNC}
                     ERRNO SYSLOG_{FACILITY,IDENTIFIER,PID}
                     _{P,U,G}ID _COMM _EXE _CMDLINE
-                    _SYSTEMD_UNIT
                     _SOURCE_REALTIME_TIMESTAMP
                     _{BOOT,MACHINE}_ID _HOSTNAME _TRANSPORT
                     _KERNEL_{DEVICE,SUBSYSTEM}
@@ -61,7 +60,6 @@ _arguments -s \
     {-b+,--boot=}'[Show data only from the specified boot or offset]:boot id or offset:_journal_boots' \
     '--list-boots[List boots ordered by time]' \
     {-k,--dmesg}'[Show only kernel messages from the current boot]' \
-    {-u+,--unit=}'[Show data only from the specified unit]:units:_journal_fields _SYSTEMD_UNIT' \
     {-p+,--priority=}'[Show only messages within the specified priority range]:priority:_journal_fields PRIORITY' \
     {-c+,--cursor=}'[Start showing entries from the specified cursor]:cursors:_journal_fields __CURSORS' \
     '--after-cursor=[Start showing entries from after the specified cursor]:cursors:_journal_fields __CURSORS' \

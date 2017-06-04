@@ -907,29 +907,6 @@ int output_journal(
         return ret;
 }
 
-int add_matches_for_unit(sd_journal *j, const char *unit) {
-        int r;
-        char *m1, *m2;
-
-        assert(j);
-        assert(unit);
-
-        m1 = strappenda("_SYSTEMD_UNIT=", unit);
-        m2 = strappenda("UNIT=", unit);
-
-        (void)(
-            /* Look for messages from the service itself */
-            (r = sd_journal_add_match(j, m1, 0)) ||
-
-             /* Look for messages from PID 1 about this service */
-            (r = sd_journal_add_disjunction(j)) ||
-            (r = sd_journal_add_match(j, "_PID=1", 0)) ||
-            (r = sd_journal_add_match(j, m2, 0))
-        );
-
-        return r;
-}
-
 int add_match_this_boot(sd_journal *j) {
         char match[9+32+1] = "_BOOT_ID=";
         uuid_t boot_id;

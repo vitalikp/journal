@@ -63,6 +63,7 @@
     - don't use regular pattern for file argument option;
     - don't use pager for help argument option;
     - remove this-boot argument option;
+    - remove unit argument option;
  * journal-fields:
     - remove MESSAGE_ID field;
     - remove coredump fields;

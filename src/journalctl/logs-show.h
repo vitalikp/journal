@@ -39,10 +39,6 @@ int output_journal(
 
 int add_match_this_boot(sd_journal *j);
 
-int add_matches_for_unit(
-                sd_journal *j,
-                const char *unit);
-
 void json_escape(
                 FILE *f,
                 const char* p,

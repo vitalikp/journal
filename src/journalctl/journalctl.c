@@ -72,8 +72,6 @@ static char *arg_file = NULL;
 static int arg_priorities = 0xFF;
 static usec_t arg_since, arg_until;
 static bool arg_since_set = false, arg_until_set = false;
-static int system_units_count = 0;
-static char* arg_system_units[256] = {};
 static const char *arg_field = NULL;
 static bool arg_reverse = false;
 static int arg_journal_type = 0;
@@ -150,7 +148,6 @@ static void help(void) {
                "  -b --boot[=ID]           Show data only from ID or, if unspecified, the current boot\n"
                "     --list-boots          Show terse information about recorded boots\n"
                "  -k --dmesg               Show kernel message log from the current boot\n"
-               "  -u --unit=UNIT           Show data only from the specified unit\n"
                "  -p --priority=RANGE      Show only messages within the specified priority range\n"
                "  -e --pager-end           Immediately jump to end of the journal in the pager\n"
                "  -f --follow              Follow the journal\n"
@@ -228,7 +225,6 @@ static int parse_argv(int argc, char *argv[]) {
                 { "show-cursor",    no_argument,       NULL, ARG_SHOW_CURSOR    },
                 { "since",          required_argument, NULL, ARG_SINCE          },
                 { "until",          required_argument, NULL, ARG_UNTIL          },
-                { "unit",           required_argument, NULL, 'u'                },
                 { "field",          required_argument, NULL, 'F'                },
                 { "reverse",        no_argument,       NULL, 'r'                },
                 {}
@@ -239,7 +235,7 @@ static int parse_argv(int argc, char *argv[]) {
         assert(argc >= 0);
         assert(argv);
 
-        while ((c = getopt_long(argc, argv, "hefo:aln::qb::kD:p:c:u:F:xrM:", options, NULL)) >= 0) {
+        while ((c = getopt_long(argc, argv, "hefo:aln::qb::kD:p:c:F:xrM:", options, NULL)) >= 0) {
 
                 switch (c) {
 
@@ -465,13 +461,6 @@ static int parse_argv(int argc, char *argv[]) {
                                 return -EINVAL;
                         }
                         arg_until_set = true;
-                        break;
-
-                case 'u':
-                        if (system_units_count >= 256)
-                        	return -EINVAL;
-
-                        arg_system_units[system_units_count++] = optarg;
                         break;
 
                 case 'F':
@@ -912,135 +901,6 @@ static int add_dmesg(sd_journal *j) {
         return 0;
 }
 
-static int get_possible_units(sd_journal *j,
-                              const char *fields,
-                              char **patterns,
-                              int plen,
-                              Set **units) {
-        _cleanup_set_free_free_ Set *found = NULL;
-        const char *field;
-        int i, r;
-
-        found = set_new(string_hash_func, string_compare_func);
-        if (!found)
-                return log_oom();
-
-        NULSTR_FOREACH(field, fields) {
-                const void *data;
-                size_t size;
-
-                r = sd_journal_query_unique(j, field);
-                if (r < 0)
-                        return r;
-
-                SD_JOURNAL_FOREACH_UNIQUE(j, data, size) {
-                        char *eq;
-                        size_t prefix;
-                        _cleanup_free_ char *u = NULL;
-
-                        eq = memchr(data, '=', size);
-                        if (eq)
-                                prefix = eq - (char*) data + 1;
-                        else
-                                prefix = 0;
-
-                        u = strndup((char*) data + prefix, size - prefix);
-                        if (!u)
-                                return log_oom();
-
-                        i = 0;
-                        while (i < plen)
-                        {
-                                if (fnmatch(patterns[i], u, FNM_NOESCAPE) == 0)
-                                {
-                                        log_debug("Matched %s with pattern %s=%s", u, field, patterns[i]);
-
-                                        r = set_consume(found, u);
-                                        u = NULL;
-                                        if (r < 0 && r != -EEXIST)
-                                                return r;
-
-                                        break;
-                                }
-
-                                i++;
-                        }
-                }
-        }
-
-        *units = found;
-        found = NULL;
-        return 0;
-}
-
-/* This list is supposed to return the superset of unit names
- * possibly matched by rules added with add_matches_for_unit... */
-#define SYSTEM_UNITS                 \
-        "_SYSTEMD_UNIT\0"            \
-        "UNIT\0"
-
-static int add_units(sd_journal *j) {
-        char *patterns[256] = {};
-        int r, i = 0, p = 0, count = 0;
-
-        assert(j);
-
-        char* u = NULL;
-        while (i < system_units_count)
-        {
-                u = arg_system_units[i++];
-
-                if (string_is_glob(u))
-                {
-                        if (p >= 256)
-                        	return -EINVAL;
-
-                        patterns[p++] = u;
-                        u = NULL;
-                } else {
-                        r = add_matches_for_unit(j, u);
-                        if (r < 0)
-                                return r;
-                        r = sd_journal_add_disjunction(j);
-                        if (r < 0)
-                                return r;
-                        count++;
-                }
-        }
-
-        if (p > 0)
-        {
-                _cleanup_set_free_free_ Set *units = NULL;
-                Iterator it;
-                char *u;
-
-                r = get_possible_units(j, SYSTEM_UNITS, patterns, p, &units);
-                if (r < 0)
-                        return r;
-
-                SET_FOREACH(u, units, it) {
-                        r = add_matches_for_unit(j, u);
-                        if (r < 0)
-                                return r;
-                        r = sd_journal_add_disjunction(j);
-                        if (r < 0)
-                                return r;
-                        count++;
-                }
-        }
-
-        /* Complain if the user request matches but nothing whatsoever was
-         * found, since otherwise everything would be matched. */
-        if (system_units_count > 0 && !count)
-                return -ENODATA;
-
-        r = sd_journal_add_conjunction(j);
-        if (r < 0)
-                return r;
-
-        return 0;
-}
-
 static int add_priorities(sd_journal *j) {
         char match[] = "PRIORITY=0";
         int i, r;
@@ -1208,13 +1068,6 @@ int main(int argc, char *argv[]) {
         r = add_dmesg(j);
         if (r < 0)
                 return EXIT_FAILURE;
-
-        r = add_units(j);
-
-        if (r < 0) {
-                log_error("Failed to add filter for units: %s", strerror(-r));
-                return EXIT_FAILURE;
-        }
 
         r = add_priorities(j);
         if (r < 0) {

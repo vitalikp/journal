@@ -27,7 +27,6 @@ __contains_word () {
 __journal_fields=(MESSAGE PRIORITY CODE_{FILE,LINE,FUNC}
                   ERRNO SYSLOG_{FACILITY,IDENTIFIER,PID}
                   _{P,U,G}ID _COMM _EXE _CMDLINE
-                  _SYSTEMD_UNIT
                   _SOURCE_REALTIME_TIMESTAMP
                   _{BOOT,MACHINE}_ID _HOSTNAME _TRANSPORT
                   _KERNEL_{DEVICE,SUBSYSTEM}
@@ -44,7 +43,7 @@ _journalctl() {
                               --no-tail -q --quiet --setup-keys -b --boot --verify
                               --version --list-boots'
                        [ARG]='-b --boot -D --directory --file -F --field
-                              -o --output -u --unit -p --priority'
+                              -o --output -p --priority'
                 [ARGUNKNOWN]='-c --cursor --interval -n --lines --since --until
                               --verify-key'
         )
@@ -70,9 +69,6 @@ _journalctl() {
                         ;;
                         --priority|-p)
                                 comps=${__syslog_priorities[*]}
-                        ;;
-                        --unit|-u)
-                                comps=$(journalctl -F '_SYSTEMD_UNIT' 2>/dev/null)
                         ;;
                         *)
                                 return 0
