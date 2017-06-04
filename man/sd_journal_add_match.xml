@@ -191,7 +191,7 @@
 
                 <programlisting>...
 int add_matches(sd_journal *j) {
-        sd_journal_add_match(j, "_SYSTEMD_UNIT=avahi-daemon.service", 0);
+        sd_journal_add_match(j, "SYSLOG_IDENTIFIER=avahi-daemon", 0);
         sd_journal_add_match(j, "PRIORITY=0", 0);
         sd_journal_add_match(j, "PRIORITY=1", 0);
         sd_journal_add_match(j, "PRIORITY=2", 0);

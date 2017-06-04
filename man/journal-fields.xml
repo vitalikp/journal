@@ -187,17 +187,6 @@
                         </varlistentry>
 
                         <varlistentry>
-                                <term><varname>_SYSTEMD_UNIT=</varname></term>
-
-                                <listitem>
-                                        <para>The systemd unit name (if
-                                        any) of the process the
-                                        journal entry originates
-                                        from.</para>
-                                </listitem>
-                        </varlistentry>
-
-                        <varlistentry>
                                 <term><varname>_SOURCE_REALTIME_TIMESTAMP=</varname></term>
                                 <listitem>
                                         <para>The earliest trusted
@@ -350,7 +339,7 @@
 
                 <para>Fields in this section are used by programs
                 to specify that they are logging on behalf of another
-                program or unit.
+                program.
                 </para>
 
                 <para>Priviledged programs (currently UID 0) may
