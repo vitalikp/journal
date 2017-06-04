@@ -541,8 +541,7 @@ void server_dispatch_message(
                 struct iovec *iovec, unsigned n, unsigned m,
                 struct ucred *ucred,
                 struct timeval *tv,
-                int priority,
-                pid_t object_pid) {
+                int priority) {
 
         int rl, r;
         char *c;

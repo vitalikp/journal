@@ -167,7 +167,7 @@ void server_process_native_message(
                         n += dispatch_message_real(&iovec[n], ucred);
                         n += dispatch_message_object(&iovec[n], object_pid);
 
-                        server_dispatch_message(s, iovec, n, m, ucred, tv, priority, object_pid);
+                        server_dispatch_message(s, iovec, n, m, ucred, tv, priority);
                         n = 0;
                         priority = LOG_INFO;
                         entry_size = 0;
@@ -336,7 +336,7 @@ void server_process_native_message(
         n += dispatch_message_real(&iovec[n], ucred);
         n += dispatch_message_object(&iovec[n], object_pid);
 
-        server_dispatch_message(s, iovec, n, m, ucred, tv, priority, object_pid);
+        server_dispatch_message(s, iovec, n, m, ucred, tv, priority);
 
 finish:
         for (j = 0; j < n; j++)  {

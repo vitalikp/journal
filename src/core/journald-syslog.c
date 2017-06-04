@@ -362,7 +362,7 @@ void server_process_syslog_message(
 
         n += dispatch_message_real(&iovec[n], ucred);
 
-        server_dispatch_message(s, iovec, n, ELEMENTSOF(iovec), ucred, tv, priority, 0);
+        server_dispatch_message(s, iovec, n, ELEMENTSOF(iovec), ucred, tv, priority);
 
         free(message);
         free(identifier);
