@@ -601,7 +601,6 @@ void server_dispatch_message(
                 struct iovec *iovec, unsigned n, unsigned m,
                 struct ucred *ucred,
                 struct timeval *tv,
-                const char *unit_id,
                 int priority,
                 pid_t object_pid) {
 
@@ -640,7 +639,7 @@ void server_dispatch_message(
                 server_driver_message(s, "Suppressed %u messages from uid %u", rl - 1, realuid);
 
 finish:
-        n += dispatch_message_real(&iovec[n], ucred, unit_id);
+        n += dispatch_message_real(&iovec[n], ucred, NULL);
         n += dispatch_message_object(&iovec[n], object_pid);
         n += dispatch_message(s, &iovec[n], tv);
         write_to_journal(s, realuid, iovec, n, priority);

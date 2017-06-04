@@ -121,7 +121,7 @@ typedef struct Server {
 #define N_IOVEC_KERNEL_FIELDS 64
 #define N_IOVEC_OBJECT_FIELDS 11
 
-void server_dispatch_message(Server *s, struct iovec *iovec, unsigned n, unsigned m, struct ucred *ucred, struct timeval *tv, const char *unit_id, int priority, pid_t object_pid);
+void server_dispatch_message(Server *s, struct iovec *iovec, unsigned n, unsigned m, struct ucred *ucred, struct timeval *tv, int priority, pid_t object_pid);
 void server_driver_message(Server *s, const char *format, ...) _printf_(2,3);
 
 /* gperf lookup function */

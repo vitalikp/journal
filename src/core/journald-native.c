@@ -110,7 +110,7 @@ void server_process_native_message(
                                 continue;
                         }
 
-                        server_dispatch_message(s, iovec, n, m, ucred, tv, NULL, priority, object_pid);
+                        server_dispatch_message(s, iovec, n, m, ucred, tv, priority, object_pid);
                         n = 0;
                         priority = LOG_INFO;
                         entry_size = 0;
@@ -276,7 +276,7 @@ void server_process_native_message(
                         server_forward_wall(s, priority, identifier, message, ucred);
         }
 
-        server_dispatch_message(s, iovec, n, m, ucred, tv, NULL, priority, object_pid);
+        server_dispatch_message(s, iovec, n, m, ucred, tv, priority, object_pid);
 
 finish:
         for (j = 0; j < n; j++)  {

@@ -360,7 +360,7 @@ void server_process_syslog_message(
         if (message)
                 IOVEC_SET_STRING(iovec[n++], message);
 
-        server_dispatch_message(s, iovec, n, ELEMENTSOF(iovec), ucred, tv, NULL, priority, 0);
+        server_dispatch_message(s, iovec, n, ELEMENTSOF(iovec), ucred, tv, priority, 0);
 
         free(message);
         free(identifier);
