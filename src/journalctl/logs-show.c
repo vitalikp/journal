@@ -930,27 +930,6 @@ int add_matches_for_unit(sd_journal *j, const char *unit) {
         return r;
 }
 
-int add_matches_for_user_unit(sd_journal *j, const char *unit, uid_t uid) {
-        int r;
-        char *m1;
-        char muid[sizeof("_UID=") + DECIMAL_STR_MAX(uid_t)];
-
-        assert(j);
-        assert(unit);
-
-        m1 = strappenda("USER_UNIT=", unit);
-        sprintf(muid, "_UID="UID_FMT, uid);
-
-        (void) (
-                /* Look for messages from systemd about this service */
-                (r = sd_journal_add_disjunction(j)) ||
-                (r = sd_journal_add_match(j, m1, 0)) ||
-                (r = sd_journal_add_match(j, muid, 0))
-        );
-
-        return r;
-}
-
 int add_match_this_boot(sd_journal *j) {
         char match[9+32+1] = "_BOOT_ID=";
         uuid_t boot_id;

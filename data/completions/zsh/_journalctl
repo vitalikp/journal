@@ -6,7 +6,6 @@ _list_fields() {
                     ERRNO SYSLOG_{FACILITY,IDENTIFIER,PID}
                     _{P,U,G}ID _COMM _EXE _CMDLINE
                     _SYSTEMD_UNIT
-                    USER_UNIT
                     _SOURCE_REALTIME_TIMESTAMP
                     _{BOOT,MACHINE}_ID _HOSTNAME _TRANSPORT
                     _KERNEL_{DEVICE,SUBSYSTEM}

@@ -52,7 +52,7 @@ int log_syntax_internal(const char *unit, int level,
         if (unit)
                 r = log_struct_internal(level,
                                         file, line, func,
-                                        getpid() == 1 ? "UNIT=%s" : "USER_UNIT=%s", unit,
+                                        "UNIT=%s", unit,
                                         "CONFIG_FILE=%s", config_file,
                                         "CONFIG_LINE=%u", config_line,
                                         "ERRNO=%d", error > 0 ? error : EINVAL,

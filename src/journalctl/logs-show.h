@@ -43,11 +43,6 @@ int add_matches_for_unit(
                 sd_journal *j,
                 const char *unit);
 
-int add_matches_for_user_unit(
-                sd_journal *j,
-                const char *unit,
-                uid_t uid);
-
 void json_escape(
                 FILE *f,
                 const char* p,
