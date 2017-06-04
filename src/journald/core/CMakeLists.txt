@@ -31,6 +31,7 @@ add_library(journald_core_obj STATIC
 	seqnum.h
 	kmsg/close.c
 	kmsg/read.c
+	kmsg/decode.c
 	kmsg.h
 	server/start.c
 	server/stop.c

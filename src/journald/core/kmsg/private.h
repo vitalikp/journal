@@ -14,5 +14,6 @@
 
 
 ssize_t kmsg_read(int fd, msg_t *msg);
+void kmsg_decode(msg_t *msg, size_t size);
 
 #endif	/* _KMSG_PRIVATE_H_ */
