@@ -122,6 +122,7 @@ typedef struct Server {
 #define N_IOVEC_OBJECT_FIELDS 11
 
 int dispatch_message_real(struct iovec *iovec, struct ucred *ucred);
+int dispatch_message(Server *s, struct iovec *iovec, struct timeval *tv);
 void server_dispatch_message(Server *s, struct iovec *iovec, unsigned n, unsigned m, struct ucred *ucred, struct timeval *tv, int priority);
 void server_driver_message(Server *s, const char *format, ...) _printf_(2,3);
 

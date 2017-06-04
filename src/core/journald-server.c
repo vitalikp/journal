@@ -365,7 +365,7 @@ bool shall_try_append_again(JournalFile *f, int r) {
         return true;
 }
 
-static int dispatch_message(Server *s, struct iovec *iovec, struct timeval *tv) {
+int dispatch_message(Server *s, struct iovec *iovec, struct timeval *tv) {
         unsigned n = 0;
         assert(s);
         assert(iovec);
