@@ -513,8 +513,7 @@ static void write_to_journal(Server *s, uid_t realuid, struct iovec *iovec, unsi
 
 static int dispatch_message_real(
                 struct iovec *iovec,
-                struct ucred *ucred,
-                const char *unit_id) {
+                struct ucred *ucred) {
 
         char    pid[sizeof("_PID=") + DECIMAL_STR_MAX(pid_t)],
                 uid[sizeof("_UID=") + DECIMAL_STR_MAX(uid_t)],
@@ -557,11 +556,6 @@ static int dispatch_message_real(
                         free(t);
                         IOVEC_SET_STRING(iovec[n++], x);
                 }
-
-                if (unit_id) {
-                        x = strappenda("_SYSTEMD_UNIT=", unit_id);
-                        IOVEC_SET_STRING(iovec[n++], x);
-                }
         }
 
         return n;
@@ -591,7 +585,7 @@ void server_driver_message(Server *s, const char *format, ...) {
         ucred.uid = getuid();
         ucred.gid = getgid();
 
-        n += dispatch_message_real(&iovec[n], &ucred, NULL);
+        n += dispatch_message_real(&iovec[n], &ucred);
         n += dispatch_message(s, &iovec[n], NULL);
         write_to_journal(s, ucred.uid, iovec, n, LOG_INFO);
 }
@@ -639,7 +633,7 @@ void server_dispatch_message(
                 server_driver_message(s, "Suppressed %u messages from uid %u", rl - 1, realuid);
 
 finish:
-        n += dispatch_message_real(&iovec[n], ucred, NULL);
+        n += dispatch_message_real(&iovec[n], ucred);
         n += dispatch_message_object(&iovec[n], object_pid);
         n += dispatch_message(s, &iovec[n], tv);
         write_to_journal(s, realuid, iovec, n, priority);
