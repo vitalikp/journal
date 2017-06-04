@@ -389,10 +389,9 @@ static int dispatch_message(Server *s, struct iovec *iovec, struct timeval *tv) 
         return n;
 }
 
-static int dispatch_message_object(Server *s, struct iovec *iovec, pid_t object_pid) {
+static int dispatch_message_object(struct iovec *iovec, pid_t object_pid) {
         unsigned n = 0;
 
-        assert(s);
         assert(iovec);
 
         if (!object_pid)
@@ -642,7 +641,7 @@ void server_dispatch_message(
 
 finish:
         n += dispatch_message_real(&iovec[n], ucred, unit_id);
-        n += dispatch_message_object(s, &iovec[n], object_pid);
+        n += dispatch_message_object(&iovec[n], object_pid);
         n += dispatch_message(s, &iovec[n], tv);
         write_to_journal(s, realuid, iovec, n, priority);
 }
