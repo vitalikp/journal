@@ -110,6 +110,8 @@ void server_process_native_message(
                                 continue;
                         }
 
+                        n += dispatch_message_real(&iovec[n], ucred);
+
                         server_dispatch_message(s, iovec, n, m, ucred, tv, priority, object_pid);
                         n = 0;
                         priority = LOG_INFO;
@@ -275,6 +277,8 @@ void server_process_native_message(
                 if (s->forward_to_wall)
                         server_forward_wall(s, priority, identifier, message, ucred);
         }
+
+        n += dispatch_message_real(&iovec[n], ucred);
 
         server_dispatch_message(s, iovec, n, m, ucred, tv, priority, object_pid);
 

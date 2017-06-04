@@ -360,6 +360,8 @@ void server_process_syslog_message(
         if (message)
                 IOVEC_SET_STRING(iovec[n++], message);
 
+        n += dispatch_message_real(&iovec[n], ucred);
+
         server_dispatch_message(s, iovec, n, ELEMENTSOF(iovec), ucred, tv, priority, 0);
 
         free(message);

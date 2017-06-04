@@ -633,7 +633,6 @@ void server_dispatch_message(
                 server_driver_message(s, "Suppressed %u messages from uid %u", rl - 1, realuid);
 
 finish:
-        n += dispatch_message_real(&iovec[n], ucred);
         n += dispatch_message_object(&iovec[n], object_pid);
         n += dispatch_message(s, &iovec[n], tv);
         write_to_journal(s, realuid, iovec, n, priority);
