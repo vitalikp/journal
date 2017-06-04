@@ -71,6 +71,60 @@ static bool allow_object_pid(struct ucred *ucred) {
         return ucred && ucred->uid == 0;
 }
 
+static int dispatch_message_object(struct iovec *iovec, pid_t object_pid) {
+        unsigned n = 0;
+
+        assert(iovec);
+
+        if (!object_pid)
+                return 0;
+
+        char o_uid[sizeof("OBJECT_UID=") + DECIMAL_STR_MAX(uid_t)],
+             o_gid[sizeof("OBJECT_GID=") + DECIMAL_STR_MAX(gid_t)];
+
+        uid_t object_uid;
+        gid_t object_gid;
+
+        char *x;
+        int r;
+        char *t;
+
+        r = get_process_uid(object_pid, &object_uid);
+        if (r >= 0) {
+                sprintf(o_uid, "OBJECT_UID="UID_FMT, object_uid);
+                IOVEC_SET_STRING(iovec[n++], o_uid);
+        }
+
+        r = get_process_gid(object_pid, &object_gid);
+        if (r >= 0) {
+                sprintf(o_gid, "OBJECT_GID="GID_FMT, object_gid);
+                IOVEC_SET_STRING(iovec[n++], o_gid);
+        }
+
+        r = get_process_comm(object_pid, &t);
+        if (r >= 0) {
+                x = strappenda("OBJECT_COMM=", t);
+                free(t);
+                IOVEC_SET_STRING(iovec[n++], x);
+        }
+
+        r = get_process_exe(object_pid, &t);
+        if (r >= 0) {
+                x = strappenda("OBJECT_EXE=", t);
+                free(t);
+                IOVEC_SET_STRING(iovec[n++], x);
+        }
+
+        r = get_process_cmdline(object_pid, 0, false, &t);
+        if (r >= 0) {
+                x = strappenda("OBJECT_CMDLINE=", t);
+                free(t);
+                IOVEC_SET_STRING(iovec[n++], x);
+        }
+
+        return n;
+}
+
 void server_process_native_message(
                 Server *s,
                 const void *buffer, size_t buffer_size,
@@ -111,6 +165,7 @@ void server_process_native_message(
                         }
 
                         n += dispatch_message_real(&iovec[n], ucred);
+                        n += dispatch_message_object(&iovec[n], object_pid);
 
                         server_dispatch_message(s, iovec, n, m, ucred, tv, priority, object_pid);
                         n = 0;
@@ -279,6 +334,7 @@ void server_process_native_message(
         }
 
         n += dispatch_message_real(&iovec[n], ucred);
+        n += dispatch_message_object(&iovec[n], object_pid);
 
         server_dispatch_message(s, iovec, n, m, ucred, tv, priority, object_pid);
 

@@ -389,60 +389,6 @@ static int dispatch_message(Server *s, struct iovec *iovec, struct timeval *tv) 
         return n;
 }
 
-static int dispatch_message_object(struct iovec *iovec, pid_t object_pid) {
-        unsigned n = 0;
-
-        assert(iovec);
-
-        if (!object_pid)
-                return 0;
-
-        char o_uid[sizeof("OBJECT_UID=") + DECIMAL_STR_MAX(uid_t)],
-             o_gid[sizeof("OBJECT_GID=") + DECIMAL_STR_MAX(gid_t)];
-
-        uid_t object_uid;
-        gid_t object_gid;
-
-        char *x;
-        int r;
-        char *t;
-
-        r = get_process_uid(object_pid, &object_uid);
-        if (r >= 0) {
-                sprintf(o_uid, "OBJECT_UID="UID_FMT, object_uid);
-                IOVEC_SET_STRING(iovec[n++], o_uid);
-        }
-
-        r = get_process_gid(object_pid, &object_gid);
-        if (r >= 0) {
-                sprintf(o_gid, "OBJECT_GID="GID_FMT, object_gid);
-                IOVEC_SET_STRING(iovec[n++], o_gid);
-        }
-
-        r = get_process_comm(object_pid, &t);
-        if (r >= 0) {
-                x = strappenda("OBJECT_COMM=", t);
-                free(t);
-                IOVEC_SET_STRING(iovec[n++], x);
-        }
-
-        r = get_process_exe(object_pid, &t);
-        if (r >= 0) {
-                x = strappenda("OBJECT_EXE=", t);
-                free(t);
-                IOVEC_SET_STRING(iovec[n++], x);
-        }
-
-        r = get_process_cmdline(object_pid, 0, false, &t);
-        if (r >= 0) {
-                x = strappenda("OBJECT_CMDLINE=", t);
-                free(t);
-                IOVEC_SET_STRING(iovec[n++], x);
-        }
-
-        return n;
-}
-
 static void write_to_journal(Server *s, uid_t realuid, struct iovec *iovec, unsigned n, int priority) {
         JournalFile *f;
         bool vacuumed = false;
@@ -633,7 +579,6 @@ void server_dispatch_message(
                 server_driver_message(s, "Suppressed %u messages from uid %u", rl - 1, realuid);
 
 finish:
-        n += dispatch_message_object(&iovec[n], object_pid);
         n += dispatch_message(s, &iovec[n], tv);
         write_to_journal(s, realuid, iovec, n, priority);
 }
