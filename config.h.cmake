@@ -4,6 +4,9 @@
 #cmakedefine _GNU_SOURCE @_GNU_SOURCE@ 
 #endif
 
+/* Maximum host name length */
+#define HOST_NAME_MAX 64
+
 /* Define if kmod is available */
 #cmakedefine HAVE_KMOD @HAVE_KMOD@
 
