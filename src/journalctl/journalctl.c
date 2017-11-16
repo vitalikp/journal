@@ -31,6 +31,7 @@
 #include <time.h>
 #include <getopt.h>
 #include <signal.h>
+#include <sys/sysmacros.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
 #include <linux/fs.h>
