@@ -85,7 +85,7 @@ endif()
 # check lz4 library
 option(LZ4_ENABLE "Enable optional LZ4 support" OFF)
 if (${LZ4_ENABLE})
-	pkg_check_modules(LZ4 REQUIRED liblz4>=125)
+	pkg_check_modules(LZ4 REQUIRED liblz4)
 	set(HAVE_LZ4 1)
 endif()
 
