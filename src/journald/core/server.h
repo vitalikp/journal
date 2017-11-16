@@ -30,6 +30,8 @@ struct server
 	/** kmsg sequence number */
 	uint64_t	kseqnum;
 
+	char		hostname[HOST_NAME_MAX];
+
 	msg_t		*msg;
 };
 
