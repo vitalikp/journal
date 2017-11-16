@@ -125,7 +125,7 @@ void server_dispatch_message(Server *s, struct iovec *iovec, unsigned n, unsigne
 void server_driver_message(Server *s, const char *format, ...) _printf_(2,3);
 
 /* gperf lookup function */
-const struct ConfigPerfItem* journald_gperf_lookup(const char *key, unsigned length);
+const struct ConfigPerfItem* journald_gperf_lookup(const char *key, size_t length);
 
 int config_parse_storage(const char *unit, const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data, void *userdata);
 
