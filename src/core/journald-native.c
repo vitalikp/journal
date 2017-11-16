@@ -29,7 +29,6 @@
 #include "journald-kmsg.h"
 #include "journald-console.h"
 #include "journald-syslog.h"
-#include "journald-wall.h"
 #include "core/socket.h"
 
 bool valid_user_field(const char *p, size_t l, bool allow_protected) {
@@ -328,9 +327,6 @@ void server_process_native_message(
 
                 if (s->forward_to_console)
                         server_forward_console(s, priority, identifier, message, ucred);
-
-                if (s->forward_to_wall)
-                        server_forward_wall(s, priority, identifier, message, ucred);
         }
 
         n += dispatch_message_real(&iovec[n], ucred);

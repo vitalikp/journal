@@ -21,8 +21,6 @@ add_library(journal_core_obj STATIC
 	core/journald-server.h
 	core/journald-console.c
 	core/journald-console.h
-	core/journald-wall.c
-	core/journald-wall.h
 	core/journald-native.c
 	core/journald-native.h
 	core/journald-rate-limit.c

@@ -218,4 +218,5 @@
  * remove using systemd library;
  * remove audit support;
  * remove selinux support;
+ * remove wall support;
  * code optimization;

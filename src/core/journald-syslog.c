@@ -28,7 +28,6 @@
 #include "journald-syslog.h"
 #include "journald-kmsg.h"
 #include "journald-console.h"
-#include "journald-wall.h"
 #include "core/socket.h"
 
 static void forward_syslog_iovec(Server *s, const struct iovec *iovec, unsigned n_iovec) {
@@ -331,9 +330,6 @@ void server_process_syslog_message(
 
         if (s->forward_to_console)
                 server_forward_console(s, priority, identifier, buf, ucred);
-
-        if (s->forward_to_wall)
-                server_forward_wall(s, priority, identifier, buf, ucred);
 
         IOVEC_SET_STRING(iovec[n++], "_TRANSPORT=syslog");
 

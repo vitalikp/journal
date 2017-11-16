@@ -933,12 +933,6 @@ static int server_parse_proc_cmdline(Server *s) {
                                 log_warning("Failed to parse forward to console switch %s. Ignoring.", word + 36);
                         else
                                 s->forward_to_console = r;
-                } else if (startswith(word, "journald.forward_to_wall=")) {
-                        r = parse_boolean(word + 33);
-                        if (r < 0)
-                                log_warning("Failed to parse forward to wall switch %s. Ignoring.", word + 33);
-                        else
-                                s->forward_to_wall = r;
                 } else if (startswith(word, "journald"))
                         log_warning("Invalid journald parameter. Ignoring.");
         }
@@ -1022,7 +1016,6 @@ int server_init(Server *s) {
         s->sync_time = -1;
 
         s->forward_to_syslog = false;
-        s->forward_to_wall = true;
 
         s->max_file_usec = DEFAULT_MAX_FILE_USEC;
 
@@ -1030,7 +1023,6 @@ int server_init(Server *s) {
         s->max_level_syslog = LOG_DEBUG;
         s->max_level_kmsg = LOG_NOTICE;
         s->max_level_console = LOG_INFO;
-        s->max_level_wall = LOG_EMERG;
 
         journal_reset_metrics(&s->system_metrics);
         journal_reset_metrics(&s->runtime_metrics);
