@@ -26,8 +26,6 @@ add_library(journal_shared_obj STATIC
 	gunicode.h
 	pager.c
 	pager.h
-	utmp-wtmp.c
-	utmp-wtmp.h
 	fileio.c
 	fileio.h
 )
