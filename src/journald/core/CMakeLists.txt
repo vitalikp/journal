@@ -14,6 +14,9 @@ add_library(journald_core_obj STATIC
 	msg.h
 	cmsg/decode.c
 	cmsg.h
+	hostname/open.c
+	hostname/read.c
+	hostname.h
 	socket/open.c
 	socket/setsndbuf.c
 	socket/getsize.c

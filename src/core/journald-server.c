@@ -318,24 +318,6 @@ static void server_cache_boot_id(Server *s) {
         uuid_to_str(id, stpcpy(s->boot_id_field, "_BOOT_ID="));
 }
 
-static void server_cache_hostname(Server *s) {
-        _cleanup_free_ char *t = NULL;
-        char *x;
-
-        assert(s);
-
-        t = gethostname_malloc();
-        if (!t)
-                return;
-
-        x = strappend("_HOSTNAME=", t);
-        if (!x)
-                return;
-
-        free(s->hostname_field);
-        s->hostname_field = x;
-}
-
 bool shall_try_append_again(JournalFile *f, int r) {
 
         /* -E2BIG            Hit configured limit
@@ -383,8 +365,8 @@ int dispatch_message(Server *s, struct iovec *iovec, struct timeval *tv) {
         if (!isempty(s->boot_id_field))
                 IOVEC_SET_STRING(iovec[n++], s->boot_id_field);
 
-        if (!isempty(s->hostname_field))
-                IOVEC_SET_STRING(iovec[n++], s->hostname_field);
+        if (!isempty(s->server.hostname))
+                IOVEC_SET_STRING(iovec[n++], strappend("_HOSTNAME=", s->server.hostname));
 
         return n;
 }
@@ -964,45 +946,6 @@ int server_schedule_sync(Server *s, int priority) {
         return 0;
 }
 
-static int dispatch_hostname_change(int fd, uint32_t events, void *userdata) {
-        Server *s = userdata;
-
-        assert(s);
-
-        server_cache_hostname(s);
-        return 0;
-}
-
-static int server_open_hostname(Server *s) {
-        int r;
-
-        assert(s);
-
-        s->hostname_fd = open("/proc/sys/kernel/hostname", O_RDONLY|O_CLOEXEC|O_NDELAY|O_NOCTTY);
-        if (s->hostname_fd < 0) {
-                log_error("Failed to open /proc/sys/kernel/hostname: %m");
-                return -errno;
-        }
-
-        r = epollfd_add(s->server.epoll, s->hostname_fd, 0, (event_cb)dispatch_hostname_change, s);
-		if (r < 0)
-		{
-			/* kernels prior to 3.2 don't support polling this file. Ignore
-			 * the failure. */
-			if (errno == EPERM)
-			{
-				log_warning("Failed to register hostname fd in event loop: %m. Ignoring.");
-				s->hostname_fd = safe_close(s->hostname_fd);
-				return 0;
-			}
-
-			log_error("Failed to register hostname fd in event loop: %m.");
-			return -1;
-		}
-
-        return 0;
-}
-
 int server_init(Server *s) {
         int r, fd;
 
@@ -1060,10 +1003,6 @@ int server_init(Server *s) {
         if (r < 0)
                 return r;
 
-        r = server_open_hostname(s);
-        if (r < 0)
-                return r;
-
         r = setup_signals(s);
         if (r < 0)
                 return r;
@@ -1072,7 +1011,6 @@ int server_init(Server *s) {
         if (!s->rate_limit)
                 return -ENOMEM;
 
-        server_cache_hostname(s);
         server_cache_boot_id(s);
 
         r = system_journal_open(s);
@@ -1098,7 +1036,6 @@ void server_done(Server *s) {
         hashmap_free(s->user_journals);
 
         server_stop(&s->server);
-        safe_close(s->hostname_fd);
 
         if (s->rate_limit)
                 journal_rate_limit_free(s->rate_limit);

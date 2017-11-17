@@ -162,6 +162,7 @@
    - add cmsg module;
    - add seqnum module;
    - add kmsg module;
+   - add hostname module;
    - init journal sockets without systemd daemon;
    - open journal sockets with socket module;
    - add ServerState enum type;

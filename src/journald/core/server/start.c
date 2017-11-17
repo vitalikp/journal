@@ -13,6 +13,7 @@
 #include "core/server.h"
 #include "core/run.h"
 #include "core/seqnum.h"
+#include "core/hostname.h"
 #include "log.h"
 
 
@@ -41,6 +42,9 @@ int server_start(server_t *s)
 		return -1;
 
 	seqnum_load(JOURNAL_RUNDIR "/kernel-seqnum", &s->kseqnum);
+
+	if (hostname_open(s) < 0)
+		return -1;
 
 	return 0;
 }
