@@ -952,7 +952,7 @@ int server_init(Server *s) {
         assert(s);
 
         zero(*s);
-        s->server.syslog_fd = s->server.native_fd = s->server.kmsg_fd = s->hostname_fd = -1;
+        s->server.syslog_fd = s->server.native_fd = s->server.kmsg_fd;
         s->compress = true;
 
         s->sync_interval_usec = DEFAULT_SYNC_INTERVAL_USEC;
