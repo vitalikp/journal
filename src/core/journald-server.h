@@ -112,7 +112,6 @@ typedef struct Server {
         usec_t sync_time;
 
         char boot_id_field[sizeof("_BOOT_ID=") + 32];
-        char *hostname_field;
 } Server;
 
 #define N_IOVEC_META_FIELDS 20

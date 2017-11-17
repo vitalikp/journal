@@ -149,6 +149,7 @@
        - remove udev field;
        - add epoll field;
        - remove epoll_fd field;
+       - remove hostname_field field;
    - don't add machine_id to root log path directory;
    - don't notify systemd watchdog;
    - dont't notify status to systemd;
