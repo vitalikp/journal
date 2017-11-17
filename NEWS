@@ -151,6 +151,7 @@
        - remove epoll_fd field;
        - remove hostname_field field;
        - remove hostname_fd field;
+       - remove boot_id_field field;
    - don't add machine_id to root log path directory;
    - don't notify systemd watchdog;
    - dont't notify status to systemd;
