@@ -341,15 +341,6 @@ ssize_t loop_write(int fd, const void *buf, size_t nbytes, bool do_poll);
 
 char* dirname_malloc(const char *path);
 
-char* gethostname_malloc(void);
-char* getlogname_malloc(void);
-
-int getttyname_malloc(int fd, char **r);
-int getttyname_harder(int fd, char **r);
-
-int get_ctty_devnr(pid_t pid, dev_t *d);
-int get_ctty(pid_t, dev_t *_devnr, char **r);
-
 int chmod_and_chown(const char *path, mode_t mode, uid_t uid, gid_t gid);
 
 int rm_rf_children(int fd, bool only_dirs, bool honour_sticky, struct stat *root_dev);
