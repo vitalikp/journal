@@ -305,19 +305,6 @@ void server_vacuum(Server *s) {
         s->cached_available_space_timestamp = 0;
 }
 
-static void server_cache_boot_id(Server *s) {
-        uuid_t id;
-        int r;
-
-        assert(s);
-
-        r = boot_get_id(&id);
-        if (r < 0)
-                return;
-
-        uuid_to_str(id, stpcpy(s->boot_id_field, "_BOOT_ID="));
-}
-
 bool shall_try_append_again(JournalFile *f, int r) {
 
         /* -E2BIG            Hit configured limit
@@ -352,6 +339,7 @@ int dispatch_message(Server *s, struct iovec *iovec, struct timeval *tv) {
         assert(s);
         assert(iovec);
 
+        char boot_id_field[sizeof("_BOOT_ID=") + 32];
         char source_time[sizeof("_SOURCE_REALTIME_TIMESTAMP=") + DECIMAL_STR_MAX(usec_t)];
 
         if (tv) {
@@ -362,8 +350,11 @@ int dispatch_message(Server *s, struct iovec *iovec, struct timeval *tv) {
         /* Note that strictly speaking storing the boot id here is
          * redundant since the entry includes this in-line
          * anyway. However, we need this indexed, too. */
-        if (!isempty(s->boot_id_field))
-                IOVEC_SET_STRING(iovec[n++], s->boot_id_field);
+        if (!uuid_is_null(s->server.boot_id)) {
+                str_copy(boot_id_field, "_BOOT_ID=", 10);
+                uuid_to_str(s->server.boot_id, &boot_id_field[9]);
+                IOVEC_SET_STRING(iovec[n++], boot_id_field);
+        }
 
         if (!isempty(s->server.hostname))
                 IOVEC_SET_STRING(iovec[n++], strappend("_HOSTNAME=", s->server.hostname));
@@ -1010,8 +1001,6 @@ int server_init(Server *s) {
         s->rate_limit = journal_rate_limit_new(s->rate_limit_interval, s->rate_limit_burst);
         if (!s->rate_limit)
                 return -ENOMEM;
-
-        server_cache_boot_id(s);
 
         r = system_journal_open(s);
         if (r < 0)

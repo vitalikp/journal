@@ -12,6 +12,7 @@
 
 #include "epollfd.h"
 #include "msg.h"
+#include "utils.h"
 
 
 typedef struct server server_t;
@@ -30,6 +31,7 @@ struct server
 	/** kmsg sequence number */
 	uint64_t	kseqnum;
 
+	uuid_t		boot_id;
 	char		hostname[HOST_NAME_MAX];
 
 	msg_t		*msg;

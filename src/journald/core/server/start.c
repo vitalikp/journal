@@ -46,5 +46,7 @@ int server_start(server_t *s)
 	if (hostname_open(s) < 0)
 		return -1;
 
+	boot_get_id(&s->boot_id);
+
 	return 0;
 }
