@@ -122,12 +122,12 @@ void server_driver_message(Server *s, const char *format, ...) _printf_(2,3);
 /* gperf lookup function */
 const struct ConfigPerfItem* journald_gperf_lookup(const char *key, size_t length);
 
-int config_parse_storage(const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data);
+int config_parse_storage(const char *filename, unsigned line, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data);
 
 const char *storage_to_string(Storage s) _const_;
 Storage storage_from_string(const char *s) _pure_;
 
-int config_parse_split_mode(const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data);
+int config_parse_split_mode(const char *filename, unsigned line, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data);
 
 const char *split_mode_to_string(SplitMode s) _const_;
 SplitMode split_mode_from_string(const char *s) _pure_;

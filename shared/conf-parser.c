@@ -128,7 +128,7 @@ static int next_assignment(const char *filename,
 
         if (r > 0) {
                 if (func)
-                        return func(filename, line, section, section_line,
+                        return func(filename, line, section_line,
                                     lvalue, ltype, rvalue, data);
 
                 return 0;
@@ -354,7 +354,6 @@ int config_parse(const char *filename,
 #define DEFINE_PARSER(type, vartype, conv_func)                         \
         int config_parse_##type(const char *filename,                   \
                                 unsigned line,                          \
-                                const char *section,                    \
                                 unsigned section_line,                  \
                                 const char *lvalue,                     \
                                 int ltype,                              \
@@ -383,7 +382,6 @@ DEFINE_PARSER(sec, usec_t, parse_sec)
 
 int config_parse_iec_off(const char *filename,
                            unsigned line,
-                           const char *section,
                            unsigned section_line,
                            const char *lvalue,
                            int ltype,
@@ -409,7 +407,6 @@ int config_parse_iec_off(const char *filename,
 
 int config_parse_bool(const char *filename,
                       unsigned line,
-                      const char *section,
                       unsigned section_line,
                       const char *lvalue,
                       int ltype,
@@ -438,7 +435,6 @@ int config_parse_bool(const char *filename,
 int config_parse_string(
                 const char *filename,
                 unsigned line,
-                const char *section,
                 unsigned section_line,
                 const char *lvalue,
                 int ltype,
@@ -474,7 +470,6 @@ int config_parse_string(
 int config_parse_path(
                 const char *filename,
                 unsigned line,
-                const char *section,
                 unsigned section_line,
                 const char *lvalue,
                 int ltype,
@@ -513,7 +508,6 @@ int config_parse_path(
 int config_parse_log_level(
                 const char *filename,
                 unsigned line,
-                const char *section,
                 unsigned section_line,
                 const char *lvalue,
                 int ltype,
