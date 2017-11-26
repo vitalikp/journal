@@ -13,6 +13,8 @@ execute_process(
 	OUTPUT_FILE ${JOURNALD_GPERF_C}
 )
 add_library(journal_core_obj STATIC
+	core/conf-parser.c
+	core/conf-parser.h
 	core/journald-kmsg.c
 	core/journald-kmsg.h
 	core/journald-syslog.c

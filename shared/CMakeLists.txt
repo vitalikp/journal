@@ -16,8 +16,6 @@ add_library(journal_shared_obj STATIC
 	siphash24.h
 	set.c
 	set.h
-	conf-parser.c
-	conf-parser.h
 	log.c
 	log.h
 	utf8.c

@@ -124,6 +124,7 @@
     - remove mkdir module;
     - remove strv module;
     - remove utmp-wtmp module;
+    - move conf-parser module to journald;
  * remove prefix field from sd_journal struct;
  * data:
    - add priority values for p journalctl argument option;
