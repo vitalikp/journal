@@ -129,7 +129,7 @@ static int next_assignment(const char *filename,
         if (r > 0) {
                 if (func)
                         return func(filename, line, section, section_line,
-                                    lvalue, ltype, rvalue, data, userdata);
+                                    lvalue, ltype, rvalue, data);
 
                 return 0;
         }
@@ -359,8 +359,7 @@ int config_parse(const char *filename,
                                 const char *lvalue,                     \
                                 int ltype,                              \
                                 const char *rvalue,                     \
-                                void *data,                             \
-                                void *userdata) {                       \
+                                void *data) {                           \
                                                                         \
                 vartype *i = data;                                      \
                 int r;                                                  \
@@ -389,8 +388,7 @@ int config_parse_iec_off(const char *filename,
                            const char *lvalue,
                            int ltype,
                            const char *rvalue,
-                           void *data,
-                           void *userdata) {
+                           void *data) {
 
         off_t *bytes = data;
         int r;
@@ -416,8 +414,7 @@ int config_parse_bool(const char *filename,
                       const char *lvalue,
                       int ltype,
                       const char *rvalue,
-                      void *data,
-                      void *userdata) {
+                      void *data) {
 
         int k;
         bool *b = data;
@@ -446,8 +443,7 @@ int config_parse_string(
                 const char *lvalue,
                 int ltype,
                 const char *rvalue,
-                void *data,
-                void *userdata) {
+                void *data) {
 
         char **s = data, *n;
 
@@ -483,8 +479,7 @@ int config_parse_path(
                 const char *lvalue,
                 int ltype,
                 const char *rvalue,
-                void *data,
-                void *userdata) {
+                void *data) {
 
         char **s = data, *n;
 
@@ -523,8 +518,7 @@ int config_parse_log_level(
                 const char *lvalue,
                 int ltype,
                 const char *rvalue,
-                void *data,
-                void *userdata) {
+                void *data) {
 
 
         int *o = data, x;

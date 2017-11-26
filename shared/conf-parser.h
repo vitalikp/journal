@@ -37,8 +37,7 @@ typedef int (*ConfigParserCallback)(const char *filename,
                                     const char *lvalue,
                                     int ltype,
                                     const char *rvalue,
-                                    void *data,
-                                    void *userdata);
+                                    void *data);
 
 /* Wraps information for parsing a specific configuration variable, to
  * be stored in a gperf perfect hashtable */
@@ -73,13 +72,13 @@ int config_parse(const char *filename,
                  void *userdata);
 
 /* Generic parsers */
-int config_parse_unsigned(const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data, void *userdata);
-int config_parse_iec_off(const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data, void *userdata);
-int config_parse_bool(const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data, void *userdata);
-int config_parse_string(const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data, void *userdata);
-int config_parse_path(const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data, void *userdata);
-int config_parse_sec(const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data, void *userdata);
-int config_parse_log_level(const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data, void *userdata);
+int config_parse_unsigned(const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data);
+int config_parse_iec_off(const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data);
+int config_parse_bool(const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data);
+int config_parse_string(const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data);
+int config_parse_path(const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data);
+int config_parse_sec(const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data);
+int config_parse_log_level(const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data);
 
 int log_syntax_internal(int level,
                         const char *file, unsigned line, const char *func,
@@ -106,8 +105,7 @@ int log_syntax_internal(int level,
                      const char *lvalue,                                \
                      int ltype,                                         \
                      const char *rvalue,                                \
-                     void *data,                                        \
-                     void *userdata) {                                  \
+                     void *data) {                                      \
                                                                         \
                 type *i = data, x;                                      \
                                                                         \
