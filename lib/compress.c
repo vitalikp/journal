@@ -95,7 +95,7 @@ int compress_blob_lz4(const void *src, uint64_t src_size, void *dst, size_t *dst
         if (src_size < 9)
                 return -ENOBUFS;
 
-        r = LZ4_compress_limitedOutput(src, dst + 8, src_size, src_size - 8 - 1);
+        r = LZ4_compress_default(src, dst + 8, src_size, src_size - 8 - 1);
         if (r <= 0)
                 return -ENOBUFS;
 
