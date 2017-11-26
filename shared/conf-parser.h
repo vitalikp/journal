@@ -30,8 +30,7 @@
  * files consisting of variable assignments only. */
 
 /* Prototype for a parser for a specific configuration setting */
-typedef int (*ConfigParserCallback)(const char *unit,
-                                    const char *filename,
+typedef int (*ConfigParserCallback)(const char *filename,
                                     unsigned line,
                                     const char *section,
                                     unsigned section_line,
@@ -67,8 +66,7 @@ typedef int (*ConfigItemLookup)(
  * ConfigPerfItem tables */
 int config_item_perf_lookup(const void *table, const char *section, const char *lvalue, ConfigParserCallback *func, int *ltype, void **data, void *userdata);
 
-int config_parse(const char *unit,
-                 const char *filename,
+int config_parse(const char *filename,
                  FILE *f,
                  const char *sections,  /* nulstr */
                  ConfigItemLookup lookup,
@@ -79,34 +77,33 @@ int config_parse(const char *unit,
                  void *userdata);
 
 /* Generic parsers */
-int config_parse_unsigned(const char *unit, const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data, void *userdata);
-int config_parse_iec_off(const char *unit, const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data, void *userdata);
-int config_parse_bool(const char *unit, const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data, void *userdata);
-int config_parse_string(const char *unit, const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data, void *userdata);
-int config_parse_path(const char *unit, const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data, void *userdata);
-int config_parse_sec(const char *unit, const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data, void *userdata);
-int config_parse_log_level(const char *unit, const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data, void *userdata);
+int config_parse_unsigned(const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data, void *userdata);
+int config_parse_iec_off(const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data, void *userdata);
+int config_parse_bool(const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data, void *userdata);
+int config_parse_string(const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data, void *userdata);
+int config_parse_path(const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data, void *userdata);
+int config_parse_sec(const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data, void *userdata);
+int config_parse_log_level(const char *filename, unsigned line, const char *section, unsigned section_line, const char *lvalue, int ltype, const char *rvalue, void *data, void *userdata);
 
-int log_syntax_internal(const char *unit, int level,
+int log_syntax_internal(int level,
                         const char *file, unsigned line, const char *func,
                         const char *config_file, unsigned config_line,
-                        int error, const char *format, ...) _printf_(9, 10);
+                        int error, const char *format, ...) _printf_(8, 9);
 
-#define log_syntax(unit, level, config_file, config_line, error, ...)   \
-        log_syntax_internal(unit, level,                                \
+#define log_syntax(level, config_file, config_line, error, ...)   \
+        log_syntax_internal(level,                                \
                             __FILE__, __LINE__, __func__,               \
                             config_file, config_line,                   \
                             error, __VA_ARGS__)
 
-#define log_invalid_utf8(unit, level, config_file, config_line, error, rvalue) { \
+#define log_invalid_utf8(level, config_file, config_line, error, rvalue) { \
         _cleanup_free_ char *__p = utf8_escape_invalid(rvalue);                  \
-        log_syntax(unit, level, config_file, config_line, error,                 \
+        log_syntax(level, config_file, config_line, error,                 \
                    "String is not UTF-8 clean, ignoring assignment: %s", __p);   \
         }
 
 #define DEFINE_CONFIG_PARSE_ENUM(function,name,type,msg)                \
-        int function(const char *unit,                                  \
-                     const char *filename,                              \
+        int function(const char *filename,                              \
                      unsigned line,                                     \
                      const char *section,                               \
                      unsigned section_line,                             \
@@ -124,7 +121,7 @@ int log_syntax_internal(const char *unit, int level,
                 assert(data);                                           \
                                                                         \
                 if ((x = name##_from_string(rvalue)) < 0) {             \
-                        log_syntax(unit, LOG_ERR, filename, line, -x,   \
+                        log_syntax(LOG_ERR, filename, line, -x,   \
                                    msg ", ignoring: %s", rvalue);       \
                         return 0;                                       \
                 }                                                       \
