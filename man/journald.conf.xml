@@ -138,32 +138,6 @@
                         </varlistentry>
 
                         <varlistentry>
-                                <term><varname>SplitMode=</varname></term>
-
-                                <listitem><para>Controls whether to
-                                split up journal files per user. One
-                                of <literal>uid</literal>,
-                                <literal>none</literal>. If
-                                <literal>uid</literal>, all users will
-                                get each their own journal files
-                                regardless of whether they possess a
-                                login session or not, however system
-                                users will log into the system
-                                journal. If
-                                <literal>none</literal>, journal files
-                                are not split up by user and all
-                                messages are instead stored in the
-                                single system journal. Note that
-                                splitting up journal files by user is
-                                only available for journals stored
-                                persistently. If journals are stored
-                                on volatile storage (see above), only
-                                a single journal file for all user IDs
-                                is kept. Defaults to
-                                <literal>uid</literal>.</para></listitem>
-                        </varlistentry>
-
-                        <varlistentry>
                                 <term><varname>RateLimitInterval=</varname></term>
                                 <term><varname>RateLimitBurst=</varname></term>
 

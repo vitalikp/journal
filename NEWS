@@ -138,6 +138,7 @@
        - remove ForwardToKMsg parameter;
        - add User parameter;
        - add Group parameter;
+       - remove split_mode parameter;
    • struct Server:
        - remove cgroup_root field;
        - remove machine_id_field field;
