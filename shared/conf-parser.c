@@ -257,7 +257,6 @@ int config_parse(const char *filename,
                  const char *sections,
                  ConfigItemLookup lookup,
                  const void *table,
-                 bool warn,
                  void *userdata) {
 
         _cleanup_free_ char *section = NULL, *continuation = NULL;
@@ -273,9 +272,8 @@ int config_parse(const char *filename,
         if (!f) {
                 /* Only log on request, except for ENOENT,
                  * since we return 0 to the caller. */
-                if (warn || errno == ENOENT)
-                        log_full(errno == ENOENT ? LOG_DEBUG : LOG_ERR,
-                                 "Failed to open configuration file '%s': %m", filename);
+                log_full(errno == ENOENT ? LOG_DEBUG : LOG_ERR,
+                         "Failed to open configuration file '%s': %m", filename);
                 return errno == ENOENT ? 0 : -errno;
         }
 
@@ -298,8 +296,7 @@ int config_parse(const char *filename,
                 if (continuation) {
                         c = strappend(continuation, l);
                         if (!c) {
-                                if (warn)
-                                        log_oom();
+                                log_oom();
                                 return -ENOMEM;
                         }
 
@@ -324,8 +321,7 @@ int config_parse(const char *filename,
                         else {
                                 continuation = strdup(l);
                                 if (!continuation) {
-                                        if (warn)
-                                                log_oom();
+                                        log_oom();
                                         return -ENOMEM;
                                 }
                         }
@@ -346,9 +342,8 @@ int config_parse(const char *filename,
                 free(c);
 
                 if (r < 0) {
-                        if (warn)
-                                log_warning("Failed to parse file '%s': %s",
-                                            filename, strerror(-r));
+                        log_warning("Failed to parse file '%s': %s",
+                                    filename, strerror(-r));
                         return r;
                 }
         }

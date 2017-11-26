@@ -70,7 +70,6 @@ int config_parse(const char *filename,
                  const char *sections,  /* nulstr */
                  ConfigItemLookup lookup,
                  const void *table,
-                 bool warn,
                  void *userdata);
 
 /* Generic parsers */
