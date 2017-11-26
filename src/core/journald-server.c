@@ -373,7 +373,7 @@ static void write_to_journal(Server *s, uid_t realuid, struct iovec *iovec, unsi
 
         uid_t uid = 0;
 
-        if (s->split_mode == SPLIT_UID && realuid > 0)
+        if (realuid > 0)
 				/* Split up strictly by any UID */
 				uid = realuid;
 		else

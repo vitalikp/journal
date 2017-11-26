@@ -154,6 +154,7 @@
        - remove hostname_field field;
        - remove hostname_fd field;
        - remove boot_id_field field;
+       - remove split_mode field;
    - don't add machine_id to root log path directory;
    - don't notify systemd watchdog;
    - dont't notify status to systemd;

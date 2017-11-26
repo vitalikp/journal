@@ -100,7 +100,6 @@ typedef struct Server {
         int max_level_console;
 
         Storage storage;
-        SplitMode split_mode;
 
         MMapCache *mmap;
 
