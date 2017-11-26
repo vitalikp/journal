@@ -195,6 +195,7 @@
    - don't receive fd's by native socket;
    - don't set control data on forward message by syslog socket;
    - read cached kernel sequence number before open /dev/kmsg;
+   - remove SplitMode enum type;
  * unit:
    - remove output syslog socket;
  * man:

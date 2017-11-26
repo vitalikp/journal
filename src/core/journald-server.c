@@ -58,14 +58,6 @@ static const char* const storage_table[_STORAGE_MAX] = {
 DEFINE_STRING_TABLE_LOOKUP(storage, Storage);
 DEFINE_CONFIG_PARSE_ENUM(config_parse_storage, storage, Storage, "Failed to parse storage setting");
 
-static const char* const split_mode_table[_SPLIT_MAX] = {
-        [SPLIT_UID] = "uid",
-        [SPLIT_NONE] = "none",
-};
-
-DEFINE_STRING_TABLE_LOOKUP(split_mode, SplitMode);
-DEFINE_CONFIG_PARSE_ENUM(config_parse_split_mode, split_mode, SplitMode, "Failed to parse split mode setting");
-
 static uint64_t available_space(Server *s, bool verbose) {
         struct statvfs ss;
         uint64_t sum = 0, ss_avail = 0, avail = 0;

@@ -50,13 +50,6 @@ typedef enum Storage {
         _STORAGE_INVALID = -1
 } Storage;
 
-typedef enum SplitMode {
-        SPLIT_UID,
-        SPLIT_NONE,
-        _SPLIT_MAX,
-        _SPLIT_INVALID = -1
-} SplitMode;
-
 typedef struct Server {
         ServerState state;
         server_t server;
@@ -125,11 +118,6 @@ int config_parse_storage(const char *filename, unsigned line, const char *rvalue
 
 const char *storage_to_string(Storage s) _const_;
 Storage storage_from_string(const char *s) _pure_;
-
-int config_parse_split_mode(const char *filename, unsigned line, const char *rvalue, void *data);
-
-const char *split_mode_to_string(SplitMode s) _const_;
-SplitMode split_mode_from_string(const char *s) _pure_;
 
 void server_fix_perms(Server *s, JournalFile *f);
 bool shall_try_append_again(JournalFile *f, int r);
