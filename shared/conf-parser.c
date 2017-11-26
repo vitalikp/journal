@@ -148,7 +148,6 @@ static int parse_line(const char *filename,
                       const char *sections,
                       ConfigItemLookup lookup,
                       const void *table,
-                      bool allow_include,
                       char **section,
                       unsigned *section_line,
                       bool *section_ignored,
@@ -171,7 +170,6 @@ static int parse_line(const char *filename,
                 return 0;
 
         if (startswith(l, ".include ")) {
-                _cleanup_free_ char *fn = NULL;
 
                 /* .includes are a bad idea, we only support them here
                  * for historical reasons. They create cyclic include
@@ -182,17 +180,9 @@ static int parse_line(const char *filename,
                  *
                  * Support for them should be eventually removed. */
 
-                if (!allow_include) {
-                        log_syntax(LOG_ERR, filename, line, EBADMSG,
-                                   ".include not allowed here. Ignoring.");
-                        return 0;
-                }
-
-                fn = file_in_same_dir(filename, strstrip(l+9));
-                if (!fn)
-                        return -ENOMEM;
-
-                return config_parse(fn, sections, lookup, table, false, false, userdata);
+                 log_syntax(LOG_ERR, filename, line, EBADMSG,
+                            ".include not allowed here. Ignoring.");
+                 return 0;
         }
 
         if (*l == '[') {
@@ -267,7 +257,6 @@ int config_parse(const char *filename,
                  const char *sections,
                  ConfigItemLookup lookup,
                  const void *table,
-                 bool allow_include,
                  bool warn,
                  void *userdata) {
 
@@ -349,7 +338,6 @@ int config_parse(const char *filename,
                                sections,
                                lookup,
                                table,
-                               allow_include,
                                &section,
                                &section_line,
                                &section_ignored,
