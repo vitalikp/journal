@@ -920,7 +920,7 @@ static int server_parse_config_file(Server *s) {
         return config_parse(JOURNAL_SYSCONFDIR "/journald.conf",
                             "Journal\0System\0Runtime\0",
                             config_item_perf_lookup, journald_gperf_lookup,
-                            false, false, true, s);
+                            false, true, s);
 }
 
 int server_schedule_sync(Server *s, int priority) {

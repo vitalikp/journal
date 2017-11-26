@@ -109,7 +109,6 @@ static int next_assignment(const char *filename,
                            unsigned section_line,
                            const char *lvalue,
                            const char *rvalue,
-                           bool relaxed,
                            void *userdata) {
 
         ConfigParserCallback func = NULL;
@@ -136,7 +135,7 @@ static int next_assignment(const char *filename,
         }
 
         /* Warn about unknown non-extension fields. */
-        if (!relaxed && !startswith(lvalue, "X-"))
+        if (!startswith(lvalue, "X-"))
                 log_syntax(LOG_WARNING, filename, line, EINVAL,
                            "Unknown lvalue '%s' in section '%s'", lvalue, section);
 
@@ -149,7 +148,6 @@ static int parse_line(const char *filename,
                       const char *sections,
                       ConfigItemLookup lookup,
                       const void *table,
-                      bool relaxed,
                       bool allow_include,
                       char **section,
                       unsigned *section_line,
@@ -194,7 +192,7 @@ static int parse_line(const char *filename,
                 if (!fn)
                         return -ENOMEM;
 
-                return config_parse(fn, sections, lookup, table, relaxed, false, false, userdata);
+                return config_parse(fn, sections, lookup, table, false, false, userdata);
         }
 
         if (*l == '[') {
@@ -216,7 +214,7 @@ static int parse_line(const char *filename,
 
                 if (sections && !nulstr_contains(sections, n)) {
 
-                        if (!relaxed && !startswith(n, "X-"))
+                        if (!startswith(n, "X-"))
                                 log_syntax(LOG_WARNING, filename, line, EINVAL,
                                            "Unknown section '%s'. Ignoring.", n);
 
@@ -237,7 +235,7 @@ static int parse_line(const char *filename,
 
         if (sections && !*section) {
 
-                if (!relaxed && !*section_ignored)
+                if (!*section_ignored)
                         log_syntax(LOG_WARNING, filename, line, EINVAL,
                                    "Assignment outside of section. Ignoring.");
 
@@ -261,7 +259,6 @@ static int parse_line(const char *filename,
                                *section_line,
                                strstrip(l),
                                strstrip(e),
-                               relaxed,
                                userdata);
 }
 
@@ -270,7 +267,6 @@ int config_parse(const char *filename,
                  const char *sections,
                  ConfigItemLookup lookup,
                  const void *table,
-                 bool relaxed,
                  bool allow_include,
                  bool warn,
                  void *userdata) {
@@ -353,7 +349,6 @@ int config_parse(const char *filename,
                                sections,
                                lookup,
                                table,
-                               relaxed,
                                allow_include,
                                &section,
                                &section_line,
