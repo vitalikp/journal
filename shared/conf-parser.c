@@ -194,7 +194,7 @@ static int parse_line(const char *filename,
                 if (!fn)
                         return -ENOMEM;
 
-                return config_parse(fn, NULL, sections, lookup, table, relaxed, false, false, userdata);
+                return config_parse(fn, sections, lookup, table, relaxed, false, false, userdata);
         }
 
         if (*l == '[') {
@@ -267,7 +267,6 @@ static int parse_line(const char *filename,
 
 /* Go through the file and parse each line */
 int config_parse(const char *filename,
-                 FILE *f,
                  const char *sections,
                  ConfigItemLookup lookup,
                  const void *table,
@@ -277,7 +276,7 @@ int config_parse(const char *filename,
                  void *userdata) {
 
         _cleanup_free_ char *section = NULL, *continuation = NULL;
-        _cleanup_fclose_ FILE *ours = NULL;
+        _cleanup_fclose_ FILE *f = NULL;
         unsigned line = 0, section_line = 0;
         bool section_ignored = false;
         int r;
@@ -285,16 +284,14 @@ int config_parse(const char *filename,
         assert(filename);
         assert(lookup);
 
+        f = fopen(filename, "re");
         if (!f) {
-                f = ours = fopen(filename, "re");
-                if (!f) {
-                        /* Only log on request, except for ENOENT,
-                         * since we return 0 to the caller. */
-                        if (warn || errno == ENOENT)
-                                log_full(errno == ENOENT ? LOG_DEBUG : LOG_ERR,
-                                         "Failed to open configuration file '%s': %m", filename);
-                        return errno == ENOENT ? 0 : -errno;
-                }
+                /* Only log on request, except for ENOENT,
+                 * since we return 0 to the caller. */
+                if (warn || errno == ENOENT)
+                        log_full(errno == ENOENT ? LOG_DEBUG : LOG_ERR,
+                                 "Failed to open configuration file '%s': %m", filename);
+                return errno == ENOENT ? 0 : -errno;
         }
 
         fd_warn_permissions(filename, fileno(f));

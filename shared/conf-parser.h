@@ -67,7 +67,6 @@ typedef int (*ConfigItemLookup)(
 int config_item_perf_lookup(const void *table, const char *section, const char *lvalue, ConfigParserCallback *func, int *ltype, void **data, void *userdata);
 
 int config_parse(const char *filename,
-                 FILE *f,
                  const char *sections,  /* nulstr */
                  ConfigItemLookup lookup,
                  const void *table,

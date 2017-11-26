@@ -917,7 +917,7 @@ static int server_parse_proc_cmdline(Server *s) {
 static int server_parse_config_file(Server *s) {
         assert(s);
 
-        return config_parse(JOURNAL_SYSCONFDIR "/journald.conf", NULL,
+        return config_parse(JOURNAL_SYSCONFDIR "/journald.conf",
                             "Journal\0System\0Runtime\0",
                             config_item_perf_lookup, journald_gperf_lookup,
                             false, false, true, s);
