@@ -17,7 +17,6 @@ struct ConfigPerfItem;
 %%
 Journal.User,               config_parse_string,     0, offsetof(Server, server.runuser)
 Journal.Group,              config_parse_string,     0, offsetof(Server, server.rungroup)
-Journal.Storage,            config_parse_storage,    0, offsetof(Server, storage)
 Journal.Compress,           config_parse_bool,       0, offsetof(Server, compress)
 Journal.SyncIntervalSec,    config_parse_sec,        0, offsetof(Server, sync_interval_usec)
 Journal.RateLimitInterval,  config_parse_sec,        0, offsetof(Server, rate_limit_interval)

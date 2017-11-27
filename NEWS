@@ -139,6 +139,7 @@
        - add User parameter;
        - add Group parameter;
        - remove split_mode parameter;
+       - remove storage parameter;
    • struct Server:
        - remove cgroup_root field;
        - remove machine_id_field field;
