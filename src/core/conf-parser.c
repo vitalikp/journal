@@ -462,13 +462,13 @@ int config_parse_path(
         assert(rvalue);
         assert(data);
 
-        if (!utf8_is_valid(rvalue)) {
-                log_invalid_utf8(LOG_ERR, filename, line, EINVAL, rvalue);
+        if (!path_is_absolute(rvalue)) {
+                log_syntax(LOG_ERR, filename, line, EINVAL, "Not an absolute path, ignoring: %s", rvalue);
                 return 0;
         }
 
-        if (!path_is_absolute(rvalue)) {
-                log_syntax(LOG_ERR, filename, line, EINVAL, "Not an absolute path, ignoring: %s", rvalue);
+        if (!utf8_is_valid(rvalue)) {
+                log_invalid_utf8(LOG_ERR, filename, line, EINVAL, rvalue);
                 return 0;
         }
 
