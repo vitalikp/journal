@@ -92,25 +92,3 @@ int log_syntax_internal(int level,
         log_syntax(level, config_file, config_line, error,                 \
                    "String is not UTF-8 clean, ignoring assignment: %s", __p);   \
         }
-
-#define DEFINE_CONFIG_PARSE_ENUM(function,name,type,msg)                \
-        int function(const char *filename,                              \
-                     unsigned line,                                     \
-                     const char *rvalue,                                \
-                     void *data) {                                      \
-                                                                        \
-                type *i = data, x;                                      \
-                                                                        \
-                assert(filename);                                       \
-                assert(rvalue);                                         \
-                assert(data);                                           \
-                                                                        \
-                if ((x = name##_from_string(rvalue)) < 0) {             \
-                        log_syntax(LOG_ERR, filename, line, -x,   \
-                                   msg ", ignoring: %s", rvalue);       \
-                        return 0;                                       \
-                }                                                       \
-                                                                        \
-                *i = x;                                                 \
-                return 0;                                               \
-        }

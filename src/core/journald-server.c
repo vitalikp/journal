@@ -56,7 +56,28 @@ static const char* const storage_table[_STORAGE_MAX] = {
 };
 
 DEFINE_STRING_TABLE_LOOKUP(storage, Storage);
-DEFINE_CONFIG_PARSE_ENUM(config_parse_storage, storage, Storage, "Failed to parse storage setting");
+
+int config_parse_storage(const char *filename,
+                         unsigned line,
+                         const char *rvalue,
+                         void *data) {
+
+        Storage *i = data, x;
+
+        assert(filename);
+        assert(rvalue);
+        assert(data);
+
+        if ((x = storage_from_string(rvalue)) < 0) {
+                log_syntax(LOG_ERR, filename, line, -x,
+                           "Failed to parse storage setting, ignoring: %s", rvalue);
+                return 0;
+        }
+
+        *i = x;
+
+        return 0;
+}
 
 static uint64_t available_space(Server *s, bool verbose) {
         struct statvfs ss;
