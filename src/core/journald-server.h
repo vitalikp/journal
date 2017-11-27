@@ -41,15 +41,6 @@ typedef enum ServerState
 	SERVER_FINISHED
 } ServerState;
 
-typedef enum Storage {
-        STORAGE_AUTO,
-        STORAGE_VOLATILE,
-        STORAGE_PERSISTENT,
-        STORAGE_NONE,
-        _STORAGE_MAX,
-        _STORAGE_INVALID = -1
-} Storage;
-
 typedef struct Server {
         ServerState state;
         server_t server;
@@ -111,11 +102,6 @@ void server_driver_message(Server *s, const char *format, ...) _printf_(2,3);
 
 /* gperf lookup function */
 const struct ConfigPerfItem* journald_gperf_lookup(const char *key, size_t length);
-
-int config_parse_storage(const char *filename, unsigned line, const char *rvalue, void *data);
-
-const char *storage_to_string(Storage s) _const_;
-Storage storage_from_string(const char *s) _pure_;
 
 void server_fix_perms(Server *s, JournalFile *f);
 bool shall_try_append_again(JournalFile *f, int r);
