@@ -92,8 +92,6 @@ typedef struct Server {
         int max_level_kmsg;
         int max_level_console;
 
-        Storage storage;
-
         MMapCache *mmap;
 
         bool dev_kmsg_readable;

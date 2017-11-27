@@ -541,11 +541,6 @@ void server_dispatch_message(
         if (LOG_PRI(priority) > s->max_level_store)
                 return;
 
-        /* Stop early in case the information will not be stored
-         * in a journal. */
-        if (s->storage == STORAGE_NONE)
-                return;
-
         uid_t realuid = 0;
 
         if (!ucred)
@@ -574,17 +569,9 @@ static int system_journal_open(Server *s) {
         char *fn;
 
         if (!s->system_journal &&
-            (s->storage == STORAGE_PERSISTENT || s->storage == STORAGE_AUTO) &&
             access(JOURNAL_RUNDIR "/flushed", F_OK) >= 0) {
 
-                /* If in auto mode: first try to create the machine
-                 * path, but not the prefix.
-                 *
-                 * If in persistent mode: create /var/log/journal and
-                 * the machine path */
-
-                if (s->storage == STORAGE_PERSISTENT)
-                        (void) mkdir("/var/log/journal/", 0755);
+                (void) mkdir("/var/log/journal/", 0755);
 
                 fn = strappenda("/var/log/journal/", "system.journal");
                 r = journal_file_open_reliably(fn, O_RDWR|O_CREAT, 0640, s->compress, &s->system_metrics, s->mmap, NULL, &s->system_journal);
@@ -599,8 +586,7 @@ static int system_journal_open(Server *s) {
                 }
         }
 
-        if (!s->runtime_journal &&
-            (s->storage != STORAGE_NONE)) {
+        if (!s->runtime_journal) {
 
                 fn = strjoin(JOURNAL_RUNDIR "/log/", "system.journal", NULL);
                 if (!fn)
@@ -655,10 +641,6 @@ int server_flush_to_var(Server *s) {
         int r;
 
         assert(s);
-
-        if (s->storage != STORAGE_AUTO &&
-            s->storage != STORAGE_PERSISTENT)
-                return 0;
 
         if (!s->runtime_journal)
                 return 0;
