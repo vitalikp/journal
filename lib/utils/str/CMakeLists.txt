@@ -25,7 +25,7 @@ add_executable(test-str-copy
 )
 
 add_test(NAME utils-str-empty COMMAND ./test-str-empty)
-add_test(NAME utils-str-eq COMMAND ./test-str-empty)
+add_test(NAME utils-str-eq COMMAND ./test-str-eq)
 add_test(NAME utils-str-caseeq COMMAND ./test-str-caseeq)
 add_test(NAME utils-str-copy COMMAND ./test-str-copy)
 
