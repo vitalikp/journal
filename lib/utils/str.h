@@ -48,6 +48,37 @@ static inline int str_eq(const char *str1, const char *str2)
 }
 
 /**
+ * str_caseeq:
+ * @str1: input string 1
+ * @str2: input string 2
+ *
+ * Returns: 1 if string str is equal without case sensitive, or 0 otherwise
+ */
+static inline int str_caseeq(const char *str1, const char *str2)
+{
+	char val;
+
+	if (!str1 || !str2)
+		return str1 == str2;
+
+	do
+	{
+		val = *str2++;
+		if (val > 0x60 && val < 0x7b)
+			val -= 0x20;
+
+		if (*str1 > 0x60 && *str1 < 0x7b)
+			val += 0x20;
+
+		if (*str1 != val)
+			return 0;
+
+	} while (*str1++);
+
+	return 1;
+}
+
+/**
  * str_copy:
  * @dst: destination string
  * @src: source string
