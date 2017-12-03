@@ -199,6 +199,7 @@
    - read cached kernel sequence number before open /dev/kmsg;
    - remove SplitMode enum type;
    - remove Storage enum type;
+   - don't check printk time config parameter;
  * unit:
    - remove output syslog socket;
  * man:

@@ -28,20 +28,6 @@
 #include "journald-server.h"
 #include "journald-console.h"
 
-static bool prefix_timestamp(void) {
-
-        static int cached_printk_time = -1;
-
-        if (_unlikely_(cached_printk_time < 0)) {
-                _cleanup_free_ char *p = NULL;
-
-                cached_printk_time =
-                        read_one_line_file("/sys/module/printk/parameters/time", &p) >= 0
-                        && parse_boolean(p) > 0;
-        }
-
-        return cached_printk_time;
-}
 
 void server_forward_console(
                 Server *s,
@@ -65,8 +51,7 @@ void server_forward_console(
                 return;
 
         /* First: timestamp */
-        if (prefix_timestamp()) {
-                assert_se(clock_gettime(CLOCK_MONOTONIC, &ts) == 0);
+        if (!clock_gettime(CLOCK_MONOTONIC, &ts)) {
                 snprintf(tbuf, sizeof(tbuf), "[%5"PRI_TIME".%06ld] ",
                          ts.tv_sec,
                          ts.tv_nsec / 1000);
