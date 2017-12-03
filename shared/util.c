@@ -76,7 +76,6 @@
 #include "fileio.h"
 #include "utf8.h"
 #include "gunicode.h"
-#include "virt.h"
 
 
 static volatile unsigned cached_columns = 0;
@@ -2595,23 +2594,6 @@ void* greedy_realloc0(void **p, size_t *allocated, size_t need, size_t size) {
 
 int proc_cmdline(char **ret) {
         int r;
-
-        if (detect_container(NULL) > 0) {
-                char *buf = NULL, *p;
-                size_t sz = 0;
-
-                r = read_full_file("/proc/1/cmdline", &buf, &sz);
-                if (r < 0)
-                        return r;
-
-                for (p = buf; p + 1 < buf + sz; p++)
-                        if (*p == 0)
-                                *p = ' ';
-
-                *p = 0;
-                *ret = buf;
-                return 1;
-        }
 
         r = read_one_line_file("/proc/cmdline", ret);
         if (r < 0)
