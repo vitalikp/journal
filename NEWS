@@ -126,6 +126,7 @@
     - remove utmp-wtmp module;
     - move conf-parser module to journald;
     - don't check containers for cmdline;
+    - remove virt module;
  * remove prefix field from sd_journal struct;
  * data:
    - add priority values for p journalctl argument option;

@@ -4,8 +4,6 @@
 add_library(journal_shared_obj STATIC
 	util.c
 	util.h
-	virt.c
-	virt.h
 	path-util.c
 	path-util.h
 	time-util.c
