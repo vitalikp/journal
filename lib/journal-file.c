@@ -2333,7 +2333,7 @@ void journal_file_print_header(JournalFile *f) {
                le64toh(f->header->arena_size),
                le64toh(f->header->data_hash_table_size) / sizeof(HashItem),
                le64toh(f->header->field_hash_table_size) / sizeof(HashItem),
-               yes_no(journal_file_rotate_suggested(f, 0)),
+               journal_file_rotate_suggested(f, 0) ? "yes" : "no",
                le64toh(f->header->head_entry_seqnum),
                le64toh(f->header->tail_entry_seqnum),
                format_timestamp_safe(x, sizeof(x), le64toh(f->header->head_entry_realtime)),
