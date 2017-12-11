@@ -186,7 +186,6 @@ finish:
 _public_ int sd_journal_sendv(const struct iovec *iov, int n) {
         PROTECT_ERRNO;
         int fd;
-        _cleanup_close_ int buffer_fd = -1;
         struct iovec *w;
         uint64_t *l;
         int i, j = 0;
@@ -203,7 +202,6 @@ _public_ int sd_journal_sendv(const struct iovec *iov, int n) {
                 struct cmsghdr cmsghdr;
                 uint8_t buf[CMSG_SPACE(sizeof(int))];
         } control;
-        struct cmsghdr *cmsg;
         bool have_syslog_identifier = false;
 
         assert_return(iov, -EINVAL);
@@ -289,41 +287,6 @@ _public_ int sd_journal_sendv(const struct iovec *iov, int n) {
                 return 0;
 
         if (errno != EMSGSIZE && errno != ENOBUFS)
-                return -errno;
-
-        /* Message doesn't fit... Let's dump the data in a temporary
-         * file and just pass a file descriptor of it to the other
-         * side.
-         *
-         * We use /dev/shm instead of /tmp here, since we want this to
-         * be a tmpfs, and one that is available from early boot on
-         * and where unprivileged users can create files. */
-        buffer_fd = open_tmpfile("/dev/shm", O_RDWR | O_CLOEXEC);
-        if (buffer_fd < 0)
-                return buffer_fd;
-
-        n = writev(buffer_fd, w, j);
-        if (n < 0)
-                return -errno;
-
-        mh.msg_iov = NULL;
-        mh.msg_iovlen = 0;
-
-        zero(control);
-        mh.msg_control = &control;
-        mh.msg_controllen = sizeof(control);
-
-        cmsg = CMSG_FIRSTHDR(&mh);
-        cmsg->cmsg_level = SOL_SOCKET;
-        cmsg->cmsg_type = SCM_RIGHTS;
-        cmsg->cmsg_len = CMSG_LEN(sizeof(int));
-        memcpy(CMSG_DATA(cmsg), &buffer_fd, sizeof(int));
-
-        mh.msg_controllen = cmsg->cmsg_len;
-
-        k = sendmsg(fd, &mh, MSG_NOSIGNAL);
-
-        if (k < 0)
                 return -errno;
 
         return 0;
