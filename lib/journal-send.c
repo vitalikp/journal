@@ -257,8 +257,7 @@ _public_ int sd_journal_sendv(const struct iovec *iov, int n) {
                 IOVEC_SET_STRING(w[j++], "\n");
         }
 
-        if (!have_syslog_identifier &&
-            string_is_safe(program_invocation_short_name)) {
+        if (!have_syslog_identifier) {
 
                 /* Implicitly add program_invocation_short_name, if it
                  * is not set explicitly. We only do this for
