@@ -1,6 +1,6 @@
 # libjournal cmake file
 
-set(LIBJOURNAL_C_FLAGS "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/journal.sym -Wl,-z,relro")
+set(LIBJOURNAL_LDFLAGS "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/journal.sym -Wl,-z,relro")
 
 #set(JOURNAL_CURRENT 11)
 #set(JOURNAL_REVISION 5)
@@ -53,7 +53,7 @@ set_target_properties(journal PROPERTIES
 	VERSION ${JOURNAL_VERSION}
 	SOVERSION ${JOURNAL_SOVERSION}
 )
-target_link_libraries(journal journal_utils_obj journal_hash_obj journal_mmap_obj journal_shared_obj ${LIBJOURNAL_C_FLAGS})
+target_link_libraries(journal journal_utils_obj journal_hash_obj journal_mmap_obj journal_shared_obj ${LIBJOURNAL_LDFLAGS})
 target_link_libraries(journal ${XZ_LIBRARIES} ${LZ4_LIBRARIES})
 target_link_libraries(journal -pthread rt)
 
