@@ -782,31 +782,37 @@ int journal_file_verify(
         bool entry_seqnum_set = false, entry_monotonic_set = false, entry_realtime_set = false, found_main_entry_array = false;
         uint64_t n_weird = 0, n_objects = 0, n_entries = 0, n_data = 0, n_fields = 0, n_data_hash_tables = 0, n_field_hash_tables = 0, n_entry_arrays = 0;
         usec_t last_usec = 0;
+        char data_fn[] = "/var/tmp/journal-verify-data-XXXXXX";
+        char entry_fn[] = "/var/tmp/journal-verify-entry-XXXXXX";
+        char entry_array_fn[] = "/var/tmp/journal-verify-entry-array-XXXXXX";
         int data_fd = -1, entry_fd = -1, entry_array_fd = -1;
         unsigned i;
         bool found_last;
         assert(f);
 
-        data_fd = open_tmpfile("/var/tmp", O_RDWR | O_CLOEXEC);
+        data_fd = mkstemp(data_fn);
         if (data_fd < 0) {
                 log_error("Failed to create data file: %m");
                 r = -errno;
                 goto fail;
         }
+        unlink(data_fn);
 
-        entry_fd = open_tmpfile("/var/tmp", O_RDWR | O_CLOEXEC);
+        entry_fd = mkstemp(entry_fn);
         if (entry_fd < 0) {
                 log_error("Failed to create entry file: %m");
                 r = -errno;
                 goto fail;
         }
+        unlink(entry_fn);
 
-        entry_array_fd = open_tmpfile("/var/tmp", O_RDWR | O_CLOEXEC);
+        entry_array_fd = mkstemp(entry_array_fn);
         if (entry_array_fd < 0) {
                 log_error("Failed to create entry array file: %m");
                 r = -errno;
                 goto fail;
         }
+        unlink(entry_array_fn);
 
         if (f->header->compatible_flags != 0)
         {
