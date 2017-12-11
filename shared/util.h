@@ -474,8 +474,6 @@ _pure_ static inline bool string_is_glob(const char *p) {
         return !!strpbrk(p, GLOB_CHARS);
 }
 
-char *strip_tab_ansi(char **p, size_t *l);
-
 #define FOREACH_LINE(line, f, on_error)                         \
         for (;;)                                                \
                 if (!fgets(line, sizeof(line), f)) {            \
