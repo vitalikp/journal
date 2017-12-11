@@ -48,12 +48,6 @@ add_executable(test-journal-stream
 )
 target_link_libraries(test-journal-stream journal_core_obj)
 
-# test-journal-verify
-add_executable(test-journal-verify
-	test-journal-verify.c
-)
-target_link_libraries(test-journal-verify journal_core_obj)
-
 # test-compress
 add_executable(test-compress
 	test-compress.c
@@ -73,6 +67,5 @@ add_test(NAME journal-init COMMAND ./test-journal-init)
 add_test(NAME journal-interleaving COMMAND ./test-journal-interleaving)
 add_test(NAME journal-match COMMAND ./test-journal-match)
 add_test(NAME journal-stream COMMAND ./test-journal-stream)
-add_test(NAME journal-verify COMMAND ./test-journal-verify)
 add_test(NAME journal-compress COMMAND ./test-compress)
 add_test(NAME journal-compress-benchmark COMMAND ./test-compress-benchmark)
