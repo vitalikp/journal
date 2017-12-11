@@ -33,6 +33,8 @@
 #include "utf8.h"
 #include "path-util.h"
 #include "set.h"
+#include "utils.h"
+
 
 int log_syntax_internal(int level,
                         const char *file, unsigned line, const char *func,
@@ -401,21 +403,16 @@ int config_parse_bool(const char *filename,
                       const char *rvalue,
                       void *data) {
 
-        int k;
-        bool *b = data;
-
         assert(filename);
         assert(rvalue);
         assert(data);
 
-        k = parse_boolean(rvalue);
-        if (k < 0) {
-                log_syntax(LOG_ERR, filename, line, -k,
+        if (parse_bool(rvalue, data) < 0) {
+                log_syntax(LOG_ERR, filename, line, errno,
                            "Failed to parse boolean value, ignoring: %s", rvalue);
                 return 0;
         }
 
-        *b = !!k;
         return 0;
 }
 

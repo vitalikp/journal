@@ -40,6 +40,8 @@
 #include "journald-console.h"
 #include "journald-native.h"
 #include "journald-server.h"
+#include "utils.h"
+
 
 #define USER_JOURNALS_MAX 1024
 
@@ -859,17 +861,11 @@ static int server_parse_proc_cmdline(Server *s) {
                         return -ENOMEM;
 
                 if (startswith(word, "journald.forward_to_syslog=")) {
-                        r = parse_boolean(word + 35);
-                        if (r < 0)
+                        if (parse_bool(word + 35, &s->forward_to_syslog) < 0)
                                 log_warning("Failed to parse forward to syslog switch %s. Ignoring.", word + 35);
-                        else
-                                s->forward_to_syslog = r;
                 } else if (startswith(word, "journald.forward_to_console=")) {
-                        r = parse_boolean(word + 36);
-                        if (r < 0)
+                        if (parse_bool(word + 36, &s->forward_to_console) < 0)
                                 log_warning("Failed to parse forward to console switch %s. Ignoring.", word + 36);
-                        else
-                                s->forward_to_console = r;
                 } else if (startswith(word, "journald"))
                         log_warning("Invalid journald parameter. Ignoring.");
         }
