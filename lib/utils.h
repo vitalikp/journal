@@ -11,6 +11,7 @@
 #define _JOURNAL_UTILS_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 #include <sys/types.h>
 
 #include "utils/str.h"
@@ -49,5 +50,6 @@ static inline uint8_t hex_char(char c)
 }
 
 int parse_uint(const char *str, uint64_t *pval);
+int parse_bool(const char *str, bool *pval);
 
 #endif	/* _JOURNAL_UTILS_H_ */
