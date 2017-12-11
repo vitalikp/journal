@@ -40,15 +40,15 @@ int main(int argc, char *argv[]) {
 
         u = umask(u);
 
-        x = mkostemp(px, O_RDWR|O_CLOEXEC);
+        x = mkstemp(px);
         assert(x >= 0);
         unlink(px);
 
-        y = mkostemp(py, O_RDWR|O_CLOEXEC);
+        y = mkstemp(py);
         assert(y >= 0);
         unlink(py);
 
-        z = mkostemp(pz, O_RDWR|O_CLOEXEC);
+        z = mkstemp(pz);
         assert(z >= 0);
         unlink(pz);
 
