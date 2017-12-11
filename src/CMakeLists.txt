@@ -35,16 +35,3 @@ target_link_libraries(journal_core_obj -pthread rt)
 
 # journalctl
 add_subdirectory(journalctl)
-
-# tests
-if (${TESTS_ENABLE})
-
-# test-journal-syslog
-add_executable(test-journal-syslog
-	test-journal-syslog.c
-)
-target_link_libraries(test-journal-syslog journal_core_obj)
-
-add_test(NAME journal-syslog COMMAND ./test-journal-syslog)
-
-endif()
