@@ -30,15 +30,12 @@
 #include "mmap-cache.h"
 
 int main(int argc, char *argv[]) {
-        _cleanup_umask_ mode_t u = 077;
         int x, y, z, r;
         char px[] = "/tmp/testmmapXXXXXXX", py[] = "/tmp/testmmapYXXXXXX", pz[] = "/tmp/testmmapZXXXXXX";
         MMapCache *m;
         void *p, *q;
 
         assert_se(m = mmap_cache_new());
-
-        u = umask(u);
 
         x = mkstemp(px);
         assert(x >= 0);
