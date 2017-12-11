@@ -32,8 +32,6 @@ set(journal_int_src
 	journal-file.h
 	journal-vacuum.c
 	journal-vacuum.h
-	journal-verify.c
-	journal-verify.h
 	journal-send.c
 	journal-def.h
 	compress.c

@@ -25,7 +25,7 @@
 #include <stddef.h>
 
 #include "utils.h"
-#include "hash.h"
+#include "hash/hash.h"
 #include "util.h"
 #include "macro.h"
 #include "journal-def.h"

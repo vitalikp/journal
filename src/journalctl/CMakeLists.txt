@@ -4,6 +4,8 @@
 add_executable(journalctl
 	logs-show.c
 	logs-show.h
+	journal-verify.c
+	journal-verify.h
 	journalctl.c
 )
 target_link_libraries(journalctl journal_int_obj journal_shared_obj)
@@ -17,6 +19,8 @@ if (${TESTS_ENABLE})
 
 # test-journal-verify
 add_executable(test-journal-verify
+	journal-verify.c
+	journal-verify.h
 	test-journal-verify.c
 )
 target_link_libraries(test-journal-verify journal_core_obj)
