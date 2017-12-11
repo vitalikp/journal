@@ -199,7 +199,8 @@ int journal_directory_vacuum(
                 n_list ++;
         }
 
-        qsort_safe(list, n_list, sizeof(struct vacuum_info), vacuum_compare);
+        if (n_list > 0)
+                qsort(list, n_list, sizeof(struct vacuum_info), vacuum_compare);
 
         for (i = 0; i < n_list; i++) {
                 if ((max_retention_usec <= 0 || list[i].realtime >= retention_limit) &&
