@@ -958,7 +958,7 @@ void log_received_signal(int level, const struct signalfd_siginfo *si) {
                 log_full(level,
                          "Received SIG%s from PID "PID_FMT" (%s).",
                          signal_to_string(si->ssi_signo),
-                         si->ssi_pid, strna(p));
+                         si->ssi_pid, p ? p : "n/a");
         } else
                 log_full(level,
                          "Received SIG%s.",
