@@ -1145,3 +1145,63 @@ fail:
 
         return r;
 }
+
+
+#ifdef TESTS
+#include <stdio.h>
+
+#include "log.h"
+
+#define N_ENTRIES 6000
+#define RANDOM_RANGE 77
+
+int main(int argc, char *argv[]) {
+        char t[] = "/tmp/journal-XXXXXX";
+        unsigned n;
+        JournalFile *f;
+
+        log_set_max_level(LOG_DEBUG);
+
+        assert_se(mkdtemp(t));
+        assert_se(chdir(t) >= 0);
+
+        log_info("Generating...");
+
+        assert_se(journal_file_open("test.journal", O_RDWR|O_CREAT, 0666, true, NULL, NULL, NULL, &f) == 0);
+
+        for (n = 0; n < N_ENTRIES; n++) {
+                struct iovec iovec;
+                struct dual_timestamp ts;
+                char *test;
+
+                dual_timestamp_get(&ts);
+
+                assert_se(asprintf(&test, "RANDOM=%lu", random() % RANDOM_RANGE));
+
+                iovec.iov_base = (void*) test;
+                iovec.iov_len = strlen(test);
+
+                assert_se(journal_file_append_entry(f, &ts, &iovec, 1, NULL, NULL, NULL) == 0);
+
+                free(test);
+        }
+
+        journal_file_close(f);
+
+        log_info("Verifying...");
+
+        assert_se(journal_file_open("test.journal", O_RDONLY, 0666, true, NULL, NULL, NULL, &f) == 0);
+        /* journal_file_print_header(f); */
+        journal_file_dump(f);
+
+        assert_se(journal_file_verify(f, true) >= 0);
+
+        journal_file_close(f);
+
+        log_info("Exiting...");
+
+        assert_se(rm_rf_dangerous(t, false, true, false) >= 0);
+
+        return 0;
+}
+#endif // TESTS
