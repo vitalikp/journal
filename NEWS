@@ -64,6 +64,7 @@
     - don't use pager for help argument option;
     - remove this-boot argument option;
     - remove unit argument option;
+    - don't check group “journal” on error EACCES;
  * journal-fields:
     - remove MESSAGE_ID field;
     - remove coredump fields;

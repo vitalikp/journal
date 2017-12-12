@@ -970,9 +970,8 @@ static int access_check(sd_journal *j) {
 
         if (set_contains(j->errors, INT_TO_PTR(-EACCES))) {
 
-                if (geteuid() != 0 && in_group("journal") <= 0) {
-                        log_error("Unprivileged users cannot access messages. Users in the 'journal' group\n"
-                                  "group may access messages.");
+                if (geteuid() != 0) {
+                        log_error("Unprivileged users cannot access messages.");
                         return -EACCES;
                 }
 
