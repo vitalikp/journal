@@ -368,8 +368,6 @@ int files_same(const char *filea, const char *fileb);
 
 int running_in_chroot(void);
 
-char *ellipsize_mem(const char *s, size_t old_length, size_t new_length, unsigned percent);
-
 int touch_file(const char *path, usec_t stamp, uid_t uid, gid_t gid, mode_t mode);
 int touch(const char *path);
 
