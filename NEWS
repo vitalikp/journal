@@ -7,23 +7,23 @@
     - remove 'deprecated' from Description filed;
  * libjournal:
      - add journal.h header file;
-     • journal-file:
-        - don't set and check machine_id header field;
-        - change format filename on rotation;
-     • vacuum:
-        - use time of last modification journal file for retention limit check;
-        - use seqnum_id and seqnum data from header journal file;
-        - remove redundant code;
-     • api:
-        - remove sd_journal_stream_fd function;
-        - remove sd_journal_reliable_fd function;
-        - remove sd_journal_get_timeout function;
-     • hash:
-        - add original lookup3 hash functions;
-        - add unit tests;
-        - add hash module;
-    • struct Window:
-        - change type keep_always field to bool;
+     - journal-file:
+        • don't set and check machine_id header field;
+        • change format filename on rotation;
+     - vacuum:
+        • use time of last modification journal file for retention limit check;
+        • use seqnum_id and seqnum data from header journal file;
+        • remove redundant code;
+     - api:
+        • remove sd_journal_stream_fd function;
+        • remove sd_journal_reliable_fd function;
+        • remove sd_journal_get_timeout function;
+     - hash:
+        • add original lookup3 hash functions;
+        • add unit tests;
+        • add hash module;
+    - struct Window:
+        • change type keep_always field to bool;
     - remove SD_JOURNAL_LOCAL_ONLY journal open flag;
     - add utils module;
     - remove lookup3 module;
@@ -133,33 +133,33 @@
    - add priority values for p journalctl argument option;
  * journald:
     - install to sbin directory;
-    • rate-limit:
-       - don't use cgroup;
-       - use default values RateLimitInterval and RateLimitBurst;
-    • journald.conf:
-       - add System and Runtime sections;
-       - remove ForwardToKMsg parameter;
-       - add User parameter;
-       - add Group parameter;
-       - remove split_mode parameter;
-       - remove storage parameter;
-   • struct Server:
-       - remove cgroup_root field;
-       - remove machine_id_field field;
-       - add state field;
-       - add epoll_fd field;
-       - add sync_time field;
-       - add sync_seqnum field;
-       - remove sync_scheduled field;
-       - remove forward_to_kmsg field;
-       - remove udev field;
-       - add epoll field;
-       - remove epoll_fd field;
-       - remove hostname_field field;
-       - remove hostname_fd field;
-       - remove boot_id_field field;
-       - remove split_mode field;
-       - remove storage field;
+    - rate-limit:
+       • don't use cgroup;
+       • use default values RateLimitInterval and RateLimitBurst;
+    - journald.conf:
+       • add System and Runtime sections;
+       • remove ForwardToKMsg parameter;
+       • add User parameter;
+       • add Group parameter;
+       • remove split_mode parameter;
+       • remove storage parameter;
+   - struct Server:
+       • remove cgroup_root field;
+       • remove machine_id_field field;
+       • add state field;
+       • add epoll_fd field;
+       • add sync_time field;
+       • add sync_seqnum field;
+       • remove sync_scheduled field;
+       • remove forward_to_kmsg field;
+       • remove udev field;
+       • add epoll field;
+       • remove epoll_fd field;
+       • remove hostname_field field;
+       • remove hostname_fd field;
+       • remove boot_id_field field;
+       • remove split_mode field;
+       • remove storage field;
    - don't add machine_id to root log path directory;
    - don't notify systemd watchdog;
    - dont't notify status to systemd;
