@@ -131,6 +131,7 @@
  * remove prefix field from sd_journal struct;
  * data:
    - add priority values for p journalctl argument option;
+   - remove initrd-switch-root target;
  * journald:
     - install to sbin directory;
     - rate-limit:
