@@ -132,6 +132,7 @@
  * data:
    - add priority values for p journalctl argument option;
    - remove initrd-switch-root target;
+   - use journal owner for log directories;
  * journald:
     - install to sbin directory;
     - rate-limit:
