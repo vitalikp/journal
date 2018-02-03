@@ -1555,6 +1555,11 @@ static int add_root_directory(sd_journal *j, const char *p) {
                 if (!de)
                         break;
 
+                if (str_eq(de->d_name, ".") || str_eq(de->d_name, "..")) {
+                        log_debug("Skipping %s/%s directory", m->path, de->d_name);
+                        continue;
+                }
+
                 if (dirent_is_file_with_suffix(de, ".journal") ||
                     dirent_is_file_with_suffix(de, ".journal~")) {
                         r = add_file(j, m->path, de->d_name);
