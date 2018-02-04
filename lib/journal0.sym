@@ -1,0 +1,17 @@
+/*
+ * Copyright © 2018 - Vitaliy Perevertun
+ *
+ * This file is part of journal.
+ *
+ * This file is licensed under the MIT license.
+ * See the file LICENSE.
+ */
+
+JOURNAL_0.1_DEV
+{
+	global:
+		journal_uuid_to_str;
+
+	local:
+		*;
+};

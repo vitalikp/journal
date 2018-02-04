@@ -41,6 +41,7 @@
     - add mmap module;
     - don't check journal file is stored in network fs;
     - skipping paths '.' and '..'  while adding root directory;
+    - add journal-0 library;
  * use uuid_t type instead of sd_id128_t;
  * don't print systemd features;
  * install sd-journal.h header file to include directory;

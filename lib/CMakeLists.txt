@@ -1,6 +1,10 @@
 # libjournal cmake file
 
+set(JOURNAL0_LDFLAGS "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/journal0.sym -Wl,-z,relro")
 set(LIBJOURNAL_LDFLAGS "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/journal.sym -Wl,-z,relro")
+
+set(JOURNAL0_SOVERSION 0)
+set(JOURNAL0_VERSION ${JOURNAL0_SOVERSION}.0.0)
 
 #set(JOURNAL_CURRENT 11)
 #set(JOURNAL_REVISION 5)
@@ -10,6 +14,7 @@ set(LIBJOURNAL_LDFLAGS "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/journal
 set(JOURNAL_SOVERSION 0)
 set(JOURNAL_VERSION ${JOURNAL_SOVERSION}.11.5)
 
+configure_file(journal-0.1.pc.cmake journal-0.1.pc @ONLY)
 configure_file(journal.pc.cmake journal.pc @ONLY)
 
 
@@ -24,6 +29,22 @@ add_subdirectory(hash)
 
 # journal mmap
 add_subdirectory(mmap)
+
+# journal0 library
+add_library(journal-0 SHARED
+	journal.h
+)
+set_target_properties(journal-0 PROPERTIES
+	LINKER_LANGUAGE C
+	VERSION ${JOURNAL0_VERSION}
+	SOVERSION ${JOURNAL0_SOVERSION}
+)
+target_link_libraries(journal-0 ${JOURNAL0_LDFLAGS})
+target_link_libraries(journal-0
+	"-Wl,--whole-archive"
+	journal_utils_obj
+	"-Wl,--no-whole-archive"
+)
 
 # journal internal
 set(journal_int_src
@@ -59,5 +80,7 @@ target_link_libraries(journal -pthread rt)
 
 # install
 install(FILES journal.h DESTINATION ${includedir}/journal)
+install(FILES ${PROJECT_BINARY_DIR}/lib/journal-0.1.pc DESTINATION ${libdir}/pkgconfig)
 install(FILES ${PROJECT_BINARY_DIR}/lib/journal.pc DESTINATION ${libdir}/pkgconfig)
 install(TARGETS journal DESTINATION ${libdir})
+install(TARGETS journal-0 DESTINATION ${libdir})

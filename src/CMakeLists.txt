@@ -30,7 +30,9 @@ add_library(journal_core_obj STATIC
 	core/journal-internal.h
 	${PROJECT_BINARY_DIR}/${JOURNALD_GPERF_C}
 )
+add_dependencies(journal_core_obj journal-0)
 target_link_libraries(journal_core_obj journald_core_obj journal_int_obj journal_shared_obj)
+target_link_libraries(journal_core_obj -L${PROJECT_BINARY_DIR}/lib -ljournal-0)
 target_link_libraries(journal_core_obj -pthread rt)
 
 # journalctl

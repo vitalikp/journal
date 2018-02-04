@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.0)
 
 
 set(VERSION 214.3-dev)
+set(VER 0.1-dev)
 if (NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE Release)
 endif()

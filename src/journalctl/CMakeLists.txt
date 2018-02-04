@@ -8,7 +8,9 @@ add_executable(journalctl
 	journal-verify.h
 	journalctl.c
 )
+add_dependencies(journalctl journal-0)
 target_link_libraries(journalctl journal_int_obj journal_shared_obj)
+target_link_libraries(journalctl -L${PROJECT_BINARY_DIR}/lib -ljournal-0)
 #target_link_libraries(journalctl -pthread rt)
 
 # install
