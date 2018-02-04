@@ -30,11 +30,7 @@ typedef union uuid uuid_t;
 
 char* journal_uuid_to_str(uuid_t id, char str[33]);
 
-#define _JOURNAL_H_INSIDE_
-
 #include <sd-journal.h>
-
-#undef _JOURNAL_H_INSIDE_
 
 #ifdef __cplusplus
 } // extern "C"
