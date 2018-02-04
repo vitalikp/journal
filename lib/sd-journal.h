@@ -27,7 +27,6 @@
 #include <stdarg.h>
 #include <sys/uio.h>
 #include <syslog.h>
-#include <systemd/_sd-common.h>
 
 #include "utils.h"
 
