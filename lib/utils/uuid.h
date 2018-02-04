@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 - Vitaliy Perevertun
+ * Copyright © 2015-2018 - Vitaliy Perevertun
  *
  * This file is part of journal
  *
@@ -20,7 +20,7 @@
 /*
  * RFC4122 http://tools.ietf.org/html/rfc4122
  */
-typedef union uuid_t
+typedef union uuid
 {
 	uint8_t		bytes[16];
 	uint64_t	qwords[2];
