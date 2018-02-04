@@ -28,7 +28,6 @@
 #include <sys/uio.h>
 #include <syslog.h>
 
-#include "utils.h"
 
 /* Journal APIs. See sd-journal(3) for more information. */
 

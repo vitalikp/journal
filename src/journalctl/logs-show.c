@@ -705,7 +705,7 @@ static int output_export(
                 cursor,
                 realtime,
                 monotonic,
-                uuid_to_str(boot_id, sid));
+                journal_uuid_to_str(boot_id, sid));
 
         JOURNAL_FOREACH_DATA_RETVAL(j, data, length, r) {
 
@@ -847,7 +847,7 @@ static int output_json(
                         cursor,
                         realtime,
                         monotonic,
-                        uuid_to_str(boot_id, sid));
+                        journal_uuid_to_str(boot_id, sid));
         else {
                 if (mode == OUTPUT_JSON_SSE)
                         fputs("data: ", f);
@@ -860,7 +860,7 @@ static int output_json(
                         cursor,
                         realtime,
                         monotonic,
-                        uuid_to_str(boot_id, sid));
+                        journal_uuid_to_str(boot_id, sid));
         }
 
         h = hashmap_new(string_hash_func, string_compare_func);
@@ -1109,7 +1109,7 @@ int add_match_this_boot(sd_journal *j) {
                 return r;
         }
 
-        uuid_to_str(boot_id, match + 9);
+        journal_uuid_to_str(boot_id, match + 9);
         r = sd_journal_add_match(j, match, strlen(match));
         if (r < 0) {
                 log_error("Failed to add match: %s", strerror(-r));

@@ -19,6 +19,7 @@
         • remove sd_journal_reliable_fd function;
         • remove sd_journal_get_timeout function;
         • add uuid union type;
+        • add journal_uuid_to_str function;
      - hash:
         • add original lookup3 hash functions;
         • add unit tests;

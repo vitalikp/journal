@@ -336,7 +336,7 @@ int dispatch_message(Server *s, struct iovec *iovec, struct timeval *tv) {
          * anyway. However, we need this indexed, too. */
         if (!uuid_is_null(s->server.boot_id)) {
                 str_copy(boot_id_field, "_BOOT_ID=", 10);
-                uuid_to_str(s->server.boot_id, &boot_id_field[9]);
+                journal_uuid_to_str(s->server.boot_id, &boot_id_field[9]);
                 IOVEC_SET_STRING(iovec[n++], boot_id_field);
         }
 

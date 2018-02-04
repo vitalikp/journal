@@ -10,7 +10,7 @@
 #include "uuid.h"
 
 
-char* uuid_to_str(uuid_t id, char str[33])
+API char* journal_uuid_to_str(uuid_t id, char str[33])
 {
 	static const char table[16] = "0123456789abcdef";
 	uint8_t i = 0;
@@ -26,3 +26,4 @@ char* uuid_to_str(uuid_t id, char str[33])
 
 	return str;
 }
+JOURNAL_API(uuid_to_str)

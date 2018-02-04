@@ -24,6 +24,12 @@ extern "C" {
 typedef union uuid uuid_t;
 
 
+/**
+ * journal utils
+ */
+
+char* journal_uuid_to_str(uuid_t id, char str[33]);
+
 #define _JOURNAL_H_INSIDE_
 
 #include <sd-journal.h>

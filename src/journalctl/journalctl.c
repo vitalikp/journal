@@ -642,7 +642,7 @@ static int discover_next_boot(sd_journal *j,
         }
 
         /* Now seek to the last occurrence of this boot ID. */
-        uuid_to_str(next_boot->id, match + 9);
+        journal_uuid_to_str(next_boot->id, match + 9);
         r = sd_journal_add_match(j, match, sizeof(match) - 1);
         if (r < 0)
                 return r;
@@ -700,7 +700,7 @@ static int get_boots(sd_journal *j,
 
                 sd_journal_flush_matches(j);
 
-                uuid_to_str(query_ref_boot->id, match + 9);
+                journal_uuid_to_str(query_ref_boot->id, match + 9);
                 r = sd_journal_add_match(j, match, sizeof(match) - 1);
                 if (r < 0)
                         return r;
@@ -823,7 +823,7 @@ static int list_boots(sd_journal *j) {
 
                 printf("% *i %s %s—%s\n",
                        w, i - count + 1,
-                       uuid_to_str(id->id, bid),
+                       journal_uuid_to_str(id->id, bid),
                        format_timestamp(a, sizeof(a), id->first),
                        format_timestamp(b, sizeof(b), id->last));
                 i++;
@@ -867,7 +867,7 @@ static int add_boot(sd_journal *j) {
                 return r == 0 ? -ENODATA : r;
         }
 
-        uuid_to_str(ref_boot_id.id, match + 9);
+        journal_uuid_to_str(ref_boot_id.id, match + 9);
 
         r = sd_journal_add_match(j, match, sizeof(match) - 1);
         if (r < 0) {
