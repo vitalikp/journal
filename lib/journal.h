@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015-2017 - Vitaliy Perevertun
+ * Copyright © 2015-2018 - Vitaliy Perevertun
  *
  * This file is part of journal
  *
@@ -9,6 +9,9 @@
 
 #ifndef _JOURNAL_H_
 #define _JOURNAL_H_
+
+#define JORNAL_ATTR_PRINTF(fmt, args) \
+	__attribute__ ((format(printf, fmt, args)))
 
 #define _JOURNAL_H_INSIDE_
 

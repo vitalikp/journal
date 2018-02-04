@@ -38,9 +38,9 @@ extern "C" {
 #endif
 
 /* Write to daemon */
-int sd_journal_print(int priority, const char *format, ...) _sd_printf_(2, 3);
-int sd_journal_printv(int priority, const char *format, va_list ap) _sd_printf_(2, 0);
-int sd_journal_send(const char *format, ...) _sd_printf_(1, 0) _sd_sentinel_;
+int sd_journal_print(int priority, const char *format, ...) JORNAL_ATTR_PRINTF(2, 3);
+int sd_journal_printv(int priority, const char *format, va_list ap) JORNAL_ATTR_PRINTF(2, 0);
+int sd_journal_send(const char *format, ...) JORNAL_ATTR_PRINTF(1, 0) _sd_sentinel_;
 int sd_journal_sendv(const struct iovec *iov, int n);
 int sd_journal_perror(const char *message);
 

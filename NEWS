@@ -24,6 +24,9 @@
         • add hash module;
     - struct Window:
         • change type keep_always field to bool;
+    - macros:
+        • don't use C++ guards by macros;
+        • add JORNAL_ATTR_PRINTF attribute macros;
     - remove SD_JOURNAL_LOCAL_ONLY journal open flag;
     - add utils module;
     - remove lookup3 module;
@@ -35,7 +38,6 @@
     - add mmap module;
     - don't check journal file is stored in network fs;
     - skipping paths '.' and '..'  while adding root directory;
-    - don't use C++ guards by macros;
  * use uuid_t type instead of sd_id128_t;
  * don't print systemd features;
  * install sd-journal.h header file to include directory;
