@@ -33,10 +33,6 @@
 
 /* Journal APIs. See sd-journal(3) for more information. */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /* Write to daemon */
 int sd_journal_print(int priority, const char *format, ...) JORNAL_ATTR_PRINTF(2, 3);
 int sd_journal_printv(int priority, const char *format, va_list ap) JORNAL_ATTR_PRINTF(2, 0);
@@ -124,9 +120,5 @@ int sd_journal_wait(sd_journal *j, uint64_t timeout_usec);
 
 #define SD_JOURNAL_FOREACH_UNIQUE(j, data, l)                           \
         for (sd_journal_restart_unique(j); sd_journal_enumerate_unique((j), &(data), &(l)) > 0; )
-
-#ifdef __cplusplus
-} // extern "C"
-#endif
 
 #endif
