@@ -89,19 +89,6 @@
 #define IP_TRANSPARENT 19
 #endif
 
-#ifndef IFLA_CARRIER
-  #define IFLA_CARRIER 33
-  #ifndef IFLA_NUM_RX_QUEUES
-    #define IFLA_NUM_RX_QUEUES 32
-    #ifndef IFLA_NUM_TX_QUEUES
-      #define IFLA_NUM_TX_QUEUES 31
-      #ifndef IFLA_PROMISCUITY
-        #define IFLA_PROMISCUITY 30
-      #endif
-    #endif
-  #endif
-#endif
-
 #ifndef SOL_NETLINK
 #define SOL_NETLINK 270
 #endif
@@ -338,36 +325,4 @@ static inline pid_t gettid(void) {
 
 #ifndef LOOP_CTL_GET_FREE
 #define LOOP_CTL_GET_FREE 0x4C82
-#endif
-
-#ifndef IFLA_BOND_MAX
-enum {
-        IFLA_BOND_UNSPEC,
-        IFLA_BOND_MODE,
-        IFLA_BOND_ACTIVE_SLAVE,
-        IFLA_BOND_MIIMON,
-        IFLA_BOND_UPDELAY,
-        IFLA_BOND_DOWNDELAY,
-        IFLA_BOND_USE_CARRIER,
-        IFLA_BOND_ARP_INTERVAL,
-        IFLA_BOND_ARP_IP_TARGET,
-        IFLA_BOND_ARP_VALIDATE,
-        IFLA_BOND_ARP_ALL_TARGETS,
-        IFLA_BOND_PRIMARY,
-        IFLA_BOND_PRIMARY_RESELECT,
-        IFLA_BOND_FAIL_OVER_MAC,
-        IFLA_BOND_XMIT_HASH_POLICY,
-        IFLA_BOND_RESEND_IGMP,
-        IFLA_BOND_NUM_PEER_NOTIF,
-        IFLA_BOND_ALL_SLAVES_ACTIVE,
-        IFLA_BOND_MIN_LINKS,
-        IFLA_BOND_LP_INTERVAL,
-        IFLA_BOND_PACKETS_PER_SLAVE,
-        IFLA_BOND_AD_LACP_RATE,
-        IFLA_BOND_AD_SELECT,
-        IFLA_BOND_AD_INFO,
-        __IFLA_BOND_MAX,
-};
-
-#define IFLA_BOND_MAX	(__IFLA_BOND_MAX - 1)
 #endif
