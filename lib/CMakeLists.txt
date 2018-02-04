@@ -13,6 +13,8 @@ set(JOURNAL_VERSION ${JOURNAL_SOVERSION}.11.5)
 configure_file(journal.pc.cmake journal.pc @ONLY)
 
 
+add_definitions(-include macros.h)
+
 # journal utils
 add_subdirectory(utils)
 
