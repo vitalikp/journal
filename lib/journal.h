@@ -20,6 +20,10 @@ extern "C" {
 #define JORNAL_ATTR_SENTINEL \
 	__attribute__((sentinel))
 
+
+typedef union uuid uuid_t;
+
+
 #define _JOURNAL_H_INSIDE_
 
 #include <sd-journal.h>

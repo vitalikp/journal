@@ -16,15 +16,17 @@
 
 #include <stdint.h>
 
+#include "journal.h"
+
 
 /*
  * RFC4122 http://tools.ietf.org/html/rfc4122
  */
-typedef union uuid
+union uuid
 {
 	uint8_t		bytes[16];
 	uint64_t	qwords[2];
-} uuid_t;
+};
 
 
 int uuid_equal(const uuid_t id1, const uuid_t id2);
