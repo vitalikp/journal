@@ -1494,10 +1494,6 @@ static int add_root_directory(sd_journal *j, const char *p) {
         assert(j);
         assert(p);
 
-        if ((j->flags & SD_JOURNAL_RUNTIME_ONLY) &&
-            !path_startswith(p, "/run"))
-                return -EINVAL;
-
         d = opendir(p);
         if (!d)
                 return -errno;
@@ -1712,7 +1708,7 @@ _public_ int sd_journal_open(sd_journal **ret, int flags) {
         int r;
 
         assert_return(ret, -EINVAL);
-        assert_return((flags & ~(SD_JOURNAL_RUNTIME_ONLY|SD_JOURNAL_SYSTEM|SD_JOURNAL_CURRENT_USER)) == 0, -EINVAL);
+        assert_return((flags & ~(SD_JOURNAL_SYSTEM|SD_JOURNAL_CURRENT_USER)) == 0, -EINVAL);
 
         j = journal_new(flags, NULL);
         if (!j)

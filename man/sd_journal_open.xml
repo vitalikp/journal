@@ -93,10 +93,7 @@
                 success will contain a journal context object. The
                 second argument is a flags field, which may consist of
                 the following flags ORed together:
-                <constant>SD_JOURNAL_RUNTIME_ONLY</constant>
-                makes sure only volatile journal files will be opened,
-                excluding those which are stored on persistent
-                storage. <constant>SD_JOURNAL_SYSTEM</constant>
+                <constant>SD_JOURNAL_SYSTEM</constant>
                 will cause journal files of system services and the
                 kernel (in opposition to user session processes) to
                 be opened. <constant>SD_JOURNAL_CURRENT_USER</constant>

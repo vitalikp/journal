@@ -30,7 +30,9 @@
         • don't use C++ guards by macros;
         • add JORNAL_ATTR_PRINTF attribute macros;
         • add JORNAL_ATTR_SENTINEL attribute macros;
-    - remove SD_JOURNAL_LOCAL_ONLY journal open flag;
+    - journal open flags:
+        • remove SD_JOURNAL_LOCAL_ONLY flag;
+        • remove SD_JOURNAL_RUNTIME_ONLY flag;
     - add utils module;
     - remove lookup3 module;
     - use automatic cleanup;
