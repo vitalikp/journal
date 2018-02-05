@@ -625,7 +625,7 @@ int server_flush_to_var(Server *s) {
 
         start = now(CLOCK_MONOTONIC);
 
-        r = sd_journal_open(&j, SD_JOURNAL_RUNTIME_ONLY);
+        r = sd_journal_open_directory(&j, JOURNAL_RUNDIR "/log", 0);
         if (r < 0) {
                 log_error("Failed to read runtime journal: %s", strerror(-r));
                 return r;
