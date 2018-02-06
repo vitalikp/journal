@@ -680,10 +680,10 @@ finish:
         journal_file_close(s->runtime_journal);
         s->runtime_journal = NULL;
 
+        sd_journal_close(j);
+
         if (r >= 0)
                 rm_rf(JOURNAL_RUNDIR "/log", false, true, false);
-
-        sd_journal_close(j);
 
         server_driver_message(s, "Time spent on flushing to /var is %s for %u entries.", format_timespan(ts, sizeof(ts), now(CLOCK_MONOTONIC) - start, 0), n);
 

@@ -217,6 +217,7 @@
    - don't check printk time config parameter;
    - don't warn about permitions in config files;
    - open runtime directory for flush without open flags;
+   - close runtime journal before removing directory;
  * unit:
    - remove output syslog socket;
  * man:
