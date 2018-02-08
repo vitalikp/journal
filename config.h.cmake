@@ -49,5 +49,8 @@
 /* journal runtime directory */
 #cmakedefine JOURNAL_RUNDIR "@JOURNAL_RUNDIR@"
 
+/* journal log directory */
+#cmakedefine JOURNAL_LOGDIR "@JOURNAL_LOGDIR@"
+
 /* Version number of package */
 #cmakedefine VERSION "@VERSION@"

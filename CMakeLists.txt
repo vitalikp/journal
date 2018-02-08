@@ -48,6 +48,7 @@ set(libdir ${CMAKE_INSTALL_PREFIX}/lib64)
 set(JOURNAL_RUNDIR /run/journal)
 set(datadir ${CMAKE_INSTALL_PREFIX}/share)
 set(logdir /var/log)
+set(JOURNAL_LOGDIR ${logdir}/journal)
 
 # config
 configure_file(config.h.cmake config.h)

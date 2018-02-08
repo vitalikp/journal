@@ -66,7 +66,7 @@ static uint64_t available_space(Server *s, bool verbose) {
                 return s->cached_available_space;
 
         if (s->system_journal) {
-                f = "/var/log/journal/";
+                f = JOURNAL_LOGDIR;
                 m = &s->system_metrics;
         } else {
                 f = JOURNAL_RUNDIR "/log/";
@@ -172,7 +172,7 @@ static JournalFile* find_journal(Server *s, uid_t uid) {
         if (f)
                 return f;
 
-        if (asprintf(&p, "/var/log/journal/user-"UID_FMT".journal", uid) < 0)
+        if (asprintf(&p, JOURNAL_LOGDIR "/user-"UID_FMT".journal", uid) < 0)
                 return s->system_journal;
 
         while (hashmap_size(s->user_journals) >= USER_JOURNALS_MAX) {
@@ -283,7 +283,7 @@ void server_vacuum(Server *s) {
 
         s->oldest_file_usec = 0;
 
-        do_vacuum(s, s->system_journal, "/var/log/journal/", &s->system_metrics);
+        do_vacuum(s, s->system_journal, JOURNAL_LOGDIR, &s->system_metrics);
         do_vacuum(s, s->runtime_journal, JOURNAL_RUNDIR "/log/", &s->runtime_metrics);
 
         s->cached_available_space_timestamp = 0;
@@ -542,9 +542,9 @@ static int system_journal_open(Server *s) {
         if (!s->system_journal &&
             access(JOURNAL_RUNDIR "/flushed", F_OK) >= 0) {
 
-                (void) mkdir("/var/log/journal/", 0755);
+                (void) mkdir(JOURNAL_LOGDIR, 0755);
 
-                fn = strappenda("/var/log/journal/", "system.journal");
+                fn = JOURNAL_LOGDIR "/system.journal";
                 r = journal_file_open_reliably(fn, O_RDWR|O_CREAT, 0640, s->compress, &s->system_metrics, s->mmap, NULL, &s->system_journal);
 
                 if (r >= 0)

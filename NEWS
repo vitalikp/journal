@@ -243,6 +243,7 @@
  	- don't use optimizations for debug build type;
  	- add JOURNAL_RUNDIR path variable;
  	- add JOURNAL_SYSCONFDIR path variable;
+ 	- add JOURNAL_LOGDIR path variable;
  	- fix build with kernel 4.10 headers;
  * bugfix:
  	- fix misuse of uint64_t as size_t;

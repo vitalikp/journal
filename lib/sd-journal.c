@@ -1604,7 +1604,7 @@ static int add_search_paths(sd_journal *j) {
         int r;
         const char search_paths[] =
                 JOURNAL_RUNDIR "/log\0"
-                "/var/log/journal\0";
+                JOURNAL_LOGDIR "\0";
         const char *p;
 
         assert(j);
