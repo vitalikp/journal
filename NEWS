@@ -218,6 +218,7 @@
    - don't warn about permitions in config files;
    - open runtime directory for flush without open flags;
    - close runtime journal before removing directory;
+   - change working directory at starting;
  * unit:
    - remove output syslog socket;
  * man:
