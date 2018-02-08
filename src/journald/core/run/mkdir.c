@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 - Vitaliy Perevertun
+ * Copyright © 2017-2018 - Vitaliy Perevertun
  *
  * This file is part of journal
  *
@@ -34,10 +34,11 @@ int run_mkdir(void)
 		return -1;
 	}
 
-	if (!mkdir(JOURNAL_RUNDIR, 0755))
-		return 0;
+	if (mkdir(JOURNAL_RUNDIR, 0755) < 0)
+	{
+		log_error("Failed to create '%s' directory: %m", JOURNAL_RUNDIR);
+		return -1;
+	}
 
-	log_error("Failed to create '%s' directory: %m", JOURNAL_RUNDIR);
-
-	return -1;
+	return 0;
 }
