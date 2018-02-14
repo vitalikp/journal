@@ -374,7 +374,7 @@ int server_open_syslog_socket(Server *s) {
 
         assert(s);
 
-        s->server.syslog_fd = socket_open(JOURNAL_RUNDIR "/devlog", SOCK_DGRAM);
+        s->server.syslog_fd = socket_open(JOURNAL_RUNDEVLOG, SOCK_DGRAM);
         if (s->server.syslog_fd < 0)
         	return -errno;
 
@@ -383,7 +383,7 @@ int server_open_syslog_socket(Server *s) {
          * for receiving syslog messages, and for forwarding them to any other
          * syslog, hence we bump both values. */
         if (socket_set_sndbuf(s->server.syslog_fd, 8<<20) < 0)
-        	log_warning("SO_SNDBUF(%s) failed: %m", JOURNAL_RUNDIR "/devlog");
+        	log_warning("SO_SNDBUF(%s) failed: %m", JOURNAL_RUNDEVLOG);
 
         r = epollfd_add(s->server.epoll, s->server.syslog_fd, EPOLLIN, (event_cb)process_datagram, s);
         if (r < 0)

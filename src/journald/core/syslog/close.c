@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 - Vitaliy Perevertun
+ * Copyright © 2017-2018 - Vitaliy Perevertun
  *
  * This file is part of journal
  *
@@ -20,5 +20,5 @@ void syslog_close(server_t *s)
 	close(s->syslog_fd);
 	s->syslog_fd = -1;
 
-	unlink(JOURNAL_RUNDIR "/devlog");
+	unlink(JOURNAL_RUNDEVLOG);
 }
