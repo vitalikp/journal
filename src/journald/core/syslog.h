@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 - Vitaliy Perevertun
+ * Copyright © 2017-2018 - Vitaliy Perevertun
  *
  * This file is part of journal
  *
@@ -15,5 +15,7 @@
 
 int syslog_open(server_t *s, event_cb callback);
 void syslog_close(server_t *s);
+
+void syslog_run(server_t *s);
 
 #endif	/* _JOURNALD_SYSLOG_H_ */

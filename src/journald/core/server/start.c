@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 - Vitaliy Perevertun
+ * Copyright © 2017-2018 - Vitaliy Perevertun
  *
  * This file is part of journal
  *
@@ -12,6 +12,7 @@
 
 #include "core/server.h"
 #include "core/run.h"
+#include "core/syslog.h"
 #include "core/seqnum.h"
 #include "core/hostname.h"
 #include "log.h"
@@ -23,6 +24,8 @@ int server_start(server_t *s)
 	{
 		if (run_mkdir() < 0)
 			return -1;
+
+		syslog_run(s);
 
 		if (run_group(s->rungroup) < 0)
 			return -1;

@@ -25,6 +25,7 @@ add_library(journald_core_obj STATIC
 	socket.h
 	syslog/open.c
 	syslog/close.c
+	syslog/run.c
 	syslog.h
 	native/open.c
 	native/close.c
