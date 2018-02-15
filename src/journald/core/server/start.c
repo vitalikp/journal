@@ -28,6 +28,9 @@ int server_start(server_t *s)
 			return -1;
 		}
 
+		if (run_mkdir(JOURNAL_LOGDIR) < 0)
+			log_warning("Failed to create '%s' directory: %m", JOURNAL_LOGDIR);
+
 		syslog_run(s);
 
 		if (run_group(s->rungroup) < 0)

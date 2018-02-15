@@ -542,8 +542,6 @@ static int system_journal_open(Server *s) {
         if (!s->system_journal &&
             access(JOURNAL_RUNDIR "/flushed", F_OK) >= 0) {
 
-                (void) mkdir(JOURNAL_LOGDIR, 0755);
-
                 fn = JOURNAL_LOGDIR "/system.journal";
                 r = journal_file_open_reliably(fn, O_RDWR|O_CREAT, 0640, s->compress, &s->system_metrics, s->mmap, NULL, &s->system_journal);
 
