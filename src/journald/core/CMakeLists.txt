@@ -6,6 +6,7 @@ add_library(journald_core_obj STATIC
 	run/mkdir.c
 	run/group.c
 	run/user.c
+	run/chuser.c
 	epollfd.c
 	epollfd.h
 	msg/new.c

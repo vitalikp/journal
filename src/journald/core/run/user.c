@@ -50,12 +50,6 @@ int run_user(const char *user, uid_t *uid, gid_t *gid)
 		}
 	}
 
-	if (setuid(pw->pw_uid) < 0)
-	{
-		log_error("Unable to setuid to %d(%s): %m", pw->pw_uid, user);
-		return -1;
-	}
-
 	if (!str_empty(pw->pw_dir) && chdir(pw->pw_dir) < 0)
 		log_warning("Unable change working directory to '%s' path: %m", pw->pw_dir);
 
