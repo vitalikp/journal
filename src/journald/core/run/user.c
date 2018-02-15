@@ -40,16 +40,6 @@ int run_user(const char *user, uid_t *uid, gid_t *gid)
 		return -1;
 	}
 
-	if (!getgid())
-	{
-		if (setgid(pw->pw_gid) < 0)
-		{
-			log_error("Unable to setgid to %d: %m", pw->pw_gid);
-
-			return -1;
-		}
-	}
-
 	if (!str_empty(pw->pw_dir) && chdir(pw->pw_dir) < 0)
 		log_warning("Unable change working directory to '%s' path: %m", pw->pw_dir);
 

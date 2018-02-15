@@ -42,6 +42,12 @@ int server_start(server_t *s)
 		if (run_user(s->runuser, &uid, &gid) < 0)
 			return -1;
 
+		if (gid > 0 && run_chgroup(gid) < 0)
+		{
+			log_error("Unable change group to “%s”: %m", s->rungroup);
+			return -1;
+		}
+
 		if (uid > 0 && run_chuser(uid) < 0)
 		{
 			log_error("Unable change user to “%s”: %m", s->runuser);

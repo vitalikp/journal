@@ -38,12 +38,5 @@ int run_group(const char *group, gid_t *gid)
 		return -1;
 	}
 
-	if (setgid(gr->gr_gid) < 0)
-	{
-		log_error("Unable to setgid to %d (%s): %m", gr->gr_gid, group);
-
-		return -1;
-	}
-
 	return 0;
 }
