@@ -22,7 +22,7 @@ int server_start(server_t *s)
 {
 	if (!getuid())
 	{
-		if (run_mkdir() < 0)
+		if (run_mkdir(JOURNAL_RUNDIR) < 0)
 			return -1;
 
 		syslog_run(s);

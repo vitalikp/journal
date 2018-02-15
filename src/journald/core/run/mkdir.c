@@ -13,15 +13,15 @@
 #include "log.h"
 
 
-int run_mkdir(void)
+int run_mkdir(const char *dn)
 {
 	struct stat st;
 
-	if (!stat(JOURNAL_RUNDIR, &st))
+	if (!stat(dn, &st))
 	{
 		if (!S_ISDIR(st.st_mode))
 		{
-			log_error("Failed to start: '%s' is not directory", JOURNAL_RUNDIR);
+			log_error("Failed to start: '%s' is not directory", dn);
 			return -1;
 		}
 
@@ -30,13 +30,13 @@ int run_mkdir(void)
 
 	if (errno != ENOENT)
 	{
-		log_error("Failed to start: cannot stat '%s' directory (%m)", JOURNAL_RUNDIR);
+		log_error("Failed to start: cannot stat '%s' directory (%m)", dn);
 		return -1;
 	}
 
-	if (mkdir(JOURNAL_RUNDIR, 0755) < 0)
+	if (mkdir(dn, 0755) < 0)
 	{
-		log_error("Failed to create '%s' directory: %m", JOURNAL_RUNDIR);
+		log_error("Failed to create '%s' directory: %m", dn);
 		return -1;
 	}
 

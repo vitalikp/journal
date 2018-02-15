@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 - Vitaliy Perevertun
+ * Copyright © 2017-2018 - Vitaliy Perevertun
  *
  * This file is part of journal
  *
@@ -11,7 +11,7 @@
 #define _JOURNALD_RUN_H_
 
 
-int run_mkdir(void);
+int run_mkdir(const char *dn);
 int run_group(const char *group);
 int run_user(const char *user);
 
