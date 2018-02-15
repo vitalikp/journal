@@ -8,7 +8,6 @@
  */
 
 #include <unistd.h>
-#include <grp.h>
 #include <pwd.h>
 
 #include "core/run.h"
@@ -43,13 +42,6 @@ int run_user(const char *user)
 		if (setgid(pw->pw_gid) < 0)
 		{
 			log_error("Unable to setgid to %d: %m", pw->pw_gid);
-
-			return -1;
-		}
-
-		if (initgroups(pw->pw_name, pw->pw_gid) < 0)
-		{
-			log_error("Unable to init groups for '%s'", user);
 
 			return -1;
 		}
