@@ -14,7 +14,7 @@
 #include "log.h"
 
 
-int run_group(const char *group)
+int run_group(const char *group, gid_t *gid)
 {
 	struct group *gr;
 
@@ -28,6 +28,8 @@ int run_group(const char *group)
 
 		return 0;
 	}
+
+	*gid = gr->gr_gid;
 
 	if (chown(JOURNAL_RUNDIR, -1, gr->gr_gid) < 0)
 	{

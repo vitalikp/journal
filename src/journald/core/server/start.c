@@ -36,7 +36,7 @@ int server_start(server_t *s)
 
 		syslog_run(s);
 
-		if (run_group(s->rungroup) < 0)
+		if (run_group(s->rungroup, &gid) < 0)
 			return -1;
 
 		if (run_user(s->runuser, &uid, &gid) < 0)
