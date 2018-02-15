@@ -15,7 +15,7 @@
 #include "log.h"
 
 
-int run_user(const char *user, uid_t *uid, gid_t *gid)
+void run_user(const char *user, uid_t *uid, gid_t *gid)
 {
 	struct passwd* pw;
 
@@ -27,7 +27,7 @@ int run_user(const char *user, uid_t *uid, gid_t *gid)
 	{
 		log_warning("No such user '%s'!", user);
 
-		return 0;
+		return;
 	}
 
 	*uid = pw->pw_uid;
@@ -35,6 +35,4 @@ int run_user(const char *user, uid_t *uid, gid_t *gid)
 
 	if (!str_empty(pw->pw_dir) && chdir(pw->pw_dir) < 0)
 		log_warning("Unable change working directory to '%s' path: %m", pw->pw_dir);
-
-	return 0;
 }

@@ -14,8 +14,8 @@
 
 
 int run_mkdir(const char *dn);
-int run_group(const char *group, gid_t *gid);
-int run_user(const char *user, uid_t *uid, gid_t *gid);
+void run_group(const char *group, gid_t *gid);
+void run_user(const char *user, uid_t *uid, gid_t *gid);
 int run_chgroup(gid_t gid);
 int run_chuser(uid_t uid);
 

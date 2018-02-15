@@ -14,7 +14,7 @@
 #include "log.h"
 
 
-int run_group(const char *group, gid_t *gid)
+void run_group(const char *group, gid_t *gid)
 {
 	struct group *gr;
 
@@ -26,10 +26,8 @@ int run_group(const char *group, gid_t *gid)
 	{
 		log_warning("No such group '%s'!", group);
 
-		return 0;
+		return;
 	}
 
 	*gid = gr->gr_gid;
-
-	return 0;
 }

@@ -25,11 +25,8 @@ int server_start(server_t *s)
 		uid_t uid = 0;
 		gid_t gid = 0;
 
-		if (run_user(s->runuser, &uid, &gid) < 0)
-			return -1;
-
-		if (run_group(s->rungroup, &gid) < 0)
-			return -1;
+		run_user(s->runuser, &uid, &gid);
+		run_group(s->rungroup, &gid);
 
 		if (run_mkdir(JOURNAL_RUNDIR) < 0)
 		{
