@@ -25,6 +25,12 @@ int server_start(server_t *s)
 		uid_t uid = 0;
 		gid_t gid = 0;
 
+		if (run_user(s->runuser, &uid, &gid) < 0)
+			return -1;
+
+		if (run_group(s->rungroup, &gid) < 0)
+			return -1;
+
 		if (run_mkdir(JOURNAL_RUNDIR) < 0)
 		{
 			log_error("Failed to create '%s' directory: %m", JOURNAL_RUNDIR);
@@ -35,12 +41,6 @@ int server_start(server_t *s)
 			log_warning("Failed to create '%s' directory: %m", JOURNAL_LOGDIR);
 
 		syslog_run(s);
-
-		if (run_user(s->runuser, &uid, &gid) < 0)
-			return -1;
-
-		if (run_group(s->rungroup, &gid) < 0)
-			return -1;
 
 		if (gid > 0 && run_chgroup(gid) < 0)
 		{
