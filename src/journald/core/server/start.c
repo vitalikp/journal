@@ -23,7 +23,10 @@ int server_start(server_t *s)
 	if (!getuid())
 	{
 		if (run_mkdir(JOURNAL_RUNDIR) < 0)
+		{
+			log_error("Failed to create '%s' directory: %m", JOURNAL_RUNDIR);
 			return -1;
+		}
 
 		syslog_run(s);
 

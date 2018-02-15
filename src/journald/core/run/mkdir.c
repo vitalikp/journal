@@ -7,10 +7,10 @@
  * See the file LICENSE.
  */
 
+#include <errno.h>
 #include <sys/stat.h>
 
 #include "core/run.h"
-#include "log.h"
 
 
 int run_mkdir(const char *dn)
@@ -21,7 +21,7 @@ int run_mkdir(const char *dn)
 	{
 		if (!S_ISDIR(st.st_mode))
 		{
-			log_error("Failed to start: '%s' is not directory", dn);
+			errno = ENOTDIR;
 			return -1;
 		}
 
@@ -29,16 +29,10 @@ int run_mkdir(const char *dn)
 	}
 
 	if (errno != ENOENT)
-	{
-		log_error("Failed to start: cannot stat '%s' directory (%m)", dn);
 		return -1;
-	}
 
 	if (mkdir(dn, 0755) < 0)
-	{
-		log_error("Failed to create '%s' directory: %m", dn);
 		return -1;
-	}
 
 	return 0;
 }
