@@ -31,12 +31,5 @@ int run_group(const char *group, gid_t *gid)
 
 	*gid = gr->gr_gid;
 
-	if (chown(JOURNAL_RUNDIR, -1, gr->gr_gid) < 0)
-	{
-		log_error("Unable to chgrp run directory to %d (%s): %m", gr->gr_gid, group);
-
-		return -1;
-	}
-
 	return 0;
 }

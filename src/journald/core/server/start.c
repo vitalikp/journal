@@ -37,6 +37,12 @@ int server_start(server_t *s)
 			return -1;
 		}
 
+		if (chown(JOURNAL_RUNDIR, uid, gid) < 0)
+		{
+			log_error("Unable to change owner “%s” directory to %s(%s): %m", JOURNAL_RUNDIR, s->runuser, s->rungroup);
+			return -1;
+		}
+
 		if (run_mkdir(JOURNAL_LOGDIR) < 0)
 			log_warning("Failed to create '%s' directory: %m", JOURNAL_LOGDIR);
 
