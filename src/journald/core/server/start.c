@@ -22,6 +22,8 @@ int server_start(server_t *s)
 {
 	if (!getuid())
 	{
+		uid_t uid = 0;
+
 		if (run_mkdir(JOURNAL_RUNDIR) < 0)
 		{
 			log_error("Failed to create '%s' directory: %m", JOURNAL_RUNDIR);
@@ -36,7 +38,7 @@ int server_start(server_t *s)
 		if (run_group(s->rungroup) < 0)
 			return -1;
 
-		if (run_user(s->runuser) < 0)
+		if (run_user(s->runuser, &uid) < 0)
 			return -1;
 	}
 

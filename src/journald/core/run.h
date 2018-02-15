@@ -10,9 +10,11 @@
 #ifndef _JOURNALD_RUN_H_
 #define _JOURNALD_RUN_H_
 
+#include <sys/types.h>
+
 
 int run_mkdir(const char *dn);
 int run_group(const char *group);
-int run_user(const char *user);
+int run_user(const char *user, uid_t *uid);
 
 #endif	/* _JOURNALD_SYSLOG_H_ */
