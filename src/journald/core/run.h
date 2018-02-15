@@ -15,6 +15,6 @@
 
 int run_mkdir(const char *dn);
 int run_group(const char *group);
-int run_user(const char *user, uid_t *uid);
+int run_user(const char *user, uid_t *uid, gid_t *gid);
 
 #endif	/* _JOURNALD_SYSLOG_H_ */

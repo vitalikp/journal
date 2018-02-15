@@ -15,7 +15,7 @@
 #include "log.h"
 
 
-int run_user(const char *user, uid_t *uid)
+int run_user(const char *user, uid_t *uid, gid_t *gid)
 {
 	struct passwd* pw;
 
@@ -31,6 +31,7 @@ int run_user(const char *user, uid_t *uid)
 	}
 
 	*uid = pw->pw_uid;
+	*gid = pw->pw_gid;
 
 	if (chown(JOURNAL_RUNDIR, pw->pw_uid, -1) < 0)
 	{
