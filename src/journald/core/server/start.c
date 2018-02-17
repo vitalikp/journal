@@ -26,7 +26,7 @@ int server_start(server_t *s)
 		uid_t uid = 0;
 		gid_t gid = 0;
 
-		run_user(s->runuser, &uid, &gid);
+		run_user(s, &uid, &gid);
 		run_group(s->rungroup, &gid);
 
 		// runtime data directory

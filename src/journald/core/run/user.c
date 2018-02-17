@@ -15,17 +15,17 @@
 #include "log.h"
 
 
-void run_user(const char *user, uid_t *uid, gid_t *gid)
+void run_user(server_t *s, uid_t *uid, gid_t *gid)
 {
 	struct passwd* pw;
 
-	if (!user)
-		user = "journal";
+	if (!s->runuser)
+		s->runuser = "journal";
 
-	pw = getpwnam(user);
+	pw = getpwnam(s->runuser);
 	if (!pw)
 	{
-		log_warning("No such user '%s'!", user);
+		log_warning("No such user '%s'!", s->runuser);
 
 		return;
 	}
