@@ -9,6 +9,7 @@
 
 #include <unistd.h>
 #include <limits.h>
+#include <errno.h>
 
 #include "core/server.h"
 #include "core/run.h"
@@ -42,6 +43,11 @@ int server_start(server_t *s)
 
 		if (run_mkdir(JOURNAL_LOGDIR) < 0)
 			log_warning("Failed to create '%s' directory: %m", JOURNAL_LOGDIR);
+		else
+		{
+			if (errno != EEXIST && chown(JOURNAL_LOGDIR, uid, gid) < 0)
+				log_warning("Unable to change owner “%s” directory to %s(%s): %m", JOURNAL_LOGDIR, s->runuser, s->rungroup);
+		}
 
 		syslog_run(s);
 
