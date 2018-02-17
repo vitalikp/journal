@@ -29,6 +29,7 @@ int server_start(server_t *s)
 		run_user(s->runuser, &uid, &gid);
 		run_group(s->rungroup, &gid);
 
+		// runtime data directory
 		if (run_mkdir(JOURNAL_RUNDIR) < 0)
 		{
 			log_error("Failed to create '%s' directory: %m", JOURNAL_RUNDIR);
@@ -41,6 +42,9 @@ int server_start(server_t *s)
 			return -1;
 		}
 
+		syslog_run(s);
+
+		// variable data directory
 		if (run_mkdir(JOURNAL_LOGDIR) < 0)
 			log_warning("Failed to create '%s' directory: %m", JOURNAL_LOGDIR);
 		else
@@ -49,8 +53,7 @@ int server_start(server_t *s)
 				log_warning("Unable to change owner “%s” directory to %s(%s): %m", JOURNAL_LOGDIR, s->runuser, s->rungroup);
 		}
 
-		syslog_run(s);
-
+		// change user and group of process
 		if (gid > 0 && run_chgroup(gid) < 0)
 		{
 			log_error("Unable change group to “%s”: %m", s->rungroup);
