@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 - Vitaliy Perevertun
+ * Copyright © 2017-2018 - Vitaliy Perevertun
  *
  * This file is part of journal
  *
@@ -14,17 +14,17 @@
 #include "log.h"
 
 
-void run_group(const char *group, gid_t *gid)
+void run_group(server_t *s, gid_t *gid)
 {
 	struct group *gr;
 
-	if (!group)
-		group = "journal";
+	if (!s->rungroup)
+		s->rungroup = "journal";
 
-	gr = getgrnam(group);
+	gr = getgrnam(s->rungroup);
 	if (!gr)
 	{
-		log_warning("No such group '%s'!", group);
+		log_warning("No such group '%s'!", s->rungroup);
 
 		return;
 	}

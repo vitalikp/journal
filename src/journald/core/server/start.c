@@ -27,7 +27,7 @@ int server_start(server_t *s)
 		gid_t gid = 0;
 
 		run_user(s, &uid, &gid);
-		run_group(s->rungroup, &gid);
+		run_group(s, &gid);
 
 		// runtime data directory
 		if (run_mkdir(JOURNAL_RUNDIR) < 0)
